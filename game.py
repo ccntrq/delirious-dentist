@@ -31,6 +31,10 @@ class MyGame(arcade.Window):
 
         self.player_list = None
         self.wall_list = None
+        self.enemy_list = None
+
+        # Load sounds
+        self.hit_enemy_sound = arcade.load_sound(":resources:sounds/coin1.wav")
 
         # Our physics engine
         self.physics_engine = None
@@ -39,8 +43,10 @@ class MyGame(arcade.Window):
         """Set up the game here. Call this function to restart the game."""
 
         """Set up the game here. Call this function to restart the game."""
+
         # Create the Sprite lists
         self.player_list = arcade.SpriteList()
+        self.enemy_list = arcade.SpriteList()
 
         # Walls use spatial hashing for faster collision detection
         self.wall_list = arcade.SpriteList(use_spatial_hash=True)
@@ -52,9 +58,16 @@ class MyGame(arcade.Window):
         self.player_sprite.center_y = 128
         self.player_list.append(self.player_sprite)
 
+        # Set up demo enemy
+        image_source = "resources/sprites/dentist.png"
+        enemy_sprite = arcade.Sprite(image_source, CHARACTER_SCALING)
+        enemy_sprite.center_x = 500
+        enemy_sprite.center_y = 500
+        self.enemy_list.append(enemy_sprite)
+
         # Create the ground
         # This shows using a loop to place multiple sprites horizontally
-        for x in range(0, 1250, 32):
+        for x in range(0, SCREEN_WIDTH + 32, 32):
             wall = arcade.Sprite("resources/sprites/wall.png", TILE_SCALING)
             wall.center_x = x
             wall.center_y = 32
@@ -71,12 +84,21 @@ class MyGame(arcade.Window):
 
         self.player_list.draw()
         self.wall_list.draw()
+        self.enemy_list.draw()
 
     def on_update(self, delta_time):
         """Movement and game logic"""
 
         # Move the player with the physics engine
         self.physics_engine.update()
+
+        # Check for collisions with or hits of enemies
+        enemy_hit_list = arcade.check_for_collision_with_list(
+            self.player_sprite, self.enemy_list)
+
+        for enemy in enemy_hit_list:
+            enemy.remove_from_sprite_lists()
+            arcade.play_sound(self.hit_enemy_sound)
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed."""
