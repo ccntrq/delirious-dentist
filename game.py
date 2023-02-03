@@ -15,10 +15,11 @@ CHARACTER_MOVEMENT_SPEED = 5
 
 
 class MyGame(arcade.Window):
-   """
-   Main application class.
-   """
-   def on_update(self, delta_time):
+    """
+    Main application class.
+    """
+
+    def on_update(self, delta_time):
         """Movement and game logic"""
 
         # Move the player with the physics engine
@@ -53,8 +54,8 @@ class MyGame(arcade.Window):
 
         # Create the 'physics engine'
         # XXX needs walls
-        self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite, arcade.SpriteList())
-
+        self.physics_engine = arcade.PhysicsEngineSimple(
+            self.player_sprite, arcade.SpriteList())
 
     def on_draw(self):
         """Render the screen."""
@@ -63,7 +64,6 @@ class MyGame(arcade.Window):
         # Code to draw the screen goes here
 
         self.player_list.draw()
-
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed."""
@@ -95,7 +95,6 @@ class MyGame(arcade.Window):
         self.physics_engine.update()
 
 
-
 def main():
     """Main function"""
     window = MyGame()
@@ -105,4 +104,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
