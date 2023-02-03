@@ -1,12 +1,12 @@
 """
-Delirous Dentist
+Delirious Dentist
 """
 import arcade
 
 # Constants
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
-SCREEN_TITLE = "Delirous Dentist"
+SCREEN_TITLE = "Delirious Dentist"
 
 
 class MyGame(arcade.Window):
