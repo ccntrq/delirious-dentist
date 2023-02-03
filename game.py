@@ -124,7 +124,7 @@ class MyGame(arcade.Window):
         if self.enemy_list.sprite_list:
             # don't add new enemies when there still is one
             return;
-        image_source = "resources/sprites/dentist.png"
+        image_source = "resources/sprites/enemy_1.png"
         enemy_sprite = arcade.Sprite(image_source, CHARACTER_SCALING)
         enemy_sprite.center_x = random.randint(32,500);
         enemy_sprite.center_y = random.randint(32,500)
