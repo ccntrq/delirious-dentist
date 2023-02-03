@@ -1,6 +1,7 @@
 """
 Delirious Dentist
 """
+import random
 import arcade
 
 # Constants
@@ -58,13 +59,6 @@ class MyGame(arcade.Window):
         self.player_sprite.center_y = 128
         self.player_list.append(self.player_sprite)
 
-        # Set up demo enemy
-        image_source = "resources/sprites/dentist.png"
-        enemy_sprite = arcade.Sprite(image_source, CHARACTER_SCALING)
-        enemy_sprite.center_x = 500
-        enemy_sprite.center_y = 500
-        self.enemy_list.append(enemy_sprite)
-
         # Create the ground
         # This shows using a loop to place multiple sprites horizontally
         for x in range(0, SCREEN_WIDTH + 32, 32):
@@ -100,6 +94,8 @@ class MyGame(arcade.Window):
             enemy.remove_from_sprite_lists()
             arcade.play_sound(self.hit_enemy_sound)
 
+        self.add_enemies()
+
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed."""
 
@@ -123,6 +119,17 @@ class MyGame(arcade.Window):
             self.player_sprite.change_x = 0
         elif key == arcade.key.RIGHT or key == arcade.key.D:
             self.player_sprite.change_x = 0
+
+    def add_enemies(self):
+        if self.enemy_list.sprite_list:
+            # don't add new enemies when there still is one
+            return;
+        image_source = "resources/sprites/dentist.png"
+        enemy_sprite = arcade.Sprite(image_source, CHARACTER_SCALING)
+        enemy_sprite.center_x = random.randint(32,500);
+        enemy_sprite.center_y = random.randint(32,500)
+        self.enemy_list.append(enemy_sprite)
+
 
 
 def main():
