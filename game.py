@@ -16,16 +16,11 @@ CHARACTER_MOVEMENT_SPEED = 5
 
 TILE_SCALING = 1
 
+
 class MyGame(arcade.Window):
     """
     Main application class.
     """
-
-    def on_update(self, delta_time):
-        """Movement and game logic"""
-
-        # Move the player with the physics engine
-        self.physics_engine.update()
 
     def __init__(self):
 
@@ -77,6 +72,12 @@ class MyGame(arcade.Window):
         self.player_list.draw()
         self.wall_list.draw()
 
+    def on_update(self, delta_time):
+        """Movement and game logic"""
+
+        # Move the player with the physics engine
+        self.physics_engine.update()
+
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed."""
 
@@ -100,11 +101,6 @@ class MyGame(arcade.Window):
             self.player_sprite.change_x = 0
         elif key == arcade.key.RIGHT or key == arcade.key.D:
             self.player_sprite.change_x = 0
-
-    def on_update(self, delta_time):
-        """Movement and game logic"""
-        # Move the player with the physics engine
-        self.physics_engine.update()
 
 
 def main():
