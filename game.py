@@ -9,10 +9,12 @@ SCREEN_HEIGHT = 600
 SCREEN_TITLE = "Delirious Dentist"
 
 # scaling factor for the dentist character
-CHARACTER_SCALING = 0.1
+CHARACTER_SCALING = 1
 # movement speed of the dentist character
 CHARACTER_MOVEMENT_SPEED = 5
 
+
+TILE_SCALING = 1
 
 class MyGame(arcade.Window):
     """
@@ -33,9 +35,9 @@ class MyGame(arcade.Window):
         arcade.set_background_color(arcade.csscolor.CORNFLOWER_BLUE)
 
         self.player_list = None
+        self.wall_list = None
 
         # Our physics engine
-        # XXX currently unused
         self.physics_engine = None
 
     def setup(self):
@@ -45,25 +47,35 @@ class MyGame(arcade.Window):
         # Create the Sprite lists
         self.player_list = arcade.SpriteList()
 
+        # Walls use spatial hashing for faster collision detection
+        self.wall_list = arcade.SpriteList(use_spatial_hash=True)
+
         # Set up the player, specifically placing it at these coordinates.
-        image_source = "resources/sprites/dentist.jpg"
+        image_source = "resources/sprites/dentist.png"
         self.player_sprite = arcade.Sprite(image_source, CHARACTER_SCALING)
         self.player_sprite.center_x = 64
         self.player_sprite.center_y = 128
         self.player_list.append(self.player_sprite)
 
+        # Create the ground
+        # This shows using a loop to place multiple sprites horizontally
+        for x in range(0, 1250, 32):
+            wall = arcade.Sprite("resources/sprites/wall.png", TILE_SCALING)
+            wall.center_x = x
+            wall.center_y = 32
+            self.wall_list.append(wall)
+
         # Create the 'physics engine'
-        # XXX needs walls
         self.physics_engine = arcade.PhysicsEngineSimple(
-            self.player_sprite, arcade.SpriteList())
+            self.player_sprite, self.wall_list)
 
     def on_draw(self):
         """Render the screen."""
-
         self.clear()
         # Code to draw the screen goes here
 
         self.player_list.draw()
+        self.wall_list.draw()
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed."""
