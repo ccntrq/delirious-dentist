@@ -8,6 +8,7 @@ import arcade
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 SCREEN_TITLE = "Delirious Dentist"
+UI_HEIGHT = 64
 
 # scaling factor for the dentist character
 CHARACTER_SCALING = 1
@@ -62,7 +63,7 @@ class MyGame(arcade.Window):
         image_source = "resources/sprites/dentist.png"
         self.player_sprite = arcade.Sprite(image_source, CHARACTER_SCALING)
         self.player_sprite.center_x = 64
-        self.player_sprite.center_y = 128
+        self.player_sprite.center_y = UI_HEIGHT
         self.player_list.append(self.player_sprite)
 
         # Create the ground
@@ -70,7 +71,7 @@ class MyGame(arcade.Window):
         for x in range(0, SCREEN_WIDTH + 32, 32):
             wall = arcade.Sprite("resources/sprites/wall.png", TILE_SCALING)
             wall.center_x = x
-            wall.center_y = 32
+            wall.center_y = UI_HEIGHT
             self.wall_list.append(wall)
 
         # Create the 'physics engine'
@@ -143,8 +144,8 @@ class MyGame(arcade.Window):
             return
         image_source = "resources/sprites/enemy_1.png"
         enemy_sprite = arcade.Sprite(image_source, CHARACTER_SCALING)
-        enemy_sprite.center_x = random.randint(32, 500)
-        enemy_sprite.center_y = random.randint(32, 500)
+        enemy_sprite.center_x = random.randint(0, SCREEN_WIDTH)
+        enemy_sprite.center_y = random.randint(UI_HEIGHT, SCREEN_HEIGHT)
         self.enemy_list.append(enemy_sprite)
 
 
