@@ -111,7 +111,6 @@ class GameView(arcade.View):
         self.hit_cooldown = 0
         self.hit_active = 0
 
-
         # Create the Sprite lists
         self.player_list = arcade.SpriteList()
         self.enemy_list = arcade.SpriteList()
@@ -242,7 +241,6 @@ class GameView(arcade.View):
             self.player_sprite, self.power_up_list
         )
 
-        # XXX rename tooth list to power up list and handle all power ups here
         for power_up in power_up_hit_list:
             if isinstance(power_up, HeartSprite):
                 self.add_life()
@@ -373,8 +371,15 @@ class GameView(arcade.View):
             tooth = ToothSprite()
 
         self.power_up_list.append(tooth)
-        tooth.center_x = min([max([enemy.center_x + random.randint(-64, 64), 32]), ENEMY_RIGHT_BORDER - 32])
-        tooth.center_y = min([max([enemy.center_y + random.randint(-64, 64), 128]), ENEMY_TOP_BORDER])
+        tooth.center_x = min(
+            [
+                max([enemy.center_x + random.randint(-64, 64), 32]),
+                ENEMY_RIGHT_BORDER - 32,
+            ]
+        )
+        tooth.center_y = min(
+            [max([enemy.center_y + random.randint(-64, 64), 128]), ENEMY_TOP_BORDER]
+        )
 
     def add_hearts(self):
         if random.randint(1, 1000) == 1:
@@ -422,6 +427,7 @@ class GameView(arcade.View):
             return
 
         self.enemy_list.append(enemy_sprite)
+
     def set_enemy_speed(self, enemy):
         enemy.change_x = random.randint(0, ENEMY_MAX_SPEED)
         enemy.change_y = random.randint(0, ENEMY_MAX_SPEED - enemy.change_x)
@@ -448,8 +454,8 @@ class GameView(arcade.View):
 
     def remove_life(self):
         if len(self.life_list.sprite_list) > 0:
-          life = self.life_list.sprite_list[-1]
-          life.remove_from_sprite_lists()
+            life = self.life_list.sprite_list[-1]
+            life.remove_from_sprite_lists()
 
     def check_game_over(self):
         if not self.life_list.sprite_list:
@@ -457,10 +463,10 @@ class GameView(arcade.View):
             self.window.show_view(GameOverView(self.score))
 
     def random_x(self):
-        return random.randint(ENEMY_LEFT_BORDER, ENEMY_RIGHT_BORDER)
+        return random.randint(ENEMY_LEFT_BORDER + 32, ENEMY_RIGHT_BORDER - 32)
 
     def random_y(self):
-        return random.randint(ENEMY_BOTTOM_BORDER, ENEMY_TOP_BORDER)
+        return random.randint(ENEMY_BOTTOM_BORDER + 32, ENEMY_TOP_BORDER - 32)
 
 
 class GameOverView(arcade.View):
