@@ -32,6 +32,8 @@ CHARACTER_MOVEMENT_SPEED = 5
 # hit timeout (number of updates after hitting space that you can hit an enemy)
 CHARACTER_HIT_TIMEOUT = 20
 CHARACTER_LIFES = 5
+# chance for a tooth drop in percent
+TOOTH_DROP_CHANCE = 30
 
 # Sprite scalings
 CHARACTER_SCALING = 1
@@ -204,8 +206,8 @@ class MyGame(arcade.Window):
             self.player_sprite.change_x = 0
 
     def on_enemy_hit(self, enemy):
-        drop_tooth = random.uniform(0, 10)
-        if drop_tooth <= 3:
+        drop_tooth = random.uniform(0, 100)
+        if drop_tooth <= TOOTH_DROP_CHANCE:
             self.drop_tooth(enemy)
 
         enemy.remove_from_sprite_lists()
