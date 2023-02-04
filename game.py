@@ -418,21 +418,22 @@ class GameView(arcade.View):
             ENEMY_2_IMAGE_SOURCE,
             ENEMY_3_IMAGE_SOURCE,
         ]
-        enemy_sprite = arcade.Sprite(random.choice(image_sources), CHARACTER_SCALING)
-        enemy_sprite.center_x = self.random_x()
-        enemy_sprite.center_y = self.random_y()
+        image_source = random.choice(image_sources)
 
-        self.set_enemy_speed(enemy_sprite)
+        for _ in range(0, 9):
+            enemy_sprite = arcade.Sprite(image_source, CHARACTER_SCALING)
+            enemy_sprite.center_x = self.random_x()
+            enemy_sprite.center_y = self.random_y()
 
-        collides_with_other_object = arcade.check_for_collision(
-            self.player_sprite, enemy_sprite
-        ) or arcade.check_for_collision_with_list(enemy_sprite, self.enemy_list)
+            self.set_enemy_speed(enemy_sprite)
 
-        if collides_with_other_object:
-            self.add_random_enemy()
-            return
+            collides_with_other_object = arcade.check_for_collision(
+                self.player_sprite, enemy_sprite
+            ) or arcade.check_for_collision_with_list(enemy_sprite, self.enemy_list)
 
-        self.enemy_list.append(enemy_sprite)
+            if not collides_with_other_object:
+                self.enemy_list.append(enemy_sprite)
+                return
 
     def set_enemy_speed(self, enemy):
         enemy.change_x = random.randint(0, ENEMY_MAX_SPEED)
