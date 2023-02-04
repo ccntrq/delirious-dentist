@@ -25,6 +25,7 @@ UI_TOOTH_IMAGE_SOURCE = "resources/sprites/ui/tooth.png"
 ENEMY_HIT_SOUND_RESOURCE = ":resources:sounds/hit2.wav"
 ENEMY_COLLISION_SOUND_RESOURCE = ":resources:sounds/hurt1.wav"
 GAME_OVER_SOUND_RESOURCE = ":resources:sounds/gameover1.wav"
+TOOTH_COLLECT_SOUND_RESOURCE = ":resources:sounds/coin1.wav"
 
 # movement speed of the dentist character
 CHARACTER_MOVEMENT_SPEED = 5
@@ -53,6 +54,7 @@ class MyGame(arcade.Window):
         self.player_list = None
         self.wall_list = None
         self.enemy_list = None
+        self.tooth_list = None
         self.static_ui_elements_list = None
 
         self.hit_active = None
@@ -62,6 +64,8 @@ class MyGame(arcade.Window):
         self.enemy_collision_sound = arcade.load_sound(
             ENEMY_COLLISION_SOUND_RESOURCE)
         self.game_over_sound = arcade.load_sound(GAME_OVER_SOUND_RESOURCE)
+        self.tooth_collect_sound = arcade.load_sound(
+            TOOTH_COLLECT_SOUND_RESOURCE)
 
         # Our physics engine
         self.physics_engine = None
@@ -79,6 +83,7 @@ class MyGame(arcade.Window):
 
         # Walls use spatial hashing for faster collision detection
         self.wall_list = arcade.SpriteList(use_spatial_hash=True)
+        self.tooth_list = arcade.SpriteList(use_spatial_hash=True)
 
         # Set up the player, specifically placing it at these coordinates.
         image_source = CHARACTER_DENTIST_IMAGE_SOURCE
@@ -134,6 +139,7 @@ class MyGame(arcade.Window):
         self.player_list.draw()
         self.wall_list.draw()
         self.enemy_list.draw()
+        self.tooth_list.draw()
         self.life_list.draw()
         self.static_ui_elements_list.draw()
 
@@ -146,6 +152,15 @@ class MyGame(arcade.Window):
         # Move the player with the physics engine
         self.physics_engine.update()
 
+        # Check for tooth collections
+        tooth_hit_list = arcade.check_for_collision_with_list(
+            self.player_sprite, self.tooth_list)
+
+        for tooth in tooth_hit_list:
+            tooth.remove_from_sprite_lists()
+            arcade.play_sound(self.tooth_collect_sound)
+            self.score += 1
+
         # Check for collisions with or hits of enemies
         enemy_hit_list = arcade.check_for_collision_with_list(
             self.player_sprite, self.enemy_list)
@@ -153,10 +168,7 @@ class MyGame(arcade.Window):
         if self.hit_active:
             self.hit_active -= 1
             for enemy in enemy_hit_list:
-                enemy.remove_from_sprite_lists()
-                arcade.play_sound(self.enemy_hit_sound)
-                self.hit_active = 0
-                self.score += 1
+                self.on_enemy_hit(enemy)
         else:
             for enemy in enemy_hit_list:
                 enemy.remove_from_sprite_lists()
@@ -190,6 +202,21 @@ class MyGame(arcade.Window):
             self.player_sprite.change_x = 0
         elif key == arcade.key.RIGHT or key == arcade.key.D:
             self.player_sprite.change_x = 0
+
+    def on_enemy_hit(self, enemy):
+        drop_tooth = random.uniform(0, 10)
+        if drop_tooth <= 3:
+            self.drop_tooth(enemy)
+
+        enemy.remove_from_sprite_lists()
+        arcade.play_sound(self.enemy_hit_sound)
+        self.hit_active = 0
+
+    def drop_tooth(self, enemy):
+        tooth = arcade.Sprite(UI_TOOTH_IMAGE_SOURCE, 0.25)
+        tooth.center_x = enemy.center_x + 32  # XXX prevent spawning outside of window
+        tooth.center_y = enemy.center_y
+        self.tooth_list.append(tooth)
 
     def add_enemies(self):
         enemy_count = int(self.score / 5) + 1
