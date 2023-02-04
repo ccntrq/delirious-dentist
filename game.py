@@ -32,6 +32,7 @@ ROOM_XRAY_IMAGE_SOURCE = "resources/sprites/room/xray.png"
 UI_HEART_IMAGE_SOURCE = "resources/sprites/ui/heart.png"
 UI_TOOTH_IMAGE_SOURCE = "resources/sprites/ui/tooth.png"
 UI_GOLDEN_TOOTH_IMAGE_SOURCE = "resources/sprites/ui/golden_tooth.png"
+UI_PLIER_IMAGE_SOURCE = "resources/sprites/ui/plier.png"
 
 # Sounds
 ENEMY_HIT_SOUND_RESOURCE = ":resources:sounds/hit2.wav"
