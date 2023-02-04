@@ -19,4 +19,11 @@ The more score points you collect the more patients will come.
 
 ## Install Instructions
 
+## Development Summary
+Delirious Dentist was developed during the Global Game Jam in February 2023.
+- Elischa Brämer: Artwork
+- Jake Flock @dasJake: Project Management, Development
+- Alexander Pankoff @ccntrq: Development
+ 
+
 ## License
