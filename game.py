@@ -16,6 +16,7 @@ CHARACTER_DENTIST_ATTACK_IMAGE_SOURCE = "resources/sprites/characters/dentist_at
 CHARACTER_ENEMY_1_IMAGE_SOURCE = "resources/sprites/characters/enemy_1.png"
 ROOM_TILE_FLOOR_IMAGE_SOURCE = "resources/sprites/room/tile_floor.png"
 ROOM_WALL_IMAGE_SOURCE = "resources/sprites/room/wall.png"
+LIFE_IMAGE_SOURCE = ":resources:images/items/star.png"
 
 # scaling factor for the dentist character
 CHARACTER_SCALING = 1
@@ -75,9 +76,8 @@ class MyGame(arcade.Window):
         self.player_sprite.center_y = UI_HEIGHT
         self.player_list.append(self.player_sprite)
 
-        life_sprite_image_source = ":resources:images/items/star.png"
         for x in range(5):
-            life = arcade.Sprite(life_sprite_image_source, 0.5)
+            life = arcade.Sprite(LIFE_IMAGE_SOURCE, 0.5)
             life.center_x = x * 32 + 32
             life.center_y = UI_HEIGHT - 32
             self.life_list.append(life)
