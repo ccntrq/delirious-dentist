@@ -44,7 +44,7 @@ CHARACTER_SCALING = 1
 TILE_SCALING = 1
 
 
-class MyGame(arcade.Window):
+class GameView(arcade.View):
     """
     Main application class.
     """
@@ -52,7 +52,7 @@ class MyGame(arcade.Window):
     def __init__(self):
 
         # Call the parent class and set up the window
-        super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+        super().__init__()
 
         arcade.set_background_color(arcade.csscolor.WHITE_SMOKE)
 
@@ -231,7 +231,7 @@ class MyGame(arcade.Window):
         if drop_tooth <= TOOTH_DROP_CHANCE:
             self.drop_tooth(enemy)
         else:
-          arcade.play_sound(self.enemy_hit_sound)
+            arcade.play_sound(self.enemy_hit_sound)
         enemy.remove_from_sprite_lists()
         self.hit_active = 0
 
@@ -272,15 +272,76 @@ class MyGame(arcade.Window):
         life.remove_from_sprite_lists()
 
         if not self.life_list.sprite_list:
-            # XXX GAME OVER SCREEN with highscores!
             arcade.play_sound(self.game_over_sound)
-            self.setup()
+            self.window.show_view(GameOverView(self.score))
+
+
+class GameOverView(arcade.View):
+    """ View to show when game is over """
+
+    def __init__(self, score):
+        """ This is run once when we switch to this view """
+        super().__init__()
+        self.score = score
+        arcade.set_background_color(arcade.csscolor.BLACK)
+
+        # Reset the viewport, necessary if we have a scrolling game and we need
+        # to reset the viewport back to the start so we can see what we draw.
+        arcade.set_viewport(0, SCREEN_WIDTH - 1, 0, SCREEN_HEIGHT - 1)
+
+    def on_draw(self):
+        """ Draw this view """
+        self.clear()
+        arcade.draw_text("GAME OVER", 0, SCREEN_HEIGHT / 2,
+                         arcade.color.WHITE_SMOKE, 48, width=SCREEN_WIDTH, align="center")
+        arcade.draw_text(f"SCORE: {self.score}", 0, SCREEN_HEIGHT / 2 - 48,
+                         arcade.color.WHITE_SMOKE, 24, width=SCREEN_WIDTH, align="center")
+        arcade.draw_text("PRESS SPACE TO RESTART", 0, SCREEN_HEIGHT / 2 - 90,
+                         arcade.color.WHITE_SMOKE, 14, width=SCREEN_WIDTH, align="center")
+
+    def on_key_release(self, key, _modifiers):
+        """ If the user releases the space key, re-start the game. """
+        if key == arcade.key.SPACE:
+            game_view = GameView()
+            game_view.setup()
+            self.window.show_view(game_view)
+
+
+class InstructionView(arcade.View):
+    """ View to show instructions before the game """
+
+    def __init__(self):
+        """ This is run once when we switch to this view """
+        super().__init__()
+        arcade.set_background_color(arcade.csscolor.BLACK)
+
+        # Reset the viewport, necessary if we have a scrolling game and we need
+        # to reset the viewport back to the start so we can see what we draw.
+        arcade.set_viewport(0, SCREEN_WIDTH - 1, 0, SCREEN_HEIGHT - 1)
+
+    def on_draw(self):
+        """ Draw this view """
+        self.clear()
+        arcade.draw_text("DELIRIOUS DENTIST", 0, SCREEN_HEIGHT / 2 + 90,
+                         arcade.color.WHITE_SMOKE, 32, width=SCREEN_WIDTH, align="center")
+        arcade.draw_text("Press space to perform a root treatment. Collect tooth for your precious roots collection and avoid beeing hit by angry patients", 0, SCREEN_HEIGHT / 2,
+                         arcade.color.WHITE_SMOKE, 24, width=SCREEN_WIDTH, align="center")
+        arcade.draw_text("PRESS SPACE TO START THE GAME", 0, SCREEN_HEIGHT / 2 - 180,
+                         arcade.color.WHITE_SMOKE, 14, width=SCREEN_WIDTH, align="center")
+
+    def on_key_release(self, key, _modifiers):
+        """ If the user releases the space key, start the game. """
+        if key == arcade.key.SPACE:
+            game_view = GameView()
+            game_view.setup()
+            self.window.show_view(game_view)
 
 
 def main():
     """Main function"""
-    window = MyGame()
-    window.setup()
+    window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+    start_view = InstructionView()
+    window.show_view(start_view)
     arcade.run()
 
 
