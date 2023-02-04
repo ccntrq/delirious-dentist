@@ -152,6 +152,7 @@ class MyGame(arcade.Window):
         if self.enemy_list.sprite_list:
             # don't add new enemies when there still is one
             return
+        # TODO: Prevent spawning over player
         image_source = "resources/sprites/enemy_1.png"
         enemy_sprite = arcade.Sprite(image_source, CHARACTER_SCALING)
         enemy_sprite.center_x = random.randint(0, SCREEN_WIDTH)
@@ -163,7 +164,7 @@ class MyGame(arcade.Window):
         life.remove_from_sprite_lists()
 
         if not self.life_list.sprite_list:
-            # XXX GAME OVER SCREEN!
+            # XXX GAME OVER SCREEN with highscores!
             raise Exception("GAME OVER!")
 
 def main():
