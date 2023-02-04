@@ -373,8 +373,8 @@ class GameView(arcade.View):
             tooth = ToothSprite()
 
         self.power_up_list.append(tooth)
-        tooth.center_x = min([max([enemy.center_x, 32]), ENEMY_RIGHT_BORDER - 32])
-        tooth.center_y = min([max([enemy.center_y, 128]), ENEMY_TOP_BORDER])
+        tooth.center_x = min([max([enemy.center_x + random.randint(-64, 64), 32]), ENEMY_RIGHT_BORDER - 32])
+        tooth.center_y = min([max([enemy.center_y + random.randint(-64, 64), 128]), ENEMY_TOP_BORDER])
 
     def add_hearts(self):
         if random.randint(1, 1000) == 1:
