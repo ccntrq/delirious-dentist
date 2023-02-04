@@ -194,8 +194,8 @@ class MyGame(arcade.Window):
         # TODO: Prevent spawning over player or other enemies
         image_source = CHARACTER_ENEMY_1_IMAGE_SOURCE
         enemy_sprite = arcade.Sprite(image_source, CHARACTER_SCALING)
-        enemy_sprite.center_x = random.randint(0, SCREEN_WIDTH)
-        enemy_sprite.center_y = random.randint(UI_HEIGHT, SCREEN_HEIGHT)
+        enemy_sprite.center_x = random.randint(64, SCREEN_WIDTH - 64 )
+        enemy_sprite.center_y =random.randint(UI_HEIGHT + 64, SCREEN_HEIGHT - 64)
         self.enemy_list.append(enemy_sprite)
 
     def remove_life(self):
