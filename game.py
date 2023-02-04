@@ -172,10 +172,10 @@ class MyGame(arcade.Window):
 
     def add_enemies(self):
         enemy_count = int(self.score / 5) + 1
-        add_enemies = enemy_count - len(self.enemy_list.sprite_list);
+        add_enemies = enemy_count - len(self.enemy_list.sprite_list)
 
         for _ in range(add_enemies):
-          self.add_random_enemy()
+            self.add_random_enemy()
 
     def add_random_enemy(self):
         # TODO: Prevent spawning over player or other enemies
