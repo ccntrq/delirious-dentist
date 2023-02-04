@@ -10,6 +10,12 @@ SCREEN_HEIGHT = 600
 SCREEN_TITLE = "Delirious Dentist"
 UI_HEIGHT = 64
 
+# Sprite locations
+CHARACTER_DENTIST_IMAGE_SOURCE = "resources/sprites/characters/dentist.png"
+CHARACTER_ENEMY_1_IMAGE_SOURCE = "resources/sprites/characters/enemy_1.png"
+ROOM_TILE_FLOOR_IMAGE_SOURCE = "resources/sprites/room/tile_floor.png"
+ROOM_WALL_IMAGE_SOURCE = "resources/sprites/room/wall.png"
+
 # scaling factor for the dentist character
 CHARACTER_SCALING = 1
 # movement speed of the dentist character
@@ -62,7 +68,7 @@ class MyGame(arcade.Window):
         self.wall_list = arcade.SpriteList(use_spatial_hash=True)
 
         # Set up the player, specifically placing it at these coordinates.
-        image_source = "resources/sprites/dentist.png"
+        image_source = CHARACTER_DENTIST_IMAGE_SOURCE
         self.player_sprite = arcade.Sprite(image_source, CHARACTER_SCALING)
         self.player_sprite.center_x = 64
         self.player_sprite.center_y = UI_HEIGHT
@@ -78,7 +84,7 @@ class MyGame(arcade.Window):
         # Create the ground
         # This shows using a loop to place multiple sprites horizontally
         for x in range(0, SCREEN_WIDTH + 32, 32):
-            wall = arcade.Sprite("resources/sprites/wall.png", TILE_SCALING)
+            wall = arcade.Sprite(ROOM_WALL_IMAGE_SOURCE, TILE_SCALING)
             wall.center_x = x
             wall.center_y = UI_HEIGHT
             self.wall_list.append(wall)
@@ -160,7 +166,7 @@ class MyGame(arcade.Window):
 
     def add_random_enemy(self):
         # TODO: Prevent spawning over player
-        image_source = "resources/sprites/enemy_1.png"
+        image_source = CHARACTER_ENEMY_1_IMAGE_SOURCE
         enemy_sprite = arcade.Sprite(image_source, CHARACTER_SCALING)
         enemy_sprite.center_x = random.randint(0, SCREEN_WIDTH)
         enemy_sprite.center_y = random.randint(UI_HEIGHT, SCREEN_HEIGHT)
