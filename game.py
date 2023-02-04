@@ -68,12 +68,11 @@ class MyGame(arcade.Window):
         self.player_list.append(self.player_sprite)
 
         life_sprite_image_source = ":resources:images/items/star.png"
-        for x  in range(5):
+        for x in range(5):
             life = arcade.Sprite(life_sprite_image_source, 0.5)
             life.center_x = x * 32 + 32
             life.center_y = UI_HEIGHT - 32
             self.life_list.append(life)
-
 
         # Create the ground
         # This shows using a loop to place multiple sprites horizontally
@@ -118,7 +117,7 @@ class MyGame(arcade.Window):
             for enemy in enemy_hit_list:
                 enemy.remove_from_sprite_lists()
                 arcade.play_sound(self.enemy_collision_sound)
-                self.remove_life();
+                self.remove_life()
 
         self.add_enemies()
 
@@ -170,6 +169,7 @@ class MyGame(arcade.Window):
         if not self.life_list.sprite_list:
             # XXX GAME OVER SCREEN with highscores!
             raise Exception("GAME OVER!")
+
 
 def main():
     """Main function"""
