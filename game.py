@@ -419,7 +419,7 @@ class GameOverView(arcade.View):
                          text_color, 48, width=SCREEN_WIDTH, align="center",  font_name=font)
         arcade.draw_text(f"SCORE: {self.score}", 0, begin_x - 48,
                          text_color, 32, width=SCREEN_WIDTH, align="center", font_name=font)
-        arcade.draw_text("PRESS SPACE TO RESTART", 0, begin_x - 90,
+        arcade.draw_text("PRESS ENTER TO RESTART", 0, begin_x - 90,
                          text_color, 24, width=SCREEN_WIDTH, align="center", font_name=font)
 
         arcade.draw_text("HIGH SCORES:", 0, begin_x - 140,
@@ -431,8 +431,8 @@ class GameOverView(arcade.View):
             i += 1
 
     def on_key_release(self, key, _modifiers):
-        """ If the user releases the space key, re-start the game. """
-        if key == arcade.key.SPACE:
+        """ If the user releases the ENTER key, re-start the game. """
+        if key == arcade.key.ENTER:
             game_view = GameView()
             game_view.setup()
             self.window.show_view(game_view)
