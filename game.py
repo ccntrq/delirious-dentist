@@ -17,6 +17,7 @@ CHARACTER_ENEMY_1_IMAGE_SOURCE = "resources/sprites/characters/enemy_1.png"
 ROOM_TILE_FLOOR_IMAGE_SOURCE = "resources/sprites/room/tile_floor.png"
 ROOM_WALL_IMAGE_SOURCE = "resources/sprites/room/wall.png"
 UI_HEART_IMAGE_SOURCE = "resources/sprites/ui/heart.png"
+UI_TOOTH_IMAGE_SOURCE = "resources/sprites/ui/tooth.png"
 
 # scaling factor for the dentist character
 CHARACTER_SCALING = 1
