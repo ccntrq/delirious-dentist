@@ -138,11 +138,8 @@ class GameView(arcade.View):
         self.player_sprite.center_y = 2 * UI_HEIGHT
         self.player_list.append(self.player_sprite)
 
-        for x in range(CHARACTER_LIFES):
-            life = arcade.Sprite(UI_HEART_IMAGE_SOURCE, TILE_SCALING)
-            life.center_x = x * 40 + 32
-            life.center_y = UI_HEIGHT - 32
-            self.life_list.append(life)
+        for _ in range(CHARACTER_LIFES):
+            self.add_life()
 
         ui_tooth = arcade.Sprite(UI_TOOTH_IMAGE_SOURCE, 0.25)
         ui_tooth.center_x = 730
@@ -253,9 +250,13 @@ class GameView(arcade.View):
             self.player_sprite, self.tooth_list
         )
 
+        # XXX rename tooth list to power up list and handle all power ups here
         for tooth in tooth_hit_list:
+            if isinstance(tooth, HeartSprite):
+                self.add_life()
+            else:
+                self.on_score(1)
             tooth.remove_from_sprite_lists()
-            self.on_score(1)
 
         # Check for tooth_gold collections
         tooth_gold_hit_list = arcade.check_for_collision_with_list(
@@ -285,9 +286,10 @@ class GameView(arcade.View):
         if self.hit_cooldown > 0:
             self.hit_cooldown -= 1
 
-        self.add_enemies()
-
         self.enemy_move()
+
+        self.add_enemies()
+        self.add_hearts()
 
     def update_player_speed(self):
         # Calculate speed based on the keys pressed
@@ -379,6 +381,24 @@ class GameView(arcade.View):
         tooth.center_x = min([max([enemy.center_x, 32]), ENEMY_RIGHT_BORDER - 32])
         tooth.center_y = min([max([enemy.center_y, 128]), ENEMY_TOP_BORDER])
 
+    def add_hearts(self):
+        if random.randint(1, 1000) == 1:
+            self.add_heart()
+
+    def add_heart(self):
+        heart = HeartSprite()
+        heart.center_x = self.random_x()
+        heart.center_y = self.random_y()
+        self.tooth_list.append(heart)
+
+    def add_life(self):
+        lifes = len(self.life_list.sprite_list)
+        life = HeartSprite()
+        life.center_x = lifes * 40 + 32
+        life.center_y = UI_HEIGHT - 32
+
+        self.life_list.append(life)
+
     def add_enemies(self):
         enemy_count = int(self.score / 5) + 1
         add_enemies = enemy_count - len(self.enemy_list.sprite_list)
@@ -393,8 +413,8 @@ class GameView(arcade.View):
             ENEMY_3_IMAGE_SOURCE,
         ]
         enemy_sprite = arcade.Sprite(random.choice(image_sources), CHARACTER_SCALING)
-        enemy_sprite.center_x = random.randint(ENEMY_LEFT_BORDER, ENEMY_RIGHT_BORDER)
-        enemy_sprite.center_y = random.randint(ENEMY_BOTTOM_BORDER, ENEMY_TOP_BORDER)
+        enemy_sprite.center_x = self.random_x()
+        enemy_sprite.center_y = self.random_y()
 
         enemy_sprite.change_x = random.randint(0, ENEMY_MAX_SPEED)
         enemy_sprite.change_y = random.randint(0, ENEMY_MAX_SPEED)
@@ -438,6 +458,12 @@ class GameView(arcade.View):
         if not self.life_list.sprite_list:
             arcade.play_sound(self.game_over_sound)
             self.window.show_view(GameOverView(self.score))
+
+    def random_x(self):
+        return random.randint(ENEMY_LEFT_BORDER, ENEMY_RIGHT_BORDER)
+
+    def random_y(self):
+        return random.randint(ENEMY_BOTTOM_BORDER, ENEMY_TOP_BORDER)
 
 
 class GameOverView(arcade.View):
@@ -579,6 +605,15 @@ class InstructionView(arcade.View):
             game_view = GameView()
             game_view.setup()
             self.window.show_view(game_view)
+
+
+class HeartSprite(arcade.Sprite):
+    def __init__(self):
+        # Set up parent class
+        super().__init__()
+
+        self.scale = TILE_SCALING
+        self.texture = arcade.load_texture(UI_HEART_IMAGE_SOURCE)
 
 
 class DentistCharacter(arcade.Sprite):
