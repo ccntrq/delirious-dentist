@@ -6,10 +6,12 @@ from operator import itemgetter
 import random
 import arcade
 
+VERSION = "0.1"
+
 # Constants
 SCREEN_WIDTH = 1024
 SCREEN_HEIGHT = 640
-SCREEN_TITLE = "Delirious Dentist"
+SCREEN_TITLE = f"Delirious Dentist (v{VERSION})"
 UI_HEIGHT = 64
 
 # Sprite locations
