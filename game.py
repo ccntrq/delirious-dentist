@@ -295,7 +295,8 @@ class GameView(arcade.View):
             self.player_sprite.change_y = CHARACTER_MOVEMENT_SPEED
         elif vert == "down":
             self.player_sprite.change_y = -CHARACTER_MOVEMENT_SPEED
-        elif horz == "left":
+
+        if horz == "left":
             self.player_sprite.change_x = -CHARACTER_MOVEMENT_SPEED
         elif horz == "right":
             self.player_sprite.change_x = CHARACTER_MOVEMENT_SPEED
