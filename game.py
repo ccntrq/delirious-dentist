@@ -191,11 +191,19 @@ class MyGame(arcade.Window):
             self.add_random_enemy()
 
     def add_random_enemy(self):
-        # TODO: Prevent spawning over player or other enemies
         image_source = CHARACTER_ENEMY_1_IMAGE_SOURCE
         enemy_sprite = arcade.Sprite(image_source, CHARACTER_SCALING)
-        enemy_sprite.center_x = random.randint(64, SCREEN_WIDTH - 64 )
-        enemy_sprite.center_y =random.randint(UI_HEIGHT + 64, SCREEN_HEIGHT - 64)
+        enemy_sprite.center_x = random.randint(64, SCREEN_WIDTH - 64)
+        enemy_sprite.center_y = random.randint(
+            UI_HEIGHT + 64, SCREEN_HEIGHT - 64)
+
+        collides_with_other_object = arcade.check_for_collision(
+            self.player_sprite, enemy_sprite) or arcade.check_for_collision_with_list(enemy_sprite, self.enemy_list)
+
+        if collides_with_other_object:
+            self.add_random_enemy()
+            return
+
         self.enemy_list.append(enemy_sprite)
 
     def remove_life(self):
