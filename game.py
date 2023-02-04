@@ -283,8 +283,9 @@ class GameView(arcade.View):
             if self.hit_cooldown > 0:
                 arcade.play_sound(self.game_over_sound)
             else:
-                self.hit_active = CHARACTER_HIT_TIMEOUT
-            self.hit_cooldown = CHARACTER_HIT_COOLDOWN + CHARACTER_HIT_TIMEOUT
+                self.hit_active = CHARACTER_HIT_TIMEOUT + \
+                    (15 if self.player_sprite.pliers_equipped else 0)
+            self.hit_cooldown = CHARACTER_HIT_TIMEOUT + CHARACTER_HIT_TIMEOUT
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key."""
@@ -310,7 +311,7 @@ class GameView(arcade.View):
     def on_score(self, score):
         arcade.play_sound(self.tooth_collect_sound)
         self.score += score
-        if self.score >= 10 and not self.player_sprite.pliers_equipped :
+        if self.score >= 10 and not self.player_sprite.pliers_equipped:
             self.player_sprite.pliers_equipped = True
             self.add_pliers_to_ui()
 
@@ -319,7 +320,6 @@ class GameView(arcade.View):
         pliers.center_x = 700
         pliers.center_y = UI_HEIGHT - 40
         self.static_ui_elements_list.append(pliers)
-
 
     def drop_tooth(self, enemy):
         # Drop golden tooth
