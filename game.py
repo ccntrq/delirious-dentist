@@ -304,7 +304,6 @@ class GameView(arcade.View):
         else:
             arcade.play_sound(self.enemy_hit_sound)
         enemy.remove_from_sprite_lists()
-        self.hit_active = 0
         self.hit_cooldown = 0
 
     def on_score(self, score):
