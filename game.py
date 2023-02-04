@@ -68,7 +68,7 @@ class GameView(arcade.View):
     Main application class.
     """
 
-    def __init__(self, init = False):
+    def __init__(self, init=False):
 
         # Call the parent class and set up the window
         super().__init__()
@@ -198,7 +198,6 @@ class GameView(arcade.View):
         self.physics_engine = arcade.PhysicsEngineSimple(
             self.player_sprite, self.wall_list)
 
-
     def on_draw(self):
         """Render the screen."""
         self.clear()
@@ -236,8 +235,7 @@ class GameView(arcade.View):
 
         for tooth in tooth_hit_list:
             tooth.remove_from_sprite_lists()
-            arcade.play_sound(self.tooth_collect_sound)
-            self.score += 1
+            self.on_score()
 
         # Check for tooth_gold collections
         tooth_gold_hit_list = arcade.check_for_collision_with_list(
@@ -302,7 +300,7 @@ class GameView(arcade.View):
 
     def on_enemy_hit(self, enemy):
         drop_tooth = random.uniform(0, 100)
-        if drop_tooth <= TOOTH_DROP_CHANCE:
+        if drop_tooth <= TOOTH_DROP_CHANCE + (25 if self.player_sprite.pliers_equipped else 0):
             self.drop_tooth(enemy)
         else:
             arcade.play_sound(self.enemy_hit_sound)
@@ -310,11 +308,17 @@ class GameView(arcade.View):
         self.hit_active = 0
         self.hit_cooldown = 0
 
+    def on_score(self):
+        arcade.play_sound(self.tooth_collect_sound)
+        self.score += 1
+        if self.score >= 10:
+            self.player_sprite.pliers_equipped = True
+
     def drop_tooth(self, enemy):
         # Drop golden tooth
         drop_golden_tooth = random.uniform(0, 100)
         tooth = None
-        if drop_golden_tooth <= TOOTH_GOLDEN_DROP_CHANCE:
+        if drop_golden_tooth <= TOOTH_GOLDEN_DROP_CHANCE + (10 if self.player_sprite.pliers_equipped else 0):
             tooth = arcade.Sprite(UI_GOLDEN_TOOTH_IMAGE_SOURCE, 0.7)
             self.tooth_gold_list.append(tooth)
         else:
@@ -466,6 +470,7 @@ class DentistCharacter(arcade.Sprite):
         super().__init__()
 
         self.scale = CHARACTER_SCALING
+        self.pliers_equipped = False
 
         # XXX auto set hitbox or adjust coordinates to our sprite
         # self.points = [[-22, -64], [22, -64], [22, 28], [-22, 28]]
@@ -473,8 +478,10 @@ class DentistCharacter(arcade.Sprite):
         # Set up the player, specifically placing it at these coordinates.
         main_image_source = CHARACTER_DENTIST_IMAGE_SOURCE
         hit_image_source = CHARACTER_DENTIST_ATTACK_IMAGE_SOURCE
+        pliers_hit_image_source = CHARACTER_DENTIST_ATTACK_PLIER_IMAGE_SOURCE
         self.main_texture = arcade.load_texture(main_image_source)
         self.hit_texture = arcade.load_texture(hit_image_source)
+        self.pliers_hit_texture = arcade.load_texture(pliers_hit_image_source)
         self.texture = self.main_texture
         self.main_hit_box = self.get_hit_box()
         self.hit_hit_box = self.main_hit_box
@@ -486,7 +493,7 @@ class DentistCharacter(arcade.Sprite):
 
     def update_animation(self, delta_time: float = 1 / 60):
         if self.hit_active:
-            self.texture = self.hit_texture
+            self.texture = self.pliers_hit_texture if self.pliers_equipped else self.hit_texture
             self.hit_box = self.hit_hit_box
             return
 
