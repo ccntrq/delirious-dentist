@@ -5,8 +5,8 @@ import random
 import arcade
 
 # Constants
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
+SCREEN_WIDTH = 840
+SCREEN_HEIGHT = 640
 SCREEN_TITLE = "Delirious Dentist"
 UI_HEIGHT = 64
 
@@ -96,16 +96,19 @@ class MyGame(arcade.Window):
             self.player_sprite, self.wall_list)
 
         # Create the floor
-        for x in range(0, SCREEN_WIDTH + 32, 32):
-            wall = arcade.Sprite(ROOM_WALL_IMAGE_SOURCE, TILE_SCALING)
-            wall.center_x = x
-            wall.center_y = UI_HEIGHT
-            self.wall_list.append(wall)
+        for x in range(0, SCREEN_WIDTH, 32):
+            for y in range(UI_HEIGHT, SCREEN_HEIGHT, 32):
+                floor = arcade.Sprite(ROOM_TILE_FLOOR_IMAGE_SOURCE, 0.25)
+                floor.center_x = x
+                floor.center_y = y
+                self.floor_list.append(floor)
+
     def on_draw(self):
         """Render the screen."""
         self.clear()
         # Code to draw the screen goes here
 
+        self.floor_list.draw()
         self.player_list.draw()
         self.wall_list.draw()
         self.enemy_list.draw()
