@@ -235,7 +235,7 @@ class GameView(arcade.View):
 
         for tooth in tooth_hit_list:
             tooth.remove_from_sprite_lists()
-            self.on_score()
+            self.on_score(1)
 
         # Check for tooth_gold collections
         tooth_gold_hit_list = arcade.check_for_collision_with_list(
@@ -243,8 +243,7 @@ class GameView(arcade.View):
 
         for tooth_gold in tooth_gold_hit_list:
             tooth_gold.remove_from_sprite_lists()
-            arcade.play_sound(self.tooth_collect_sound)
-            self.score += 10
+            self.on_score(10)
 
         # Check for collisions with or hits of enemies
         enemy_hit_list = arcade.check_for_collision_with_list(
@@ -308,9 +307,9 @@ class GameView(arcade.View):
         self.hit_active = 0
         self.hit_cooldown = 0
 
-    def on_score(self):
+    def on_score(self, score):
         arcade.play_sound(self.tooth_collect_sound)
-        self.score += 1
+        self.score += score
         if self.score >= 10:
             self.player_sprite.pliers_equipped = True
 
