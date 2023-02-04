@@ -12,6 +12,7 @@ UI_HEIGHT = 64
 
 # Sprite locations
 CHARACTER_DENTIST_IMAGE_SOURCE = "resources/sprites/characters/dentist.png"
+CHARACTER_DENTIST_ATTACK_IMAGE_SOURCE = "resources/sprites/characters/dentist_attack.png"
 CHARACTER_ENEMY_1_IMAGE_SOURCE = "resources/sprites/characters/enemy_1.png"
 ROOM_TILE_FLOOR_IMAGE_SOURCE = "resources/sprites/room/tile_floor.png"
 ROOM_WALL_IMAGE_SOURCE = "resources/sprites/room/wall.png"
