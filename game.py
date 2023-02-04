@@ -392,21 +392,22 @@ class GameOverView(arcade.View):
         # DON'T clear here! We want to draw over the endgame screen.
         # self.clear()
 
-        text_color = arcade.color.PUCE_RED
+        text_color = arcade.color.BLACK
         begin_x = SCREEN_HEIGHT * 0.75
+        font = "Kenney Blocks"
         arcade.draw_text("GAME OVER", 0, begin_x,
-                         text_color, 48, width=SCREEN_WIDTH, align="center")
+                         text_color, 48, width=SCREEN_WIDTH, align="center",  font_name=font)
         arcade.draw_text(f"SCORE: {self.score}", 0, begin_x - 48,
-                         text_color, 24, width=SCREEN_WIDTH, align="center")
+                         text_color, 32, width=SCREEN_WIDTH, align="center", font_name=font)
         arcade.draw_text("PRESS SPACE TO RESTART", 0, begin_x - 90,
-                         text_color, 14, width=SCREEN_WIDTH, align="center")
+                         text_color, 24, width=SCREEN_WIDTH, align="center", font_name=font)
 
-        arcade.draw_text("HIGH SCORES:", 0, begin_x - 125,
-                         text_color, 14, width=SCREEN_WIDTH, align="center")
+        arcade.draw_text("HIGH SCORES:", 0, begin_x - 140,
+                         text_color, 24, width=SCREEN_WIDTH, align="center", font_name=font)
         i = 0
         for high_score in ScoreBoard().get_high_scores():
-            arcade.draw_text(f"{high_score[0]}  -  {high_score[1]}", 0, begin_x - 150 - i * 20,
-                             text_color, 14, width=SCREEN_WIDTH, align="center")
+            arcade.draw_text(f"{high_score[0]}  -  {high_score[1]}", 0, begin_x - 170 - i * 30,
+                             text_color, 24, width=SCREEN_WIDTH, align="center", font_name=font)
             i += 1
 
     def on_key_release(self, key, _modifiers):
@@ -492,7 +493,7 @@ class ScoreBoard():
         with open(HIGH_SCORE_FILE, "r+") as high_score_file:
             lines = list(reversed(sorted(map(lambda x: x.rstrip().split(
                 ','), high_score_file.readlines()), key=itemgetter(0))))
-            return lines[0:limit-1]
+            return lines[0:limit]
 
 
 def main():
