@@ -55,6 +55,7 @@ class MyGame(arcade.Window):
         # Create the Sprite lists
         self.player_list = arcade.SpriteList()
         self.enemy_list = arcade.SpriteList()
+        self.life_list = arcade.SpriteList()
 
         # Walls use spatial hashing for faster collision detection
         self.wall_list = arcade.SpriteList(use_spatial_hash=True)
@@ -65,6 +66,14 @@ class MyGame(arcade.Window):
         self.player_sprite.center_x = 64
         self.player_sprite.center_y = UI_HEIGHT
         self.player_list.append(self.player_sprite)
+
+        life_sprite_image_source = ":resources:images/items/star.png"
+        for x  in range(5):
+            life = arcade.Sprite(life_sprite_image_source, 0.5)
+            life.center_x = x * 32 + 32
+            life.center_y = UI_HEIGHT - 32
+            self.life_list.append(life)
+
 
         # Create the ground
         # This shows using a loop to place multiple sprites horizontally
@@ -86,6 +95,7 @@ class MyGame(arcade.Window):
         self.player_list.draw()
         self.wall_list.draw()
         self.enemy_list.draw()
+        self.life_list.draw()
 
     def on_update(self, delta_time):
         """Movement and game logic"""
@@ -106,9 +116,9 @@ class MyGame(arcade.Window):
                 self.hit_active = 0
         else:
             for enemy in enemy_hit_list:
-                # XXX remove life?
                 enemy.remove_from_sprite_lists()
                 arcade.play_sound(self.enemy_collision_sound)
+                self.remove_life();
 
         self.add_enemies()
 
@@ -148,6 +158,13 @@ class MyGame(arcade.Window):
         enemy_sprite.center_y = random.randint(UI_HEIGHT, SCREEN_HEIGHT)
         self.enemy_list.append(enemy_sprite)
 
+    def remove_life(self):
+        life = self.life_list.sprite_list[-1]
+        life.remove_from_sprite_lists()
+
+        if not self.life_list.sprite_list:
+            # XXX GAME OVER SCREEN!
+            raise Exception("GAME OVER!")
 
 def main():
     """Main function"""
