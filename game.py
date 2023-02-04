@@ -29,6 +29,7 @@ ENEMY_HIT_SOUND_RESOURCE = ":resources:sounds/hit2.wav"
 ENEMY_COLLISION_SOUND_RESOURCE = ":resources:sounds/hurt1.wav"
 GAME_OVER_SOUND_RESOURCE = ":resources:sounds/gameover1.wav"
 TOOTH_COLLECT_SOUND_RESOURCE = ":resources:sounds/coin1.wav"
+TOOTH_DROP_SOUND_RESOURCE = ":resources:sounds/laser1.wav"
 
 # movement speed of the dentist character
 CHARACTER_MOVEMENT_SPEED = 5
@@ -71,6 +72,8 @@ class MyGame(arcade.Window):
         self.game_over_sound = arcade.load_sound(GAME_OVER_SOUND_RESOURCE)
         self.tooth_collect_sound = arcade.load_sound(
             TOOTH_COLLECT_SOUND_RESOURCE)
+        self.tooth_drop_sound = arcade.load_sound(
+            TOOTH_DROP_SOUND_RESOURCE)
 
         # Our physics engine
         self.physics_engine = None
@@ -227,13 +230,14 @@ class MyGame(arcade.Window):
         drop_tooth = random.uniform(0, 100)
         if drop_tooth <= TOOTH_DROP_CHANCE:
             self.drop_tooth(enemy)
-
+        else:
+          arcade.play_sound(self.enemy_hit_sound)
         enemy.remove_from_sprite_lists()
-        arcade.play_sound(self.enemy_hit_sound)
         self.hit_active = 0
 
     def drop_tooth(self, enemy):
-        tooth = arcade.Sprite(UI_TOOTH_IMAGE_SOURCE, 0.25)
+        arcade.play_sound(self.tooth_drop_sound)
+        tooth = arcade.Sprite(UI_TOOTH_IMAGE_SOURCE, 0.5)
         tooth.center_x = enemy.center_x + 32  # XXX prevent spawning outside of window
         tooth.center_y = enemy.center_y
         self.tooth_list.append(tooth)
