@@ -447,8 +447,9 @@ class GameView(arcade.View):
                 self.set_enemy_speed(enemy_sprite)
 
     def remove_life(self):
-        life = self.life_list.sprite_list[-1]
-        life.remove_from_sprite_lists()
+        if len(self.life_list.sprite_list) > 0:
+          life = self.life_list.sprite_list[-1]
+          life.remove_from_sprite_lists()
 
     def check_game_over(self):
         if not self.life_list.sprite_list:
