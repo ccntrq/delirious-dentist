@@ -35,6 +35,7 @@ TOOTH_DROP_SOUND_RESOURCE = ":resources:sounds/laser1.wav"
 CHARACTER_MOVEMENT_SPEED = 5
 # hit timeout (number of updates after hitting space that you can hit an enemy)
 CHARACTER_HIT_TIMEOUT = 20
+CHARACTER_HIT_COOLDOWN = 10
 CHARACTER_LIFES = 5
 # chance for a tooth drop in percent
 TOOTH_DROP_CHANCE = 30
@@ -64,6 +65,7 @@ class GameView(arcade.View):
         self.static_ui_elements_list = None
 
         self.hit_active = None
+        self.hit_cooldown = None
 
         # Load sounds
         self.enemy_hit_sound = arcade.load_sound(ENEMY_HIT_SOUND_RESOURCE)
@@ -81,6 +83,8 @@ class GameView(arcade.View):
     def setup(self):
         """Set up the game here. Call this function to restart the game."""
         self.score = 0
+        self.hit_cooldown = 0
+        self.hit_active = 0
 
         # Create the Sprite lists
         self.player_list = arcade.SpriteList()
@@ -140,7 +144,6 @@ class GameView(arcade.View):
             wall.center_y = y
             self.wall_list.append(wall)
 
-
         # Create the 'physics engine'
         self.physics_engine = arcade.PhysicsEngineSimple(
             self.player_sprite, self.wall_list)
@@ -198,6 +201,9 @@ class GameView(arcade.View):
                 arcade.play_sound(self.enemy_collision_sound)
                 self.remove_life()
 
+        if self.hit_cooldown > 0:
+            self.hit_cooldown -= 1
+
         self.add_enemies()
 
     def on_key_press(self, key, modifiers):
@@ -212,7 +218,11 @@ class GameView(arcade.View):
         elif key == arcade.key.RIGHT or key == arcade.key.D:
             self.player_sprite.change_x = CHARACTER_MOVEMENT_SPEED
         elif key == arcade.key.SPACE:
-            self.hit_active = CHARACTER_HIT_TIMEOUT
+            self.hit_cooldown = CHARACTER_HIT_COOLDOWN + CHARACTER_HIT_TIMEOUT
+            if self.hit_cooldown > 0:
+                arcade.play_sound(self.game_over_sound)
+            else:
+                self.hit_active = CHARACTER_HIT_TIMEOUT
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key."""
@@ -234,6 +244,7 @@ class GameView(arcade.View):
             arcade.play_sound(self.enemy_hit_sound)
         enemy.remove_from_sprite_lists()
         self.hit_active = 0
+        self.hit_cooldown = 0
 
     def drop_tooth(self, enemy):
         arcade.play_sound(self.tooth_drop_sound)
