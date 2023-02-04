@@ -158,14 +158,14 @@ class MyGame(arcade.Window):
             self.player_sprite.change_x = 0
 
     def add_enemies(self):
-        if self.enemy_list.sprite_list:
-            # don't add new enemies when there still is one
-            return
+        enemy_count = int(self.score / 5) + 1
+        add_enemies = enemy_count - len(self.enemy_list.sprite_list);
 
-        self.add_random_enemy()
+        for _ in range(add_enemies):
+          self.add_random_enemy()
 
     def add_random_enemy(self):
-        # TODO: Prevent spawning over player
+        # TODO: Prevent spawning over player or other enemies
         image_source = CHARACTER_ENEMY_1_IMAGE_SOURCE
         enemy_sprite = arcade.Sprite(image_source, CHARACTER_SCALING)
         enemy_sprite.center_x = random.randint(0, SCREEN_WIDTH)
