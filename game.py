@@ -46,6 +46,11 @@ CHARACTER_LIFES = 5
 TOOTH_DROP_CHANCE = 30
 TOOTH_GOLDEN_DROP_CHANCE = 10
 
+ENEMY_TOP_BORDER = SCREEN_HEIGHT - 64
+ENEMY_RIGHT_BORDER = SCREEN_WIDTH - 64
+ENEMY_BOTTOM_BORDER = 64
+ENEMY_LEFT_BORDER = 64
+
 # Sprite scalings
 CHARACTER_SCALING = 1
 TILE_SCALING = 1
@@ -311,9 +316,10 @@ class GameView(arcade.View):
                          ENEMY_2_IMAGE_SOURCE, ENEMY_3_IMAGE_SOURCE]
         enemy_sprite = arcade.Sprite(
             random.choice(image_sources), CHARACTER_SCALING)
-        enemy_sprite.center_x = random.randint(64, SCREEN_WIDTH - 64)
+        enemy_sprite.center_x = random.randint(
+            ENEMY_LEFT_BORDER, ENEMY_RIGHT_BORDER)
         enemy_sprite.center_y = random.randint(
-            UI_HEIGHT + 64, SCREEN_HEIGHT - 64)
+            ENEMY_BOTTOM_BORDER, ENEMY_TOP_BORDER)
 
         collides_with_other_object = arcade.check_for_collision(
             self.player_sprite, enemy_sprite) or arcade.check_for_collision_with_list(enemy_sprite, self.enemy_list)
