@@ -16,8 +16,12 @@ UI_HEIGHT = 64
 
 # Sprite locations
 CHARACTER_DENTIST_IMAGE_SOURCE = "resources/sprites/characters/dentist.png"
-CHARACTER_DENTIST_ATTACK_IMAGE_SOURCE = "resources/sprites/characters/dentist_attack.png"
-CHARACTER_DENTIST_ATTACK_PLIER_IMAGE_SOURCE = "resources/sprites/characters/dentist_attack_plier.png"
+CHARACTER_DENTIST_ATTACK_IMAGE_SOURCE = (
+    "resources/sprites/characters/dentist_attack.png"
+)
+CHARACTER_DENTIST_ATTACK_PLIER_IMAGE_SOURCE = (
+    "resources/sprites/characters/dentist_attack_plier.png"
+)
 ENEMY_1_IMAGE_SOURCE = "resources/sprites/characters/enemy_1.png"
 ENEMY_2_IMAGE_SOURCE = "resources/sprites/characters/enemy_2.png"
 ENEMY_3_IMAGE_SOURCE = "resources/sprites/characters/enemy_3.png"
@@ -70,7 +74,6 @@ class GameView(arcade.View):
     """
 
     def __init__(self, init=False):
-
         # Call the parent class and set up the window
         super().__init__()
 
@@ -96,13 +99,10 @@ class GameView(arcade.View):
 
         # Load sounds
         self.enemy_hit_sound = arcade.load_sound(ENEMY_HIT_SOUND_RESOURCE)
-        self.enemy_collision_sound = arcade.load_sound(
-            ENEMY_COLLISION_SOUND_RESOURCE)
+        self.enemy_collision_sound = arcade.load_sound(ENEMY_COLLISION_SOUND_RESOURCE)
         self.game_over_sound = arcade.load_sound(GAME_OVER_SOUND_RESOURCE)
-        self.tooth_collect_sound = arcade.load_sound(
-            TOOTH_COLLECT_SOUND_RESOURCE)
-        self.tooth_drop_sound = arcade.load_sound(
-            TOOTH_DROP_SOUND_RESOURCE)
+        self.tooth_collect_sound = arcade.load_sound(TOOTH_COLLECT_SOUND_RESOURCE)
+        self.tooth_drop_sound = arcade.load_sound(TOOTH_DROP_SOUND_RESOURCE)
 
         # Our physics engine
         self.physics_engine = None
@@ -207,7 +207,8 @@ class GameView(arcade.View):
 
         # Create the 'physics engine'
         self.physics_engine = arcade.PhysicsEngineSimple(
-            self.player_sprite, self.wall_list)
+            self.player_sprite, self.wall_list
+        )
 
     def on_draw(self):
         """Render the screen."""
@@ -224,8 +225,15 @@ class GameView(arcade.View):
         self.life_list.draw()
         self.static_ui_elements_list.draw()
 
-        arcade.draw_text(str(self.score), 750, 18,
-                         arcade.color.BLACK, 24, width=SCREEN_WIDTH, align="left")
+        arcade.draw_text(
+            str(self.score),
+            750,
+            18,
+            arcade.color.BLACK,
+            24,
+            width=SCREEN_WIDTH,
+            align="left",
+        )
 
         if self.init:
             self.init = False
@@ -242,7 +250,8 @@ class GameView(arcade.View):
 
         # Check for tooth collections
         tooth_hit_list = arcade.check_for_collision_with_list(
-            self.player_sprite, self.tooth_list)
+            self.player_sprite, self.tooth_list
+        )
 
         for tooth in tooth_hit_list:
             tooth.remove_from_sprite_lists()
@@ -250,7 +259,8 @@ class GameView(arcade.View):
 
         # Check for tooth_gold collections
         tooth_gold_hit_list = arcade.check_for_collision_with_list(
-            self.player_sprite, self.tooth_gold_list)
+            self.player_sprite, self.tooth_gold_list
+        )
 
         for tooth_gold in tooth_gold_hit_list:
             tooth_gold.remove_from_sprite_lists()
@@ -258,7 +268,8 @@ class GameView(arcade.View):
 
         # Check for collisions with or hits of enemies
         enemy_hit_list = arcade.check_for_collision_with_list(
-            self.player_sprite, self.enemy_list)
+            self.player_sprite, self.enemy_list
+        )
 
         self.player_sprite.hit_active = self.hit_active
         if self.hit_active:
@@ -307,8 +318,9 @@ class GameView(arcade.View):
             if self.hit_cooldown > 0:
                 arcade.play_sound(self.game_over_sound)
             else:
-                self.hit_active = CHARACTER_HIT_TIMEOUT + \
-                    (15 if self.player_sprite.pliers_equipped else 0)
+                self.hit_active = CHARACTER_HIT_TIMEOUT + (
+                    15 if self.player_sprite.pliers_equipped else 0
+                )
             self.hit_cooldown = CHARACTER_HIT_TIMEOUT + CHARACTER_HIT_TIMEOUT
 
         self.update_player_speed()
@@ -329,7 +341,9 @@ class GameView(arcade.View):
 
     def on_enemy_hit(self, enemy):
         drop_tooth = random.uniform(0, 100)
-        if drop_tooth <= TOOTH_DROP_CHANCE + (25 if self.player_sprite.pliers_equipped else 0):
+        if drop_tooth <= TOOTH_DROP_CHANCE + (
+            25 if self.player_sprite.pliers_equipped else 0
+        ):
             self.drop_tooth(enemy)
         else:
             arcade.play_sound(self.enemy_hit_sound)
@@ -353,15 +367,16 @@ class GameView(arcade.View):
         # Drop golden tooth
         drop_golden_tooth = random.uniform(0, 100)
         tooth = None
-        if drop_golden_tooth <= TOOTH_GOLDEN_DROP_CHANCE + (10 if self.player_sprite.pliers_equipped else 0):
+        if drop_golden_tooth <= TOOTH_GOLDEN_DROP_CHANCE + (
+            10 if self.player_sprite.pliers_equipped else 0
+        ):
             tooth = arcade.Sprite(UI_GOLDEN_TOOTH_IMAGE_SOURCE, 0.7)
             self.tooth_gold_list.append(tooth)
         else:
             tooth = arcade.Sprite(UI_TOOTH_IMAGE_SOURCE, 0.5)
             self.tooth_list.append(tooth)
 
-        tooth.center_x = min(
-            [max([enemy.center_x, 32]), ENEMY_RIGHT_BORDER - 32])
+        tooth.center_x = min([max([enemy.center_x, 32]), ENEMY_RIGHT_BORDER - 32])
         tooth.center_y = min([max([enemy.center_y, 128]), ENEMY_TOP_BORDER])
 
     def add_enemies(self):
@@ -372,20 +387,21 @@ class GameView(arcade.View):
             self.add_random_enemy()
 
     def add_random_enemy(self):
-        image_sources = [ENEMY_1_IMAGE_SOURCE,
-                         ENEMY_2_IMAGE_SOURCE, ENEMY_3_IMAGE_SOURCE]
-        enemy_sprite = arcade.Sprite(
-            random.choice(image_sources), CHARACTER_SCALING)
-        enemy_sprite.center_x = random.randint(
-            ENEMY_LEFT_BORDER, ENEMY_RIGHT_BORDER)
-        enemy_sprite.center_y = random.randint(
-            ENEMY_BOTTOM_BORDER, ENEMY_TOP_BORDER)
+        image_sources = [
+            ENEMY_1_IMAGE_SOURCE,
+            ENEMY_2_IMAGE_SOURCE,
+            ENEMY_3_IMAGE_SOURCE,
+        ]
+        enemy_sprite = arcade.Sprite(random.choice(image_sources), CHARACTER_SCALING)
+        enemy_sprite.center_x = random.randint(ENEMY_LEFT_BORDER, ENEMY_RIGHT_BORDER)
+        enemy_sprite.center_y = random.randint(ENEMY_BOTTOM_BORDER, ENEMY_TOP_BORDER)
 
         enemy_sprite.change_x = random.randint(0, ENEMY_MAX_SPEED)
         enemy_sprite.change_y = random.randint(0, ENEMY_MAX_SPEED)
 
         collides_with_other_object = arcade.check_for_collision(
-            self.player_sprite, enemy_sprite) or arcade.check_for_collision_with_list(enemy_sprite, self.enemy_list)
+            self.player_sprite, enemy_sprite
+        ) or arcade.check_for_collision_with_list(enemy_sprite, self.enemy_list)
 
         if collides_with_other_object:
             self.add_random_enemy()
@@ -407,7 +423,9 @@ class GameView(arcade.View):
                 enemy_sprite.change_y = -abs(enemy_sprite.change_y)
             elif enemy_sprite.bottom < ENEMY_BOTTOM_BORDER:
                 enemy_sprite.change_y = abs(enemy_sprite.change_y)
-            elif arcade.check_for_collision_with_list(enemy_sprite, self.decoration_list):
+            elif arcade.check_for_collision_with_list(
+                enemy_sprite, self.decoration_list
+            ):
                 # chose random new speed and direction when hitting deco elements
                 enemy_sprite.change_x = random.randint(0, ENEMY_MAX_SPEED)
                 enemy_sprite.change_y = random.randint(0, ENEMY_MAX_SPEED)
@@ -423,10 +441,10 @@ class GameView(arcade.View):
 
 
 class GameOverView(arcade.View):
-    """ View to show when game is over """
+    """View to show when game is over"""
 
     def __init__(self, score):
-        """ This is run once when we switch to this view """
+        """This is run once when we switch to this view"""
         super().__init__()
         self.score = score
         ScoreBoard().store_score(score)
@@ -436,30 +454,70 @@ class GameOverView(arcade.View):
         arcade.set_viewport(0, SCREEN_WIDTH - 1, 0, SCREEN_HEIGHT - 1)
 
     def on_draw(self):
-        """ Draw this view """
+        """Draw this view"""
         # DON'T clear here! We want to draw over the endgame screen.
         # self.clear()
 
         text_color = arcade.color.BLACK
         begin_x = SCREEN_HEIGHT * 0.75
         font = "Kenney Blocks"
-        arcade.draw_text("GAME OVER", 0, begin_x,
-                         text_color, 48, width=SCREEN_WIDTH, align="center",  font_name=font)
-        arcade.draw_text(f"SCORE: {self.score}", 0, begin_x - 48,
-                         text_color, 32, width=SCREEN_WIDTH, align="center", font_name=font)
-        arcade.draw_text("PRESS ENTER TO RESTART", 0, begin_x - 90,
-                         text_color, 24, width=SCREEN_WIDTH, align="center", font_name=font)
+        arcade.draw_text(
+            "GAME OVER",
+            0,
+            begin_x,
+            text_color,
+            48,
+            width=SCREEN_WIDTH,
+            align="center",
+            font_name=font,
+        )
+        arcade.draw_text(
+            f"SCORE: {self.score}",
+            0,
+            begin_x - 48,
+            text_color,
+            32,
+            width=SCREEN_WIDTH,
+            align="center",
+            font_name=font,
+        )
+        arcade.draw_text(
+            "PRESS ENTER TO RESTART",
+            0,
+            begin_x - 90,
+            text_color,
+            24,
+            width=SCREEN_WIDTH,
+            align="center",
+            font_name=font,
+        )
 
-        arcade.draw_text("HIGH SCORES:", 0, begin_x - 140,
-                         text_color, 24, width=SCREEN_WIDTH, align="center", font_name=font)
+        arcade.draw_text(
+            "HIGH SCORES:",
+            0,
+            begin_x - 140,
+            text_color,
+            24,
+            width=SCREEN_WIDTH,
+            align="center",
+            font_name=font,
+        )
         i = 0
         for high_score in ScoreBoard().get_high_scores():
-            arcade.draw_text(f"{high_score[0]}  -  {high_score[1]}", 0, begin_x - 170 - i * 30,
-                             text_color, 24, width=SCREEN_WIDTH, align="center", font_name=font)
+            arcade.draw_text(
+                f"{high_score[0]}  -  {high_score[1]}",
+                0,
+                begin_x - 170 - i * 30,
+                text_color,
+                24,
+                width=SCREEN_WIDTH,
+                align="center",
+                font_name=font,
+            )
             i += 1
 
     def on_key_release(self, key, _modifiers):
-        """ If the user releases the ENTER key, re-start the game. """
+        """If the user releases the ENTER key, re-start the game."""
         if key == arcade.key.ENTER:
             game_view = GameView()
             game_view.setup()
@@ -467,10 +525,10 @@ class GameOverView(arcade.View):
 
 
 class InstructionView(arcade.View):
-    """ View to show instructions before the game """
+    """View to show instructions before the game"""
 
     def __init__(self):
-        """ This is run once when we switch to this view """
+        """This is run once when we switch to this view"""
         super().__init__()
 
         # Reset the viewport, necessary if we have a scrolling game and we need
@@ -478,21 +536,45 @@ class InstructionView(arcade.View):
         arcade.set_viewport(0, SCREEN_WIDTH - 1, 0, SCREEN_HEIGHT - 1)
 
     def on_draw(self):
-        """ Draw this view """
+        """Draw this view"""
         # Don't clear hear. We want to draw over the game view!
         # self.clear()
         font = "Kenney Blocks"
         text_color = arcade.color.BLACK
         text_start = SCREEN_HEIGHT * 0.75
-        arcade.draw_text("DELIRIOUS DENTIST", 0, text_start,
-                         text_color, 48, width=SCREEN_WIDTH, align="center", font_name=font)
-        arcade.draw_text("Press space to perform a root treatment. Collect tooth for your precious roots collection and avoid beeing hit by angry patients", 0, text_start - 90,
-                         text_color, 32, width=SCREEN_WIDTH, align="center", font_name=font)
-        arcade.draw_text("PRESS SPACE TO START THE GAME", 0, text_start - 350,
-                         text_color, 24, width=SCREEN_WIDTH, align="center", font_name=font)
+        arcade.draw_text(
+            "DELIRIOUS DENTIST",
+            0,
+            text_start,
+            text_color,
+            48,
+            width=SCREEN_WIDTH,
+            align="center",
+            font_name=font,
+        )
+        arcade.draw_text(
+            "Press space to perform a root treatment. Collect tooth for your precious roots collection and avoid beeing hit by angry patients",
+            0,
+            text_start - 90,
+            text_color,
+            32,
+            width=SCREEN_WIDTH,
+            align="center",
+            font_name=font,
+        )
+        arcade.draw_text(
+            "PRESS SPACE TO START THE GAME",
+            0,
+            text_start - 350,
+            text_color,
+            24,
+            width=SCREEN_WIDTH,
+            align="center",
+            font_name=font,
+        )
 
     def on_key_release(self, key, _modifiers):
-        """ If the user releases the space key, start the game. """
+        """If the user releases the space key, start the game."""
         if key == arcade.key.SPACE:
             game_view = GameView()
             game_view.setup()
@@ -501,7 +583,6 @@ class InstructionView(arcade.View):
 
 class DentistCharacter(arcade.Sprite):
     def __init__(self):
-
         # Set up parent class
         super().__init__()
 
@@ -529,7 +610,9 @@ class DentistCharacter(arcade.Sprite):
 
     def update_animation(self, delta_time: float = 1 / 60):
         if self.hit_active:
-            self.texture = self.pliers_hit_texture if self.pliers_equipped else self.hit_texture
+            self.texture = (
+                self.pliers_hit_texture if self.pliers_equipped else self.hit_texture
+            )
             self.hit_box = self.hit_hit_box
             return
 
@@ -537,7 +620,7 @@ class DentistCharacter(arcade.Sprite):
         self.hit_box = self.main_hit_box
 
 
-class ScoreBoard():
+class ScoreBoard:
     def store_score(self, score):
         timestamp = datetime.datetime.now().strftime("%b %d %Y %H:%M:%S")
         with open(HIGH_SCORE_FILE, "a+") as high_score_file:
@@ -545,8 +628,20 @@ class ScoreBoard():
 
     def get_high_scores(self, limit=10):
         with open(HIGH_SCORE_FILE, "r+") as high_score_file:
-            lines = list(reversed(sorted(map(lambda x: [int(x[0]), x[1]], map(lambda x: x.rstrip().split(
-                ','), high_score_file.readlines())), key=itemgetter(0))))
+            lines = list(
+                reversed(
+                    sorted(
+                        map(
+                            lambda x: [int(x[0]), x[1]],
+                            map(
+                                lambda x: x.rstrip().split(","),
+                                high_score_file.readlines(),
+                            ),
+                        ),
+                        key=itemgetter(0),
+                    )
+                )
+            )
             return lines[0:limit]
 
 
