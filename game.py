@@ -57,7 +57,8 @@ class MyGame(arcade.Window):
 
         # Load sounds
         self.enemy_hit_sound = arcade.load_sound(ENEMY_HIT_SOUND_RESOURCE)
-        self.enemy_collision_sound = arcade.load_sound(ENEMY_COLLISION_SOUND_RESOURCE)
+        self.enemy_collision_sound = arcade.load_sound(
+            ENEMY_COLLISION_SOUND_RESOURCE)
         self.game_over_sound = arcade.load_sound(GAME_OVER_SOUND_RESOURCE)
 
         # Our physics engine
@@ -196,7 +197,7 @@ class MyGame(arcade.Window):
         if not self.life_list.sprite_list:
             # XXX GAME OVER SCREEN with highscores!
             arcade.play_sound(self.game_over_sound)
-            self.setup();
+            self.setup()
 
 
 def main():
