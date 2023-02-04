@@ -16,7 +16,7 @@ CHARACTER_DENTIST_ATTACK_IMAGE_SOURCE = "resources/sprites/characters/dentist_at
 CHARACTER_ENEMY_1_IMAGE_SOURCE = "resources/sprites/characters/enemy_1.png"
 ROOM_TILE_FLOOR_IMAGE_SOURCE = "resources/sprites/room/tile_floor.png"
 ROOM_WALL_IMAGE_SOURCE = "resources/sprites/room/wall.png"
-LIFE_IMAGE_SOURCE = ":resources:images/items/star.png"
+GUI_HEART_IMAGE_SOURCE = "resources/sprites/gui/heart.png"
 
 # scaling factor for the dentist character
 CHARACTER_SCALING = 1
@@ -65,6 +65,7 @@ class MyGame(arcade.Window):
         self.player_list = arcade.SpriteList()
         self.enemy_list = arcade.SpriteList()
         self.life_list = arcade.SpriteList()
+        self.floor_list = arcade.SpriteList()
 
         # Walls use spatial hashing for faster collision detection
         self.wall_list = arcade.SpriteList(use_spatial_hash=True)
@@ -77,7 +78,7 @@ class MyGame(arcade.Window):
         self.player_list.append(self.player_sprite)
 
         for x in range(5):
-            life = arcade.Sprite(LIFE_IMAGE_SOURCE, 0.5)
+            life = arcade.Sprite(GUI_HEART_IMAGE_SOURCE, 0.5)
             life.center_x = x * 32 + 32
             life.center_y = UI_HEIGHT - 32
             self.life_list.append(life)
@@ -94,6 +95,12 @@ class MyGame(arcade.Window):
         self.physics_engine = arcade.PhysicsEngineSimple(
             self.player_sprite, self.wall_list)
 
+        # Create the floor
+        for x in range(0, SCREEN_WIDTH + 32, 32):
+            wall = arcade.Sprite(ROOM_WALL_IMAGE_SOURCE, TILE_SCALING)
+            wall.center_x = x
+            wall.center_y = UI_HEIGHT
+            self.wall_list.append(wall)
     def on_draw(self):
         """Render the screen."""
         self.clear()
