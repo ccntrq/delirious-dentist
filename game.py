@@ -45,11 +45,12 @@ CHARACTER_LIFES = 5
 # chance for a tooth drop in percent
 TOOTH_DROP_CHANCE = 30
 TOOTH_GOLDEN_DROP_CHANCE = 10
+ENEMY_MAX_SPEED = 0
 
 ENEMY_TOP_BORDER = SCREEN_HEIGHT - 64
-ENEMY_RIGHT_BORDER = SCREEN_WIDTH - 64
+ENEMY_RIGHT_BORDER = SCREEN_WIDTH
 ENEMY_BOTTOM_BORDER = 64
-ENEMY_LEFT_BORDER = 64
+ENEMY_LEFT_BORDER = 0
 
 # Sprite scalings
 CHARACTER_SCALING = 1
@@ -181,6 +182,7 @@ class GameView(arcade.View):
         room_plant.center_x = 600
         room_plant.center_y = 200
         self.wall_list.append(room_plant)
+
     def on_draw(self):
         """Render the screen."""
         self.clear()
@@ -188,8 +190,8 @@ class GameView(arcade.View):
 
         self.interior_list.draw()
         self.player_list.draw()
-        self.wall_list.draw()
         self.enemy_list.draw()
+        self.wall_list.draw()
         self.tooth_list.draw()
         self.tooth_gold_list.draw()
         self.life_list.draw()
@@ -321,6 +323,9 @@ class GameView(arcade.View):
         enemy_sprite.center_y = random.randint(
             ENEMY_BOTTOM_BORDER, ENEMY_TOP_BORDER)
 
+        enemy_sprite.change_x = random.randint(0, ENEMY_MAX_SPEED)
+        enemy_sprite.change_y = random.randint(0, ENEMY_MAX_SPEED)
+
         collides_with_other_object = arcade.check_for_collision(
             self.player_sprite, enemy_sprite) or arcade.check_for_collision_with_list(enemy_sprite, self.enemy_list)
 
@@ -330,12 +335,20 @@ class GameView(arcade.View):
 
         self.enemy_list.append(enemy_sprite)
 
-
     def enemy_move(self):
         for enemy_sprite in self.enemy_list.sprite_list:
-            enemy_sprite.change_y = random.randint(-1, 1)
-            enemy_sprite.center_y += enemy_sprite.change_y * 10
+            enemy_sprite.center_y += enemy_sprite.change_y
+            enemy_sprite.center_x += enemy_sprite.change_x
 
+        for enemy_sprite in self.enemy_list.sprite_list:
+            if enemy_sprite.right > ENEMY_RIGHT_BORDER:
+                enemy_sprite.change_x = -abs(enemy_sprite.change_x)
+            elif enemy_sprite.left < ENEMY_LEFT_BORDER:
+                enemy_sprite.change_x = abs(enemy_sprite.change_x)
+            if enemy_sprite.top > ENEMY_TOP_BORDER:
+                enemy_sprite.change_y = -abs(enemy_sprite.change_y)
+            elif enemy_sprite.bottom < ENEMY_BOTTOM_BORDER:
+                enemy_sprite.change_y = abs(enemy_sprite.change_y)
 
     def remove_life(self):
         life = self.life_list.sprite_list[-1]
@@ -437,11 +450,20 @@ class DentistCharacter(arcade.Sprite):
         self.main_texture = arcade.load_texture(main_image_source)
         self.hit_texture = arcade.load_texture(hit_image_source)
         self.texture = self.main_texture
+        self.main_hit_box = self.get_hit_box()
+        # self.hit_hit_box = [[-50, -50], [50, -50], [50, 50], [-50, 50]]
+        self.hit_hit_box = list(map(
+            lambda x: [x[0] * 2, x[1] * 2], list(self.main_hit_box)))
         self.hit_active = 0
 
     def update_animation(self, delta_time: float = 1 / 60):
+        if self.hit_active:
+            self.texture = self.hit_texture
+            self.hit_box = self.hit_hit_box
+            return
 
-        self.texture = self.hit_texture if self.hit_active else self.main_texture
+        self.texture = self.main_texture
+        self.hit_box = self.main_hit_box
 
 
 class ScoreBoard():
