@@ -74,6 +74,7 @@ class GameView(arcade.View):
         self.score = None
         self.player_list = None
         self.wall_list = None
+        self.decoration_list = None
         self.enemy_list = None
         self.tooth_list = None
         self.tooth_gold_list = None
@@ -110,6 +111,7 @@ class GameView(arcade.View):
 
         # Walls use spatial hashing for faster collision detection
         self.wall_list = arcade.SpriteList(use_spatial_hash=True)
+        self.decoration_list = arcade.SpriteList(use_spatial_hash=True)
         self.tooth_list = arcade.SpriteList(use_spatial_hash=True)
         self.tooth_gold_list = arcade.SpriteList(use_spatial_hash=True)
 
@@ -160,10 +162,6 @@ class GameView(arcade.View):
             wall.center_y = y
             self.wall_list.append(wall)
 
-        # Create the 'physics engine'
-        self.physics_engine = arcade.PhysicsEngineSimple(
-            self.player_sprite, self.wall_list)
-
         # Create the floor
         for x in range(0, SCREEN_WIDTH, 32):
             for y in range(UI_HEIGHT, SCREEN_HEIGHT, 32):
@@ -176,12 +174,19 @@ class GameView(arcade.View):
         room_chair = arcade.Sprite(ROOM_CHAIR_IMAGE_SOURCE, 0.5)
         room_chair.center_x = 400
         room_chair.center_y = 400
-        self.wall_list.append(room_chair)
+        self.decoration_list.append(room_chair)
 
         room_plant = arcade.Sprite(ROOM_PLANT_IMAGE_SOURCE, 0.4)
         room_plant.center_x = 600
         room_plant.center_y = 200
-        self.wall_list.append(room_plant)
+        self.decoration_list.append(room_plant)
+
+        for deco in self.decoration_list:
+            self.wall_list.append(deco)
+
+        # Create the 'physics engine'
+        self.physics_engine = arcade.PhysicsEngineSimple(
+            self.player_sprite, self.wall_list)
 
     def on_draw(self):
         """Render the screen."""
@@ -192,6 +197,7 @@ class GameView(arcade.View):
         self.player_list.draw()
         self.enemy_list.draw()
         self.wall_list.draw()
+        self.decoration_list.draw()
         self.tooth_list.draw()
         self.tooth_gold_list.draw()
         self.life_list.draw()
@@ -346,6 +352,10 @@ class GameView(arcade.View):
                 enemy_sprite.change_y = -abs(enemy_sprite.change_y)
             elif enemy_sprite.bottom < ENEMY_BOTTOM_BORDER:
                 enemy_sprite.change_y = abs(enemy_sprite.change_y)
+            elif arcade.check_for_collision_with_list(enemy_sprite, self.decoration_list):
+                # chose random new speed and direction when hitting deco elements
+                enemy_sprite.change_x = random.randint(0, ENEMY_MAX_SPEED)
+                enemy_sprite.change_y = random.randint(0, ENEMY_MAX_SPEED)
 
     def remove_life(self):
         life = self.life_list.sprite_list[-1]
