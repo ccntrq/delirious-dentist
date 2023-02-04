@@ -463,10 +463,10 @@ class GameView(arcade.View):
             self.window.show_view(GameOverView(self.score))
 
     def random_x(self):
-        return random.randint(ENEMY_LEFT_BORDER + 32, ENEMY_RIGHT_BORDER - 32)
+        return random.randint(ENEMY_LEFT_BORDER + 64, ENEMY_RIGHT_BORDER - 64)
 
     def random_y(self):
-        return random.randint(ENEMY_BOTTOM_BORDER + 32, ENEMY_TOP_BORDER - 32)
+        return random.randint(ENEMY_BOTTOM_BORDER + 64, ENEMY_TOP_BORDER - 64)
 
 
 class GameOverView(arcade.View):
