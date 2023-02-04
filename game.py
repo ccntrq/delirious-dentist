@@ -491,8 +491,8 @@ class ScoreBoard():
 
     def get_high_scores(self, limit=10):
         with open(HIGH_SCORE_FILE, "r+") as high_score_file:
-            lines = list(reversed(sorted(map(lambda x: x.rstrip().split(
-                ','), high_score_file.readlines()), key=itemgetter(0))))
+            lines = list(reversed(sorted(map(lambda x: [int(x[0]), x[1]], map(lambda x: x.rstrip().split(
+                ','), high_score_file.readlines())), key=itemgetter(0))))
             return lines[0:limit]
 
 
