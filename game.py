@@ -13,9 +13,9 @@ UI_HEIGHT = 64
 # Sprite locations
 CHARACTER_DENTIST_IMAGE_SOURCE = "resources/sprites/characters/dentist.png"
 CHARACTER_DENTIST_ATTACK_IMAGE_SOURCE = "resources/sprites/characters/dentist_attack.png"
-CHARACTER_ENEMY_1_IMAGE_SOURCE = "resources/sprites/characters/enemy_1.png"
-CHARACTER_ENEMY_2_IMAGE_SOURCE = "resources/sprites/characters/enemy_2.png"
-CHARACTER_ENEMY_3_IMAGE_SOURCE = "resources/sprites/characters/enemy_3.png"
+ENEMY_1_IMAGE_SOURCE = "resources/sprites/characters/enemy_1.png"
+ENEMY_2_IMAGE_SOURCE = "resources/sprites/characters/enemy_2.png"
+ENEMY_3_IMAGE_SOURCE = "resources/sprites/characters/enemy_3.png"
 ROOM_TILE_FLOOR_IMAGE_SOURCE = "resources/sprites/room/tile_floor.png"
 ROOM_WALL_IMAGE_SOURCE = "resources/sprites/room/wall.png"
 UI_HEART_IMAGE_SOURCE = "resources/sprites/ui/heart.png"
@@ -199,8 +199,8 @@ class MyGame(arcade.Window):
             self.add_random_enemy()
 
     def add_random_enemy(self):
-        image_sources = [CHARACTER_ENEMY_1_IMAGE_SOURCE,
-                         CHARACTER_ENEMY_2_IMAGE_SOURCE, CHARACTER_ENEMY_3_IMAGE_SOURCE]
+        image_sources = [ENEMY_1_IMAGE_SOURCE,
+                         ENEMY_2_IMAGE_SOURCE, ENEMY_3_IMAGE_SOURCE]
         enemy_sprite = arcade.Sprite(
             random.choice(image_sources), CHARACTER_SCALING)
         enemy_sprite.center_x = random.randint(64, SCREEN_WIDTH - 64)
