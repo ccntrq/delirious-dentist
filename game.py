@@ -48,7 +48,7 @@ class MyGame(arcade.Window):
 
         arcade.set_background_color(arcade.csscolor.CORNFLOWER_BLUE)
 
-        self.score = 0
+        self.score = None
         self.player_list = None
         self.wall_list = None
         self.enemy_list = None
@@ -65,6 +65,7 @@ class MyGame(arcade.Window):
 
     def setup(self):
         """Set up the game here. Call this function to restart the game."""
+        self.score = 0
 
         # Create the Sprite lists
         self.player_list = arcade.SpriteList()
