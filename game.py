@@ -1,6 +1,8 @@
 """
 Delirious Dentist
 """
+import datetime
+from operator import itemgetter
 import random
 import arcade
 
@@ -47,6 +49,8 @@ TOOTH_GOLDEN_DROP_CHANCE = 10
 # Sprite scalings
 CHARACTER_SCALING = 1
 TILE_SCALING = 1
+
+HIGH_SCORE_FILE = "delirious-dentist.scores"
 
 
 class GameView(arcade.View):
@@ -339,6 +343,7 @@ class GameOverView(arcade.View):
         """ This is run once when we switch to this view """
         super().__init__()
         self.score = score
+        ScoreBoard().store_score(score)
         arcade.set_background_color(arcade.csscolor.BLACK)
 
         # Reset the viewport, necessary if we have a scrolling game and we need
@@ -354,6 +359,14 @@ class GameOverView(arcade.View):
                          arcade.color.WHITE_SMOKE, 24, width=SCREEN_WIDTH, align="center")
         arcade.draw_text("PRESS SPACE TO RESTART", 0, SCREEN_HEIGHT / 2 - 90,
                          arcade.color.WHITE_SMOKE, 14, width=SCREEN_WIDTH, align="center")
+
+        arcade.draw_text("HIGH SCORES:", 0, SCREEN_HEIGHT / 2 - 125,
+                         arcade.color.WHITE_SMOKE, 14, width=SCREEN_WIDTH, align="center")
+        i = 0
+        for high_score in ScoreBoard().get_high_scores():
+            arcade.draw_text(f"{high_score[0]}  -  {high_score[1]}", 0, SCREEN_HEIGHT / 2 - 150 - i * 20,
+                             arcade.color.WHITE_SMOKE, 14, width=SCREEN_WIDTH, align="center")
+            i += 1
 
     def on_key_release(self, key, _modifiers):
         """ If the user releases the space key, re-start the game. """
@@ -391,6 +404,19 @@ class InstructionView(arcade.View):
             game_view = GameView()
             game_view.setup()
             self.window.show_view(game_view)
+
+
+class ScoreBoard():
+    def store_score(self, score):
+        timestamp = datetime.datetime.now().strftime("%b %d %Y %H:%M:%S")
+        with open(HIGH_SCORE_FILE, "a+") as high_score_file:
+            high_score_file.write(f"{score},{timestamp}\n")
+
+    def get_high_scores(self, limit=10):
+        with open(HIGH_SCORE_FILE, "r+") as high_score_file:
+            lines = list(reversed(sorted(map(lambda x: x.rstrip().split(
+                ','), high_score_file.readlines()), key=itemgetter(0))))
+            return lines[0:limit-1]
 
 
 def main():
