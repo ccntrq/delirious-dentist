@@ -193,6 +193,8 @@ class GameView(arcade.View):
         arcade.draw_text(str(self.score), 750, 18,
                          arcade.color.BLACK, 24, width=SCREEN_WIDTH, align="left")
 
+        self.check_game_over()
+
     def on_update(self, delta_time):
         """Movement and game logic"""
 
@@ -331,6 +333,7 @@ class GameView(arcade.View):
         life = self.life_list.sprite_list[-1]
         life.remove_from_sprite_lists()
 
+    def check_game_over(self):
         if not self.life_list.sprite_list:
             arcade.play_sound(self.game_over_sound)
             self.window.show_view(GameOverView(self.score))
@@ -344,7 +347,6 @@ class GameOverView(arcade.View):
         super().__init__()
         self.score = score
         ScoreBoard().store_score(score)
-        arcade.set_background_color(arcade.csscolor.BLACK)
 
         # Reset the viewport, necessary if we have a scrolling game and we need
         # to reset the viewport back to the start so we can see what we draw.
@@ -352,20 +354,24 @@ class GameOverView(arcade.View):
 
     def on_draw(self):
         """ Draw this view """
-        self.clear()
-        arcade.draw_text("GAME OVER", 0, SCREEN_HEIGHT / 2,
-                         arcade.color.WHITE_SMOKE, 48, width=SCREEN_WIDTH, align="center")
-        arcade.draw_text(f"SCORE: {self.score}", 0, SCREEN_HEIGHT / 2 - 48,
-                         arcade.color.WHITE_SMOKE, 24, width=SCREEN_WIDTH, align="center")
-        arcade.draw_text("PRESS SPACE TO RESTART", 0, SCREEN_HEIGHT / 2 - 90,
-                         arcade.color.WHITE_SMOKE, 14, width=SCREEN_WIDTH, align="center")
+        # DON'T clear here! We want to draw over the endgame screen.
+        # self.clear()
 
-        arcade.draw_text("HIGH SCORES:", 0, SCREEN_HEIGHT / 2 - 125,
-                         arcade.color.WHITE_SMOKE, 14, width=SCREEN_WIDTH, align="center")
+        text_color = arcade.color.PUCE_RED
+        begin_x = SCREEN_HEIGHT * 0.75
+        arcade.draw_text("GAME OVER", 0, begin_x,
+                         text_color, 48, width=SCREEN_WIDTH, align="center")
+        arcade.draw_text(f"SCORE: {self.score}", 0, begin_x - 48,
+                         text_color, 24, width=SCREEN_WIDTH, align="center")
+        arcade.draw_text("PRESS SPACE TO RESTART", 0, begin_x - 90,
+                         text_color, 14, width=SCREEN_WIDTH, align="center")
+
+        arcade.draw_text("HIGH SCORES:", 0, begin_x - 125,
+                         text_color, 14, width=SCREEN_WIDTH, align="center")
         i = 0
         for high_score in ScoreBoard().get_high_scores():
-            arcade.draw_text(f"{high_score[0]}  -  {high_score[1]}", 0, SCREEN_HEIGHT / 2 - 150 - i * 20,
-                             arcade.color.WHITE_SMOKE, 14, width=SCREEN_WIDTH, align="center")
+            arcade.draw_text(f"{high_score[0]}  -  {high_score[1]}", 0, begin_x - 150 - i * 20,
+                             text_color, 14, width=SCREEN_WIDTH, align="center")
             i += 1
 
     def on_key_release(self, key, _modifiers):
