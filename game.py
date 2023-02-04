@@ -29,6 +29,7 @@ CHARACTER_SCALING = 1
 CHARACTER_MOVEMENT_SPEED = 5
 # hit timeout (number of updates after hitting space that you can hit an enemy)
 CHARACTER_HIT_TIMEOUT = 20
+CHARACTER_LIFES = 5
 
 
 TILE_SCALING = 1
@@ -79,9 +80,9 @@ class MyGame(arcade.Window):
         self.player_sprite.center_y = UI_HEIGHT
         self.player_list.append(self.player_sprite)
 
-        for x in range(5):
+        for x in range(CHARACTER_LIFES):
             life = arcade.Sprite(UI_HEART_IMAGE_SOURCE, TILE_SCALING)
-            life.center_x = x * 32 + 32
+            life.center_x = x * 40 + 32
             life.center_y = UI_HEIGHT - 32
             self.life_list.append(life)
 
