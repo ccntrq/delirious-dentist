@@ -24,15 +24,14 @@ ENEMY_HIT_SOUND_RESOURCE = ":resources:sounds/hit2.wav"
 ENEMY_COLLISION_SOUND_RESOURCE = ":resources:sounds/hurt1.wav"
 GAME_OVER_SOUND_RESOURCE = ":resources:sounds/gameover1.wav"
 
-# scaling factor for the dentist character
-CHARACTER_SCALING = 1
 # movement speed of the dentist character
 CHARACTER_MOVEMENT_SPEED = 5
 # hit timeout (number of updates after hitting space that you can hit an enemy)
 CHARACTER_HIT_TIMEOUT = 20
 CHARACTER_LIFES = 5
 
-
+# Sprite scalings
+CHARACTER_SCALING = 1
 TILE_SCALING = 1
 
 
