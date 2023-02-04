@@ -55,6 +55,8 @@ CHARACTER_LIFES = 5
 TOOTH_DROP_CHANCE = 50
 TOOTH_GOLDEN_DROP_CHANCE = 10
 ENEMY_MAX_SPEED = 5
+TOOTH_POINTS = 1
+GOLDEN_TOOTH_POINTS = 10
 
 ENEMY_TOP_BORDER = SCREEN_HEIGHT - 64
 ENEMY_RIGHT_BORDER = SCREEN_WIDTH
@@ -85,8 +87,7 @@ class GameView(arcade.View):
         self.wall_list = None
         self.decoration_list = None
         self.enemy_list = None
-        self.tooth_list = None
-        self.tooth_gold_list = None
+        self.power_up_list = None
         self.static_ui_elements_list = None
 
         self.hit_active = None
@@ -128,8 +129,7 @@ class GameView(arcade.View):
         # Walls use spatial hashing for faster collision detection
         self.wall_list = arcade.SpriteList(use_spatial_hash=True)
         self.decoration_list = arcade.SpriteList(use_spatial_hash=True)
-        self.tooth_list = arcade.SpriteList(use_spatial_hash=True)
-        self.tooth_gold_list = arcade.SpriteList(use_spatial_hash=True)
+        self.power_up_list = arcade.SpriteList(use_spatial_hash=True)
 
         # Set up the player, specifically placing it at these coordinates.
         image_source = CHARACTER_DENTIST_IMAGE_SOURCE
@@ -217,8 +217,7 @@ class GameView(arcade.View):
         self.enemy_list.draw()
         self.wall_list.draw()
         self.decoration_list.draw()
-        self.tooth_list.draw()
-        self.tooth_gold_list.draw()
+        self.power_up_list.draw()
         self.life_list.draw()
         self.static_ui_elements_list.draw()
 
@@ -246,26 +245,19 @@ class GameView(arcade.View):
         self.player_list.update_animation()
 
         # Check for tooth collections
-        tooth_hit_list = arcade.check_for_collision_with_list(
-            self.player_sprite, self.tooth_list
+        power_up_hit_list = arcade.check_for_collision_with_list(
+            self.player_sprite, self.power_up_list
         )
 
         # XXX rename tooth list to power up list and handle all power ups here
-        for tooth in tooth_hit_list:
-            if isinstance(tooth, HeartSprite):
+        for power_up in power_up_hit_list:
+            if isinstance(power_up, HeartSprite):
                 self.add_life()
+            elif isinstance(power_up, ToothSprite):
+                self.on_score(power_up.points)
             else:
-                self.on_score(1)
-            tooth.remove_from_sprite_lists()
-
-        # Check for tooth_gold collections
-        tooth_gold_hit_list = arcade.check_for_collision_with_list(
-            self.player_sprite, self.tooth_gold_list
-        )
-
-        for tooth_gold in tooth_gold_hit_list:
-            tooth_gold.remove_from_sprite_lists()
-            self.on_score(10)
+                raise Exception("Unknown power up type.")
+            power_up.remove_from_sprite_lists()
 
         # Check for collisions with or hits of enemies
         enemy_hit_list = arcade.check_for_collision_with_list(
@@ -372,12 +364,11 @@ class GameView(arcade.View):
         if drop_golden_tooth <= TOOTH_GOLDEN_DROP_CHANCE + (
             10 if self.player_sprite.pliers_equipped else 0
         ):
-            tooth = arcade.Sprite(UI_GOLDEN_TOOTH_IMAGE_SOURCE, 0.7)
-            self.tooth_gold_list.append(tooth)
+            tooth = GoldenToothSprite()
         else:
-            tooth = arcade.Sprite(UI_TOOTH_IMAGE_SOURCE, 0.5)
-            self.tooth_list.append(tooth)
+            tooth = ToothSprite()
 
+        self.power_up_list.append(tooth)
         tooth.center_x = min([max([enemy.center_x, 32]), ENEMY_RIGHT_BORDER - 32])
         tooth.center_y = min([max([enemy.center_y, 128]), ENEMY_TOP_BORDER])
 
@@ -389,7 +380,7 @@ class GameView(arcade.View):
         heart = HeartSprite()
         heart.center_x = self.random_x()
         heart.center_y = self.random_y()
-        self.tooth_list.append(heart)
+        self.power_up_list.append(heart)
 
     def add_life(self):
         lifes = len(self.life_list.sprite_list)
@@ -605,6 +596,26 @@ class InstructionView(arcade.View):
             game_view = GameView()
             game_view.setup()
             self.window.show_view(game_view)
+
+
+class ToothSprite(arcade.Sprite):
+    def __init__(self):
+        # Set up parent class
+        super().__init__()
+
+        self.scale = 0.5
+        self.points = TOOTH_POINTS
+        self.texture = arcade.load_texture(UI_TOOTH_IMAGE_SOURCE)
+
+
+class GoldenToothSprite(arcade.Sprite):
+    def __init__(self):
+        # Set up parent class
+        super().__init__()
+
+        self.scale = 0.75
+        self.points = GOLDEN_TOOTH_POINTS
+        self.texture = arcade.load_texture(UI_GOLDEN_TOOTH_IMAGE_SOURCE)
 
 
 class HeartSprite(arcade.Sprite):
