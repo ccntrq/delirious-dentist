@@ -294,14 +294,14 @@ class GameView(arcade.View):
         drop_golden_tooth = random.uniform(0, 100)
         tooth = None
         if drop_golden_tooth <= TOOTH_GOLDEN_DROP_CHANCE:
-          tooth = arcade.Sprite(UI_GOLDEN_TOOTH_IMAGE_SOURCE, 0.7)
-          self.tooth_gold_list.append(tooth)
-        else :
-          tooth = arcade.Sprite( UI_TOOTH_IMAGE_SOURCE, 0.5)
-          self.tooth_list.append(tooth)
+            tooth = arcade.Sprite(UI_GOLDEN_TOOTH_IMAGE_SOURCE, 0.7)
+            self.tooth_gold_list.append(tooth)
+        else:
+            tooth = arcade.Sprite(UI_TOOTH_IMAGE_SOURCE, 0.5)
+            self.tooth_list.append(tooth)
 
-        tooth.center_x = enemy.center_x + 32  # XXX prevent spawning outside of window
-        tooth.center_y = enemy.center_y
+        tooth.center_x = enemy.center_x + 32
+        tooth.center_y = min([max([enemy.center_y, 128]), ENEMY_TOP_BORDER])
 
     def add_enemies(self):
         enemy_count = int(self.score / 5) + 1
