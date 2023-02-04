@@ -199,8 +199,10 @@ class MyGame(arcade.Window):
             self.add_random_enemy()
 
     def add_random_enemy(self):
-        image_source = CHARACTER_ENEMY_1_IMAGE_SOURCE
-        enemy_sprite = arcade.Sprite(image_source, CHARACTER_SCALING)
+        image_sources = [CHARACTER_ENEMY_1_IMAGE_SOURCE,
+                         CHARACTER_ENEMY_2_IMAGE_SOURCE, CHARACTER_ENEMY_3_IMAGE_SOURCE]
+        enemy_sprite = arcade.Sprite(
+            random.choice(image_sources), CHARACTER_SCALING)
         enemy_sprite.center_x = random.randint(64, SCREEN_WIDTH - 64)
         enemy_sprite.center_y = random.randint(
             UI_HEIGHT + 64, SCREEN_HEIGHT - 64)
