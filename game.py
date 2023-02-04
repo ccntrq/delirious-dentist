@@ -232,11 +232,11 @@ class GameView(arcade.View):
         elif key == arcade.key.RIGHT or key == arcade.key.D:
             self.player_sprite.change_x = CHARACTER_MOVEMENT_SPEED
         elif key == arcade.key.SPACE:
-            self.hit_cooldown = CHARACTER_HIT_COOLDOWN + CHARACTER_HIT_TIMEOUT
             if self.hit_cooldown > 0:
                 arcade.play_sound(self.game_over_sound)
             else:
                 self.hit_active = CHARACTER_HIT_TIMEOUT
+            self.hit_cooldown = CHARACTER_HIT_COOLDOWN + CHARACTER_HIT_TIMEOUT
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key."""
