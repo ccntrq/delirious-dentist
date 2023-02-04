@@ -409,8 +409,7 @@ class GameView(arcade.View):
         enemy_sprite.center_x = self.random_x()
         enemy_sprite.center_y = self.random_y()
 
-        enemy_sprite.change_x = random.randint(0, ENEMY_MAX_SPEED)
-        enemy_sprite.change_y = random.randint(0, ENEMY_MAX_SPEED)
+        self.set_enemy_speed(enemy_sprite)
 
         collides_with_other_object = arcade.check_for_collision(
             self.player_sprite, enemy_sprite
@@ -421,6 +420,9 @@ class GameView(arcade.View):
             return
 
         self.enemy_list.append(enemy_sprite)
+    def set_enemy_speed(self, enemy):
+        enemy.change_x = random.randint(0, ENEMY_MAX_SPEED)
+        enemy.change_y = random.randint(0, ENEMY_MAX_SPEED - enemy.change_x)
 
     def enemy_move(self):
         for enemy_sprite in self.enemy_list.sprite_list:
@@ -440,8 +442,7 @@ class GameView(arcade.View):
                 enemy_sprite, self.decoration_list
             ):
                 # chose random new speed and direction when hitting deco elements
-                enemy_sprite.change_x = random.randint(0, ENEMY_MAX_SPEED)
-                enemy_sprite.change_y = random.randint(0, ENEMY_MAX_SPEED)
+                self.set_enemy_speed(enemy_sprite)
 
     def remove_life(self):
         life = self.life_list.sprite_list[-1]
