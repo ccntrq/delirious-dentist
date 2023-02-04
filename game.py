@@ -33,6 +33,7 @@ class MyGame(arcade.Window):
 
         arcade.set_background_color(arcade.csscolor.CORNFLOWER_BLUE)
 
+        self.score = 0
         self.player_list = None
         self.wall_list = None
         self.enemy_list = None
@@ -96,6 +97,9 @@ class MyGame(arcade.Window):
         self.enemy_list.draw()
         self.life_list.draw()
 
+        arcade.draw_text(str(self.score), 750, 8,
+                         arcade.color.BLACK, 32, width=SCREEN_WIDTH, align="left")
+
     def on_update(self, delta_time):
         """Movement and game logic"""
 
@@ -109,10 +113,10 @@ class MyGame(arcade.Window):
         if self.hit_active:
             self.hit_active -= 1
             for enemy in enemy_hit_list:
-                # XXX add points/tooth roots
                 enemy.remove_from_sprite_lists()
                 arcade.play_sound(self.enemy_hit_sound)
                 self.hit_active = 0
+                self.score += 1
         else:
             for enemy in enemy_hit_list:
                 enemy.remove_from_sprite_lists()
