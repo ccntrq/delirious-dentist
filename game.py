@@ -109,7 +109,7 @@ class GameView(arcade.View):
 
         # Set up the player, specifically placing it at these coordinates.
         image_source = CHARACTER_DENTIST_IMAGE_SOURCE
-        self.player_sprite = arcade.Sprite(image_source, CHARACTER_SCALING)
+        self.player_sprite = DentistCharacter()
         self.player_sprite.center_x = 64
         self.player_sprite.center_y = 2 * UI_HEIGHT
         self.player_list.append(self.player_sprite)
@@ -200,6 +200,7 @@ class GameView(arcade.View):
 
         # Move the player with the physics engine
         self.physics_engine.update()
+        self.player_list.update_animation()
 
         # Check for tooth collections
         tooth_hit_list = arcade.check_for_collision_with_list(
@@ -223,6 +224,7 @@ class GameView(arcade.View):
         enemy_hit_list = arcade.check_for_collision_with_list(
             self.player_sprite, self.enemy_list)
 
+        self.player_sprite.hit_active = self.hit_active
         if self.hit_active:
             self.hit_active -= 1
             for enemy in enemy_hit_list:
@@ -410,6 +412,30 @@ class InstructionView(arcade.View):
             game_view = GameView()
             game_view.setup()
             self.window.show_view(game_view)
+
+
+class DentistCharacter(arcade.Sprite):
+    def __init__(self):
+
+        # Set up parent class
+        super().__init__()
+
+        self.scale = CHARACTER_SCALING
+
+        # XXX auto set hitbox or adjust coordinates to our sprite
+        # self.points = [[-22, -64], [22, -64], [22, 28], [-22, 28]]
+
+        # Set up the player, specifically placing it at these coordinates.
+        main_image_source = CHARACTER_DENTIST_IMAGE_SOURCE
+        hit_image_source = CHARACTER_DENTIST_ATTACK_IMAGE_SOURCE
+        self.main_texture = arcade.load_texture(main_image_source)
+        self.hit_texture = arcade.load_texture(hit_image_source)
+        self.texture = self.main_texture
+        self.hit_active = 0
+
+    def update_animation(self, delta_time: float = 1 / 60):
+
+        self.texture = self.hit_texture if self.hit_active else self.main_texture
 
 
 class ScoreBoard():
