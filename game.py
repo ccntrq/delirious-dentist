@@ -188,8 +188,8 @@ class GameView(arcade.View):
         self.decoration_list.append(room_plant)
 
         room_xray = arcade.Sprite(ROOM_XRAY_IMAGE_SOURCE, 0.4)
-        room_xray.center_x = 950
-        room_xray.center_y = 520
+        room_xray.center_x = 900
+        room_xray.center_y = 400
         self.decoration_list.append(room_xray)
 
         for deco in self.decoration_list:
