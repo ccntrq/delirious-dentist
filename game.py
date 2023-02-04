@@ -21,6 +21,7 @@ ROOM_WINDOW_IMAGE_SOURCE = "resources/sprites/room/wall.png"
 ROOM_WINDOW_IMAGE_SOURCE = "resources/sprites/room/window.png"
 ROOM_WINDOW_LEFT_IMAGE_SOURCE = "resources/sprites/room/window_left.png"
 ROOM_WINDOW_RIGHT_IMAGE_SOURCE = "resources/sprites/room/window_right.png"
+ROOM_CHAIR_IMAGE_SOURCE = "resources/sprites/room/chair.png"
 UI_HEART_IMAGE_SOURCE = "resources/sprites/ui/heart.png"
 UI_TOOTH_IMAGE_SOURCE = "resources/sprites/ui/tooth.png"
 UI_GOLDEN_TOOTH_IMAGE_SOURCE = "resources/sprites/ui/golden_tooth.png"
@@ -93,7 +94,7 @@ class GameView(arcade.View):
         self.player_list = arcade.SpriteList()
         self.enemy_list = arcade.SpriteList()
         self.life_list = arcade.SpriteList()
-        self.floor_list = arcade.SpriteList()
+        self.interior_list = arcade.SpriteList()
         self.static_ui_elements_list = arcade.SpriteList()
 
         # Walls use spatial hashing for faster collision detection
@@ -158,14 +159,18 @@ class GameView(arcade.View):
                 floor = arcade.Sprite(ROOM_TILE_FLOOR_IMAGE_SOURCE, 0.25)
                 floor.center_x = x + 16
                 floor.center_y = y
-                self.floor_list.append(floor)
+                self.interior_list.append(floor)
 
+        room_chair = arcade.Sprite(ROOM_CHAIR_IMAGE_SOURCE, 0.5)
+        room_chair.center_x = 400
+        room_chair.center_y = 400
+        self.interior_list.append(room_chair)
     def on_draw(self):
         """Render the screen."""
         self.clear()
         # Code to draw the screen goes here
 
-        self.floor_list.draw()
+        self.interior_list.draw()
         self.player_list.draw()
         self.wall_list.draw()
         self.enemy_list.draw()
