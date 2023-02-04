@@ -93,10 +93,7 @@ class GameView(arcade.View):
         self.hit_active = None
         self.hit_cooldown = None
 
-        self.up_pressed = False
-        self.down_pressed = False
-        self.left_pressed = False
-        self.right_pressed = False
+        self.key_history = []
 
         # Load sounds
         self.enemy_hit_sound = arcade.load_sound(ENEMY_HIT_SOUND_RESOURCE)
@@ -114,10 +111,6 @@ class GameView(arcade.View):
         self.hit_cooldown = 0
         self.hit_active = 0
 
-        self.up_pressed = False
-        self.down_pressed = False
-        self.left_pressed = False
-        self.right_pressed = False
 
         # Create the Sprite lists
         self.player_list = arcade.SpriteList()
@@ -185,18 +178,18 @@ class GameView(arcade.View):
 
         # Create interior
         room_chair = arcade.Sprite(ROOM_CHAIR_IMAGE_SOURCE, 0.5)
-        room_chair.center_x = 400
-        room_chair.center_y = 400
+        room_chair.center_x = self.random_x()
+        room_chair.center_y = self.random_y()
         self.decoration_list.append(room_chair)
 
         room_plant = arcade.Sprite(ROOM_PLANT_IMAGE_SOURCE, 0.4)
-        room_plant.center_x = 600
-        room_plant.center_y = 200
+        room_plant.center_x = self.random_x()
+        room_plant.center_y = self.random_y()
         self.decoration_list.append(room_plant)
 
         room_xray = arcade.Sprite(ROOM_XRAY_IMAGE_SOURCE, 0.4)
-        room_xray.center_x = 900
-        room_xray.center_y = 400
+        room_xray.center_x = self.random_x()
+        room_xray.center_y = self.random_y()
         self.decoration_list.append(room_xray)
 
         for deco in self.decoration_list:
@@ -290,26 +283,34 @@ class GameView(arcade.View):
         self.player_sprite.change_x = 0
         self.player_sprite.change_y = 0
 
-        if self.up_pressed and not self.down_pressed:
+        if not self.key_history:
+            return
+
+        actions = list(reversed(self.key_history))
+
+        horz = next((x for x in actions if x == "left" or x == "right"), None)
+        vert = next((x for x in actions if x == "up" or x == "down"), None)
+
+        if vert == "up":
             self.player_sprite.change_y = CHARACTER_MOVEMENT_SPEED
-        elif self.down_pressed and not self.up_pressed:
+        elif vert == "down":
             self.player_sprite.change_y = -CHARACTER_MOVEMENT_SPEED
-        if self.left_pressed and not self.right_pressed:
+        elif horz == "left":
             self.player_sprite.change_x = -CHARACTER_MOVEMENT_SPEED
-        elif self.right_pressed and not self.left_pressed:
+        elif horz == "right":
             self.player_sprite.change_x = CHARACTER_MOVEMENT_SPEED
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed."""
 
         if key == arcade.key.UP or key == arcade.key.W:
-            self.up_pressed = True
+            self.key_history.append("up")
         elif key == arcade.key.DOWN or key == arcade.key.S:
-            self.down_pressed = True
+            self.key_history.append("down")
         elif key == arcade.key.LEFT or key == arcade.key.A:
-            self.left_pressed = True
+            self.key_history.append("left")
         elif key == arcade.key.RIGHT or key == arcade.key.D:
-            self.right_pressed = True
+            self.key_history.append("right")
         elif key == arcade.key.SPACE:
             if self.hit_cooldown > 0:
                 arcade.play_sound(self.game_over_sound)
@@ -325,13 +326,13 @@ class GameView(arcade.View):
         """Called when the user releases a key."""
 
         if key == arcade.key.UP or key == arcade.key.W:
-            self.up_pressed = False
+            self.key_history = list(filter(lambda x: x != "up", self.key_history))
         elif key == arcade.key.DOWN or key == arcade.key.S:
-            self.down_pressed = False
+            self.key_history = list(filter(lambda x: x != "down", self.key_history))
         elif key == arcade.key.LEFT or key == arcade.key.A:
-            self.left_pressed = False
+            self.key_history = list(filter(lambda x: x != "left", self.key_history))
         elif key == arcade.key.RIGHT or key == arcade.key.D:
-            self.right_pressed = False
+            self.key_history = list(filter(lambda x: x != "right", self.key_history))
 
         self.update_player_speed()
 
