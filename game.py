@@ -22,6 +22,7 @@ ROOM_WINDOW_IMAGE_SOURCE = "resources/sprites/room/window.png"
 ROOM_WINDOW_LEFT_IMAGE_SOURCE = "resources/sprites/room/window_left.png"
 ROOM_WINDOW_RIGHT_IMAGE_SOURCE = "resources/sprites/room/window_right.png"
 ROOM_CHAIR_IMAGE_SOURCE = "resources/sprites/room/chair.png"
+ROOM_PLANT_IMAGE_SOURCE = "resources/sprites/room/plant.png"
 UI_HEART_IMAGE_SOURCE = "resources/sprites/ui/heart.png"
 UI_TOOTH_IMAGE_SOURCE = "resources/sprites/ui/tooth.png"
 UI_GOLDEN_TOOTH_IMAGE_SOURCE = "resources/sprites/ui/golden_tooth.png"
@@ -161,10 +162,16 @@ class GameView(arcade.View):
                 floor.center_y = y
                 self.interior_list.append(floor)
 
+        # Create interior
         room_chair = arcade.Sprite(ROOM_CHAIR_IMAGE_SOURCE, 0.5)
         room_chair.center_x = 400
         room_chair.center_y = 400
-        self.interior_list.append(room_chair)
+        self.wall_list.append(room_chair)
+
+        room_plant = arcade.Sprite(ROOM_PLANT_IMAGE_SOURCE, 0.4)
+        room_plant.center_x = 600
+        room_plant.center_y = 200
+        self.wall_list.append(room_plant)
     def on_draw(self):
         """Render the screen."""
         self.clear()
