@@ -20,8 +20,8 @@ UI_HEART_IMAGE_SOURCE = "resources/sprites/ui/heart.png"
 UI_TOOTH_IMAGE_SOURCE = "resources/sprites/ui/tooth.png"
 
 # Sounds
-ENEMY_HIT_SOUND_RESOURCE = ":resources:sounds/coin1.wav"
-ENEMY_COLLISION_SOUND_RESOURCE = ":resources:sounds/coin2.wav"
+ENEMY_HIT_SOUND_RESOURCE = ":resources:sounds/hit2.wav"
+ENEMY_COLLISION_SOUND_RESOURCE = ":resources:sounds/hurt1.wav"
 
 # scaling factor for the dentist character
 CHARACTER_SCALING = 1
