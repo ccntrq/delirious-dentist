@@ -45,7 +45,7 @@ CHARACTER_LIFES = 5
 # chance for a tooth drop in percent
 TOOTH_DROP_CHANCE = 30
 TOOTH_GOLDEN_DROP_CHANCE = 10
-ENEMY_MAX_SPEED = 0
+ENEMY_MAX_SPEED = 5
 
 ENEMY_TOP_BORDER = SCREEN_HEIGHT - 64
 ENEMY_RIGHT_BORDER = SCREEN_WIDTH
@@ -292,19 +292,16 @@ class GameView(arcade.View):
     def drop_tooth(self, enemy):
         # Drop golden tooth
         drop_golden_tooth = random.uniform(0, 100)
+        tooth = None
         if drop_golden_tooth <= TOOTH_GOLDEN_DROP_CHANCE:
-            arcade.play_sound(self.tooth_drop_sound)
-            tooth = arcade.Sprite(UI_GOLDEN_TOOTH_IMAGE_SOURCE, 0.5)
-            tooth.center_x = enemy.center_x + 32  # XXX prevent spawning outside of window
-            tooth.center_y = enemy.center_y
-            self.tooth_gold_list.append(tooth)
+          tooth = arcade.Sprite(UI_GOLDEN_TOOTH_IMAGE_SOURCE, 0.7)
+          self.tooth_gold_list.append(tooth)
+        else :
+          tooth = arcade.Sprite( UI_TOOTH_IMAGE_SOURCE, 0.5)
+          self.tooth_list.append(tooth)
 
-        else:
-            arcade.play_sound(self.tooth_drop_sound)
-            tooth = arcade.Sprite(UI_TOOTH_IMAGE_SOURCE, 0.5)
-            tooth.center_x = enemy.center_x + 32  # XXX prevent spawning outside of window
-            tooth.center_y = enemy.center_y
-            self.tooth_list.append(tooth)
+        tooth.center_x = enemy.center_x + 32  # XXX prevent spawning outside of window
+        tooth.center_y = enemy.center_y
 
     def add_enemies(self):
         enemy_count = int(self.score / 5) + 1
@@ -451,9 +448,11 @@ class DentistCharacter(arcade.Sprite):
         self.hit_texture = arcade.load_texture(hit_image_source)
         self.texture = self.main_texture
         self.main_hit_box = self.get_hit_box()
-        # self.hit_hit_box = [[-50, -50], [50, -50], [50, 50], [-50, 50]]
-        self.hit_hit_box = list(map(
-            lambda x: [x[0] * 2, x[1] * 2], list(self.main_hit_box)))
+        self.hit_hit_box = self.main_hit_box
+        # XXX Unused. Changing to a larger hit box pushes us away from borders
+        # XXX when hitting close while close to one
+        # self.hit_hit_box = list(map(
+        #    lambda x: [x[0] * 1.5, x[1] * 1.5], list(self.main_hit_box)))
         self.hit_active = 0
 
     def update_animation(self, delta_time: float = 1 / 60):
