@@ -5,6 +5,7 @@ import datetime
 from operator import itemgetter
 import random
 import arcade
+import pyglet
 
 VERSION = "0.1"
 
@@ -105,6 +106,8 @@ class GameView(arcade.View):
         # Our physics engine
         self.physics_engine = None
 
+        self.camera = arcade.Camera(SCREEN_WIDTH, SCREEN_HEIGHT)
+
     def setup(self):
         """Set up the game here. Call this function to restart the game."""
         self.score = 0
@@ -203,6 +206,8 @@ class GameView(arcade.View):
         """Render the screen."""
         self.clear()
         # Code to draw the screen goes here
+
+        self.camera.use()
 
         self.interior_list.draw()
         self.player_list.draw()
@@ -312,7 +317,8 @@ class GameView(arcade.View):
             self.key_history.append("right")
         elif key == arcade.key.SPACE:
             if self.hit_cooldown > 0:
-                arcade.play_sound(self.game_over_sound)
+                # arcade.play_sound(self.game_over_sound)
+                self.camera.shake(pyglet.math.Vec2(0, 3))
             else:
                 self.hit_active = CHARACTER_HIT_TIMEOUT + (
                     15 if self.player_sprite.pliers_equipped else 0
