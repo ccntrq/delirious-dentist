@@ -80,7 +80,7 @@ class MyGame(arcade.Window):
         self.player_list.append(self.player_sprite)
 
         for x in range(5):
-            life = arcade.Sprite(UI_HEART_IMAGE_SOURCE, 0.5)
+            life = arcade.Sprite(UI_HEART_IMAGE_SOURCE, TILE_SCALING)
             life.center_x = x * 32 + 32
             life.center_y = UI_HEIGHT - 32
             self.life_list.append(life)
