@@ -23,6 +23,7 @@ ROOM_WINDOW_LEFT_IMAGE_SOURCE = "resources/sprites/room/window_left.png"
 ROOM_WINDOW_RIGHT_IMAGE_SOURCE = "resources/sprites/room/window_right.png"
 UI_HEART_IMAGE_SOURCE = "resources/sprites/ui/heart.png"
 UI_TOOTH_IMAGE_SOURCE = "resources/sprites/ui/tooth.png"
+UI_GOLDEN_TOOTH_IMAGE_SOURCE = "resources/sprites/ui/golden_tooth.png"
 
 # Sounds
 ENEMY_HIT_SOUND_RESOURCE = ":resources:sounds/hit2.wav"
@@ -39,6 +40,7 @@ CHARACTER_HIT_COOLDOWN = 10
 CHARACTER_LIFES = 5
 # chance for a tooth drop in percent
 TOOTH_DROP_CHANCE = 30
+TOOTH_GOLDEN_DROP_CHANCE = 10
 
 # Sprite scalings
 CHARACTER_SCALING = 1
@@ -62,6 +64,7 @@ class GameView(arcade.View):
         self.wall_list = None
         self.enemy_list = None
         self.tooth_list = None
+        self.tooth_gold_list = None
         self.static_ui_elements_list = None
 
         self.hit_active = None
@@ -96,6 +99,7 @@ class GameView(arcade.View):
         # Walls use spatial hashing for faster collision detection
         self.wall_list = arcade.SpriteList(use_spatial_hash=True)
         self.tooth_list = arcade.SpriteList(use_spatial_hash=True)
+        self.tooth_gold_list = arcade.SpriteList(use_spatial_hash=True)
 
         # Set up the player, specifically placing it at these coordinates.
         image_source = CHARACTER_DENTIST_IMAGE_SOURCE
@@ -166,6 +170,7 @@ class GameView(arcade.View):
         self.wall_list.draw()
         self.enemy_list.draw()
         self.tooth_list.draw()
+        self.tooth_gold_list.draw()
         self.life_list.draw()
         self.static_ui_elements_list.draw()
 
@@ -186,6 +191,15 @@ class GameView(arcade.View):
             tooth.remove_from_sprite_lists()
             arcade.play_sound(self.tooth_collect_sound)
             self.score += 1
+
+        # Check for tooth_gold collections
+        tooth_gold_hit_list = arcade.check_for_collision_with_list(
+            self.player_sprite, self.tooth_gold_list)
+
+        for tooth_gold in tooth_gold_hit_list:
+            tooth_gold.remove_from_sprite_lists()
+            arcade.play_sound(self.tooth_collect_sound)
+            self.score += 10
 
         # Check for collisions with or hits of enemies
         enemy_hit_list = arcade.check_for_collision_with_list(
@@ -247,11 +261,21 @@ class GameView(arcade.View):
         self.hit_cooldown = 0
 
     def drop_tooth(self, enemy):
-        arcade.play_sound(self.tooth_drop_sound)
-        tooth = arcade.Sprite(UI_TOOTH_IMAGE_SOURCE, 0.5)
-        tooth.center_x = enemy.center_x + 32  # XXX prevent spawning outside of window
-        tooth.center_y = enemy.center_y
-        self.tooth_list.append(tooth)
+        # Drop golden tooth
+        drop_golden_tooth = random.uniform(0, 100)
+        if drop_golden_tooth <= TOOTH_GOLDEN_DROP_CHANCE:
+            arcade.play_sound(self.tooth_drop_sound)
+            tooth = arcade.Sprite(UI_GOLDEN_TOOTH_IMAGE_SOURCE, 0.5)
+            tooth.center_x = enemy.center_x + 32  # XXX prevent spawning outside of window
+            tooth.center_y = enemy.center_y
+            self.tooth_gold_list.append(tooth)
+
+        else:
+            arcade.play_sound(self.tooth_drop_sound)
+            tooth = arcade.Sprite(UI_TOOTH_IMAGE_SOURCE, 0.5)
+            tooth.center_x = enemy.center_x + 32  # XXX prevent spawning outside of window
+            tooth.center_y = enemy.center_y
+            self.tooth_list.append(tooth)
 
     def add_enemies(self):
         enemy_count = int(self.score / 5) + 1
