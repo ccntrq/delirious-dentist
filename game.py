@@ -17,6 +17,7 @@ UI_HEIGHT = 64
 # Sprite locations
 CHARACTER_DENTIST_IMAGE_SOURCE = "resources/sprites/characters/dentist.png"
 CHARACTER_DENTIST_ATTACK_IMAGE_SOURCE = "resources/sprites/characters/dentist_attack.png"
+CHARACTER_DENTIST_ATTACK_PLIER_IMAGE_SOURCE = "resources/sprites/characters/dentist_attack_plier.png"
 ENEMY_1_IMAGE_SOURCE = "resources/sprites/characters/enemy_1.png"
 ENEMY_2_IMAGE_SOURCE = "resources/sprites/characters/enemy_2.png"
 ENEMY_3_IMAGE_SOURCE = "resources/sprites/characters/enemy_3.png"
@@ -46,7 +47,7 @@ CHARACTER_HIT_TIMEOUT = 20
 CHARACTER_HIT_COOLDOWN = 10
 CHARACTER_LIFES = 5
 # chance for a tooth drop in percent
-TOOTH_DROP_CHANCE = 30
+TOOTH_DROP_CHANCE = 50
 TOOTH_GOLDEN_DROP_CHANCE = 10
 ENEMY_MAX_SPEED = 5
 
