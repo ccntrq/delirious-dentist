@@ -419,17 +419,17 @@ class GameView(arcade.View):
             ENEMY_3_IMAGE_SOURCE,
         ]
         image_source = random.choice(image_sources)
+        enemy_sprite = arcade.Sprite(image_source, CHARACTER_SCALING)
+        self.set_enemy_speed(enemy_sprite)
 
         for _ in range(0, 9):
-            enemy_sprite = arcade.Sprite(image_source, CHARACTER_SCALING)
             enemy_sprite.center_x = self.random_x()
             enemy_sprite.center_y = self.random_y()
 
-            self.set_enemy_speed(enemy_sprite)
-
             collides_with_other_object = arcade.check_for_collision(
                 self.player_sprite, enemy_sprite
-            ) or arcade.check_for_collision_with_list(enemy_sprite, self.enemy_list)
+            )
+            # or arcade.check_for_collision_with_list(enemy_sprite, self.enemy_list)
 
             if not collides_with_other_object:
                 self.enemy_list.append(enemy_sprite)
