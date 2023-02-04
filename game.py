@@ -19,6 +19,10 @@ ROOM_WALL_IMAGE_SOURCE = "resources/sprites/room/wall.png"
 UI_HEART_IMAGE_SOURCE = "resources/sprites/ui/heart.png"
 UI_TOOTH_IMAGE_SOURCE = "resources/sprites/ui/tooth.png"
 
+# Sounds
+ENEMY_HIT_SOUND_RESOURCE = ":resources:sounds/coin1.wav"
+ENEMY_COLLISION_SOUND_RESOURCE = ":resources:sounds/coin2.wav"
+
 # scaling factor for the dentist character
 CHARACTER_SCALING = 1
 # movement speed of the dentist character
@@ -50,9 +54,8 @@ class MyGame(arcade.Window):
         self.hit_active = None
 
         # Load sounds
-        self.enemy_hit_sound = arcade.load_sound(":resources:sounds/coin1.wav")
-        self.enemy_collision_sound = arcade.load_sound(
-            ":resources:sounds/coin2.wav")
+        self.enemy_hit_sound = arcade.load_sound(ENEMY_HIT_SOUND_RESOURCE)
+        self.enemy_collision_sound = arcade.load_sound(ENEMY_COLLISION_SOUND_RESOURCE)
 
         # Our physics engine
         self.physics_engine = None
