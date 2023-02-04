@@ -107,7 +107,7 @@ class GameView(arcade.View):
         for x in range(CHARACTER_LIFES):
             life = arcade.Sprite(UI_HEART_IMAGE_SOURCE, TILE_SCALING)
             life.center_x = x * 40 + 32
-            life.center_y = UI_HEIGHT - 36
+            life.center_y = UI_HEIGHT - 32
             self.life_list.append(life)
 
         ui_tooth = arcade.Sprite(UI_TOOTH_IMAGE_SOURCE, 0.25)
