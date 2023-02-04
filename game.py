@@ -14,6 +14,8 @@ UI_HEIGHT = 64
 CHARACTER_DENTIST_IMAGE_SOURCE = "resources/sprites/characters/dentist.png"
 CHARACTER_DENTIST_ATTACK_IMAGE_SOURCE = "resources/sprites/characters/dentist_attack.png"
 CHARACTER_ENEMY_1_IMAGE_SOURCE = "resources/sprites/characters/enemy_1.png"
+CHARACTER_ENEMY_2_IMAGE_SOURCE = "resources/sprites/characters/enemy_2.png"
+CHARACTER_ENEMY_3_IMAGE_SOURCE = "resources/sprites/characters/enemy_3.png"
 ROOM_TILE_FLOOR_IMAGE_SOURCE = "resources/sprites/room/tile_floor.png"
 ROOM_WALL_IMAGE_SOURCE = "resources/sprites/room/wall.png"
 UI_HEART_IMAGE_SOURCE = "resources/sprites/ui/heart.png"
@@ -89,12 +91,19 @@ class MyGame(arcade.Window):
             life.center_y = UI_HEIGHT - 32
             self.life_list.append(life)
 
-        # Create the ground
-        # This shows using a loop to place multiple sprites horizontally
-        for x in range(0, SCREEN_WIDTH + 32, 32):
+        # Create walls
+        # Create lower boundary
+        for x in range(0, SCREEN_WIDTH, 32):
             wall = arcade.Sprite(ROOM_WALL_IMAGE_SOURCE, TILE_SCALING)
             wall.center_x = x
             wall.center_y = UI_HEIGHT
+            self.wall_list.append(wall)
+
+        # Create upper boundary
+        for x in range(0, SCREEN_WIDTH, 32):
+            wall = arcade.Sprite(ROOM_WALL_IMAGE_SOURCE, TILE_SCALING)
+            wall.center_x = x
+            wall.center_y = SCREEN_HEIGHT - 16
             self.wall_list.append(wall)
 
         # Create the 'physics engine'
