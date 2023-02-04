@@ -13,6 +13,8 @@ SCREEN_TITLE = "Delirious Dentist"
 CHARACTER_SCALING = 1
 # movement speed of the dentist character
 CHARACTER_MOVEMENT_SPEED = 5
+# hit timeout (number of updates after hitting space that you can hit an enemy)
+CHARACTER_HIT_TIMEOUT = 20
 
 
 TILE_SCALING = 1
@@ -34,8 +36,12 @@ class MyGame(arcade.Window):
         self.wall_list = None
         self.enemy_list = None
 
+        self.hit_active = None
+
         # Load sounds
-        self.hit_enemy_sound = arcade.load_sound(":resources:sounds/coin1.wav")
+        self.enemy_hit_sound = arcade.load_sound(":resources:sounds/coin1.wav")
+        self.enemy_collision_sound = arcade.load_sound(
+            ":resources:sounds/coin2.wav")
 
         # Our physics engine
         self.physics_engine = None
@@ -90,9 +96,18 @@ class MyGame(arcade.Window):
         enemy_hit_list = arcade.check_for_collision_with_list(
             self.player_sprite, self.enemy_list)
 
-        for enemy in enemy_hit_list:
-            enemy.remove_from_sprite_lists()
-            arcade.play_sound(self.hit_enemy_sound)
+        if self.hit_active:
+            self.hit_active -= 1
+            for enemy in enemy_hit_list:
+                # XXX add points/tooth roots
+                enemy.remove_from_sprite_lists()
+                arcade.play_sound(self.enemy_hit_sound)
+                self.hit_active = 0
+        else:
+            for enemy in enemy_hit_list:
+                # XXX remove life?
+                enemy.remove_from_sprite_lists()
+                arcade.play_sound(self.enemy_collision_sound)
 
         self.add_enemies()
 
@@ -107,6 +122,8 @@ class MyGame(arcade.Window):
             self.player_sprite.change_x = -CHARACTER_MOVEMENT_SPEED
         elif key == arcade.key.RIGHT or key == arcade.key.D:
             self.player_sprite.change_x = CHARACTER_MOVEMENT_SPEED
+        elif key == arcade.key.SPACE:
+            self.hit_active = CHARACTER_HIT_TIMEOUT
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key."""
@@ -123,13 +140,12 @@ class MyGame(arcade.Window):
     def add_enemies(self):
         if self.enemy_list.sprite_list:
             # don't add new enemies when there still is one
-            return;
+            return
         image_source = "resources/sprites/enemy_1.png"
         enemy_sprite = arcade.Sprite(image_source, CHARACTER_SCALING)
-        enemy_sprite.center_x = random.randint(32,500);
-        enemy_sprite.center_y = random.randint(32,500)
+        enemy_sprite.center_x = random.randint(32, 500)
+        enemy_sprite.center_y = random.randint(32, 500)
         self.enemy_list.append(enemy_sprite)
-
 
 
 def main():
