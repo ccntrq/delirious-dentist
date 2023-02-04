@@ -310,8 +310,16 @@ class GameView(arcade.View):
     def on_score(self, score):
         arcade.play_sound(self.tooth_collect_sound)
         self.score += score
-        if self.score >= 10:
+        if self.score >= 10 and not self.player_sprite.pliers_equipped :
             self.player_sprite.pliers_equipped = True
+            self.add_pliers_to_ui()
+
+    def add_pliers_to_ui(self):
+        pliers = arcade.Sprite(UI_PLIER_IMAGE_SOURCE, 0.2)
+        pliers.center_x = 700
+        pliers.center_y = UI_HEIGHT - 40
+        self.static_ui_elements_list.append(pliers)
+
 
     def drop_tooth(self, enemy):
         # Drop golden tooth
