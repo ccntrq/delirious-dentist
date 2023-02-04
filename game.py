@@ -220,6 +220,8 @@ class GameView(arcade.View):
 
         self.add_enemies()
 
+        self.enemy_move()
+
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed."""
 
@@ -301,6 +303,13 @@ class GameView(arcade.View):
             return
 
         self.enemy_list.append(enemy_sprite)
+
+
+    def enemy_move(self):
+        for enemy_sprite in self.enemy_list.sprite_list:
+            enemy_sprite.change_y = random.randint(-1, 1)
+            enemy_sprite.center_y += enemy_sprite.change_y * 10
+
 
     def remove_life(self):
         life = self.life_list.sprite_list[-1]
