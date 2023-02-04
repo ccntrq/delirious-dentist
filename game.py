@@ -53,6 +53,7 @@ class MyGame(arcade.Window):
         self.player_list = None
         self.wall_list = None
         self.enemy_list = None
+        self.static_ui_elements_list = None
 
         self.hit_active = None
 
@@ -74,6 +75,7 @@ class MyGame(arcade.Window):
         self.enemy_list = arcade.SpriteList()
         self.life_list = arcade.SpriteList()
         self.floor_list = arcade.SpriteList()
+        self.static_ui_elements_list = arcade.SpriteList()
 
         # Walls use spatial hashing for faster collision detection
         self.wall_list = arcade.SpriteList(use_spatial_hash=True)
@@ -91,8 +93,13 @@ class MyGame(arcade.Window):
             life.center_y = UI_HEIGHT - 32
             self.life_list.append(life)
 
-        # Create walls
-        # Create lower boundary
+        ui_tooth = arcade.Sprite(UI_TOOTH_IMAGE_SOURCE, 0.25)
+        ui_tooth.center_x = 730
+        ui_tooth.center_y = UI_HEIGHT - 32
+        self.static_ui_elements_list.append(ui_tooth)
+
+        # Create the ground
+        # This shows using a loop to place multiple sprites horizontally
         for x in range(0, SCREEN_WIDTH, 32):
             wall = arcade.Sprite(ROOM_WALL_IMAGE_SOURCE, TILE_SCALING)
             wall.center_x = x
@@ -128,9 +135,10 @@ class MyGame(arcade.Window):
         self.wall_list.draw()
         self.enemy_list.draw()
         self.life_list.draw()
+        self.static_ui_elements_list.draw()
 
-        arcade.draw_text(str(self.score), 750, 8,
-                         arcade.color.BLACK, 32, width=SCREEN_WIDTH, align="left")
+        arcade.draw_text(str(self.score), 750, 18,
+                         arcade.color.BLACK, 24, width=SCREEN_WIDTH, align="left")
 
     def on_update(self, delta_time):
         """Movement and game logic"""
