@@ -324,7 +324,8 @@ class GameView(arcade.View):
             tooth = arcade.Sprite(UI_TOOTH_IMAGE_SOURCE, 0.5)
             self.tooth_list.append(tooth)
 
-        tooth.center_x = enemy.center_x + 32
+        tooth.center_x = min(
+            [max([enemy.center_x, 32]), ENEMY_RIGHT_BORDER - 32])
         tooth.center_y = min([max([enemy.center_y, 128]), ENEMY_TOP_BORDER])
 
     def add_enemies(self):
