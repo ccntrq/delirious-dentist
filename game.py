@@ -107,6 +107,7 @@ class GameView(arcade.View):
         self.physics_engine = None
 
         self.camera = arcade.Camera(SCREEN_WIDTH, SCREEN_HEIGHT)
+        self.ui_camera = arcade.Camera(SCREEN_WIDTH, SCREEN_HEIGHT)
 
     def setup(self):
         """Set up the game here. Call this function to restart the game."""
@@ -207,17 +208,10 @@ class GameView(arcade.View):
         self.clear()
         # Code to draw the screen goes here
 
-        self.camera.use()
+        self.ui_camera.use()
 
-        self.interior_list.draw()
-        self.player_list.draw()
-        self.enemy_list.draw()
-        self.wall_list.draw()
-        self.decoration_list.draw()
-        self.power_up_list.draw()
         self.life_list.draw()
         self.static_ui_elements_list.draw()
-
         arcade.draw_text(
             str(self.score),
             750,
@@ -227,6 +221,15 @@ class GameView(arcade.View):
             width=SCREEN_WIDTH,
             align="left",
         )
+
+        self.camera.use()
+
+        self.interior_list.draw()
+        self.player_list.draw()
+        self.enemy_list.draw()
+        self.wall_list.draw()
+        self.decoration_list.draw()
+        self.power_up_list.draw()
 
         if self.init:
             self.init = False
@@ -249,10 +252,13 @@ class GameView(arcade.View):
         for power_up in power_up_hit_list:
             if isinstance(power_up, HeartSprite):
                 self.add_life()
-            elif isinstance(power_up, ToothSprite) or isinstance(
-                power_up, GoldenToothSprite
-            ):
+            elif isinstance(power_up, ToothSprite) :
                 self.on_score(power_up.points)
+                arcade.play_sound(self.tooth_collect_sound)
+            elif isinstance( power_up, GoldenToothSprite):
+                self.on_score(power_up.points)
+                arcade.play_sound(self.tooth_collect_sound) # XXX GOLDEN TOOTH SOUND
+                self.camera.shake(pyglet.math.Vec2(5,5))
             else:
                 raise Exception("Unknown power up type.")
             power_up.remove_from_sprite_lists()
@@ -317,8 +323,7 @@ class GameView(arcade.View):
             self.key_history.append("right")
         elif key == arcade.key.SPACE:
             if self.hit_cooldown > 0:
-                # arcade.play_sound(self.game_over_sound)
-                self.camera.shake(pyglet.math.Vec2(0, 3))
+                arcade.play_sound(self.game_over_sound)
             else:
                 self.hit_active = CHARACTER_HIT_TIMEOUT + (
                     15 if self.player_sprite.pliers_equipped else 0
@@ -353,7 +358,6 @@ class GameView(arcade.View):
         self.hit_cooldown = 0
 
     def on_score(self, score):
-        arcade.play_sound(self.tooth_collect_sound)
         self.score += score
         if self.score >= 10 and not self.player_sprite.pliers_equipped:
             self.player_sprite.pliers_equipped = True
