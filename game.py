@@ -253,7 +253,9 @@ class GameView(arcade.View):
         for power_up in power_up_hit_list:
             if isinstance(power_up, HeartSprite):
                 self.add_life()
-            elif isinstance(power_up, ToothSprite):
+            elif isinstance(power_up, ToothSprite) or isinstance(
+                power_up, GoldenToothSprite
+            ):
                 self.on_score(power_up.points)
             else:
                 raise Exception("Unknown power up type.")
