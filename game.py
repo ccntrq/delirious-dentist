@@ -89,6 +89,11 @@ class GameView(arcade.View):
         self.hit_active = None
         self.hit_cooldown = None
 
+        self.up_pressed = False
+        self.down_pressed = False
+        self.left_pressed = False
+        self.right_pressed = False
+
         # Load sounds
         self.enemy_hit_sound = arcade.load_sound(ENEMY_HIT_SOUND_RESOURCE)
         self.enemy_collision_sound = arcade.load_sound(
@@ -107,6 +112,11 @@ class GameView(arcade.View):
         self.score = 0
         self.hit_cooldown = 0
         self.hit_active = 0
+
+        self.up_pressed = False
+        self.down_pressed = False
+        self.left_pressed = False
+        self.right_pressed = False
 
         # Create the Sprite lists
         self.player_list = arcade.SpriteList()
@@ -268,17 +278,31 @@ class GameView(arcade.View):
 
         self.enemy_move()
 
+    def update_player_speed(self):
+        # Calculate speed based on the keys pressed
+        self.player_sprite.change_x = 0
+        self.player_sprite.change_y = 0
+
+        if self.up_pressed and not self.down_pressed:
+            self.player_sprite.change_y = CHARACTER_MOVEMENT_SPEED
+        elif self.down_pressed and not self.up_pressed:
+            self.player_sprite.change_y = -CHARACTER_MOVEMENT_SPEED
+        if self.left_pressed and not self.right_pressed:
+            self.player_sprite.change_x = -CHARACTER_MOVEMENT_SPEED
+        elif self.right_pressed and not self.left_pressed:
+            self.player_sprite.change_x = CHARACTER_MOVEMENT_SPEED
+
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed."""
 
         if key == arcade.key.UP or key == arcade.key.W:
-            self.player_sprite.change_y = CHARACTER_MOVEMENT_SPEED
+            self.up_pressed = True
         elif key == arcade.key.DOWN or key == arcade.key.S:
-            self.player_sprite.change_y = -CHARACTER_MOVEMENT_SPEED
+            self.down_pressed = True
         elif key == arcade.key.LEFT or key == arcade.key.A:
-            self.player_sprite.change_x = -CHARACTER_MOVEMENT_SPEED
+            self.left_pressed = True
         elif key == arcade.key.RIGHT or key == arcade.key.D:
-            self.player_sprite.change_x = CHARACTER_MOVEMENT_SPEED
+            self.right_pressed = True
         elif key == arcade.key.SPACE:
             if self.hit_cooldown > 0:
                 arcade.play_sound(self.game_over_sound)
@@ -287,17 +311,21 @@ class GameView(arcade.View):
                     (15 if self.player_sprite.pliers_equipped else 0)
             self.hit_cooldown = CHARACTER_HIT_TIMEOUT + CHARACTER_HIT_TIMEOUT
 
+        self.update_player_speed()
+
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key."""
 
         if key == arcade.key.UP or key == arcade.key.W:
-            self.player_sprite.change_y = 0
+            self.up_pressed = False
         elif key == arcade.key.DOWN or key == arcade.key.S:
-            self.player_sprite.change_y = 0
+            self.down_pressed = False
         elif key == arcade.key.LEFT or key == arcade.key.A:
-            self.player_sprite.change_x = 0
+            self.left_pressed = False
         elif key == arcade.key.RIGHT or key == arcade.key.D:
-            self.player_sprite.change_x = 0
+            self.right_pressed = False
+
+        self.update_player_speed()
 
     def on_enemy_hit(self, enemy):
         drop_tooth = random.uniform(0, 100)
