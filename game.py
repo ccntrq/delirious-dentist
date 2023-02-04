@@ -25,6 +25,7 @@ ROOM_WINDOW_LEFT_IMAGE_SOURCE = "resources/sprites/room/window_left.png"
 ROOM_WINDOW_RIGHT_IMAGE_SOURCE = "resources/sprites/room/window_right.png"
 ROOM_CHAIR_IMAGE_SOURCE = "resources/sprites/room/chair.png"
 ROOM_PLANT_IMAGE_SOURCE = "resources/sprites/room/plant.png"
+ROOM_XRAY_IMAGE_SOURCE = "resources/sprites/room/xray.png"
 UI_HEART_IMAGE_SOURCE = "resources/sprites/ui/heart.png"
 UI_TOOTH_IMAGE_SOURCE = "resources/sprites/ui/tooth.png"
 UI_GOLDEN_TOOTH_IMAGE_SOURCE = "resources/sprites/ui/golden_tooth.png"
@@ -181,12 +182,18 @@ class GameView(arcade.View):
         room_plant.center_y = 200
         self.decoration_list.append(room_plant)
 
+        room_xray = arcade.Sprite(ROOM_XRAY_IMAGE_SOURCE, 0.4)
+        room_xray.center_x = 200
+        room_xray.center_y = 300
+        self.decoration_list.append(room_xray)
+
         for deco in self.decoration_list:
             self.wall_list.append(deco)
 
         # Create the 'physics engine'
         self.physics_engine = arcade.PhysicsEngineSimple(
             self.player_sprite, self.wall_list)
+
 
     def on_draw(self):
         """Render the screen."""
