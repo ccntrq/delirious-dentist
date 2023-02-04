@@ -152,6 +152,10 @@ class MyGame(arcade.Window):
         if self.enemy_list.sprite_list:
             # don't add new enemies when there still is one
             return
+
+        self.add_random_enemy()
+
+    def add_random_enemy(self):
         # TODO: Prevent spawning over player
         image_source = "resources/sprites/enemy_1.png"
         enemy_sprite = arcade.Sprite(image_source, CHARACTER_SCALING)
