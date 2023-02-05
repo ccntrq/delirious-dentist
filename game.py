@@ -457,15 +457,14 @@ class GameView(arcade.View):
             tooth = ToothSprite()
 
         self.power_up_list.append(tooth)
+        self.position_after_hit(self.player_sprite, enemy, tooth)
         tooth.center_x = min(
             [
-                max([enemy.center_x + random.randint(-64, 64), 32]),
+                max([tooth.center_x, 32]),
                 ENEMY_RIGHT_BORDER - 32,
             ]
         )
-        tooth.center_y = min(
-            [max([enemy.center_y + random.randint(-64, 64), 128]), ENEMY_TOP_BORDER]
-        )
+        tooth.center_y = min([max([tooth.center_y, 128]), ENEMY_TOP_BORDER])
 
     def add_pliers(self):
         if (
@@ -572,6 +571,20 @@ class GameView(arcade.View):
 
     def random_y(self):
         return random.randint(ENEMY_BOTTOM_BORDER + 64, ENEMY_TOP_BORDER - 64)
+
+    def position_after_hit(self, player, enemy, sprite):
+        start_x = player.center_x
+        start_y = player.center_y
+
+        dest_x = enemy.center_x
+        dest_y = enemy.center_y
+
+        x_diff = dest_x - start_x
+        y_diff = dest_y - start_y
+        angle = math.atan2(y_diff, x_diff)
+
+        sprite.center_x = enemy.center_x + math.cos(angle) * 128
+        sprite.center_y = enemy.center_y + math.sin(angle) * 128
 
 
 class GameOverView(arcade.View):
@@ -745,8 +758,6 @@ class EnemySprite(arcade.Sprite):
         self.texture = arcade.load_texture(image_source)
 
     def away_from(self, sprite):
-        # Random 1 in 100 chance that we'll change from our old direction and
-        # then re-aim toward the player
         start_x = self.center_x
         start_y = self.center_y
 
