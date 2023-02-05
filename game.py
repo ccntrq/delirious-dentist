@@ -119,12 +119,20 @@ class GameView(arcade.View):
         self.game_opening_sound = arcade.load_sound(GAME_OPENING_SOUND_RESOURCE)
         self.space_spam_sound = arcade.load_sound(SPACE_SPAM_SOUND_RESOURCE)
         self.tooth_collect_sound = arcade.load_sound(TOOTH_COLLECT_SOUND_RESOURCE)
-        self.tooth_gold_collect_sound = arcade.load_sound(TOOTH_GOLD_COLLECT_SOUND_RESOURCE)
+        self.tooth_gold_collect_sound = arcade.load_sound(
+            TOOTH_GOLD_COLLECT_SOUND_RESOURCE
+        )
         self.tooth_drop_sound = arcade.load_sound(TOOTH_DROP_SOUND_RESOURCE)
         self.tooth_gold_drop_sound = arcade.load_sound(TOOTH_GOLD_DROP_SOUND_RESOURCE)
-        self.item_collect_pliers_sound = arcade.load_sound(ITEM_COLLECT_PLIERS_SOUND_RESOURCE)
-        self.item_collect_bolt_sound = arcade.load_sound(ITEM_COLLECT_BOLT_SOUND_RESOURCE)
-        self.item_collect_generic_sound = arcade.load_sound(ITEM_COLLECT_GENERIC_SOUND_RESOURCE)
+        self.item_collect_pliers_sound = arcade.load_sound(
+            ITEM_COLLECT_PLIERS_SOUND_RESOURCE
+        )
+        self.item_collect_bolt_sound = arcade.load_sound(
+            ITEM_COLLECT_BOLT_SOUND_RESOURCE
+        )
+        self.item_collect_generic_sound = arcade.load_sound(
+            ITEM_COLLECT_GENERIC_SOUND_RESOURCE
+        )
 
         # Our physics engine
         self.physics_engine = None
@@ -134,7 +142,6 @@ class GameView(arcade.View):
 
         # Marker if gameover
         self.gameover_state = False
-
 
     def setup(self):
         """Set up the game here. Call this function to restart the game."""
@@ -173,7 +180,6 @@ class GameView(arcade.View):
         ui_tooth.center_x = 930
         ui_tooth.center_y = UI_HEIGHT - 38
         self.static_ui_elements_list.append(ui_tooth)
-
 
         # Create walls
         # Create lower boundary
@@ -246,9 +252,7 @@ class GameView(arcade.View):
         self.clear()
         # Code to draw the screen goes here
 
-
         self.camera.use()
-
 
         self.interior_list.draw()
         self.player_list.draw()
@@ -576,7 +580,6 @@ class GameOverView(arcade.View):
         arcade.set_viewport(0, SCREEN_WIDTH - 1, 0, SCREEN_HEIGHT - 1)
 
     def setup(self):
-
         self.scoreboard_ui_elements_list = arcade.SpriteList()
         ui_scoreboard = arcade.Sprite(UI_SCOREBOARD_IMAGE_SOURCE, 1.25)
         ui_scoreboard.center_x = SCREEN_WIDTH / 2
@@ -636,10 +639,12 @@ class GameOverView(arcade.View):
         i = 0
         for high_score in ScoreBoard().get_high_scores():
             arcade.draw_text(
-                f'{high_score[0]:03}  -  {high_score[1]}',
+                f"{high_score[0]:03}  -  {high_score[1]}",
                 0,
                 begin_x - 170 - i * 30,
-                text_color_current if self.gameover_time == high_score[1] else text_color,
+                text_color_current
+                if self.gameover_time == high_score[1]
+                else text_color,
                 24,
                 width=SCREEN_WIDTH,
                 align="center",
@@ -848,9 +853,9 @@ class ScoreBoard:
             )
             return lines[0:limit]
 
+
 class ToothAnimation(GoldenToothSprite):
     def __init__(self):
-
         # Set up parent class
         super().__init__()
         self.scale = 1
