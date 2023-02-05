@@ -108,6 +108,7 @@ class GameView(arcade.View):
 
         self.hit_active = None
         self.hit_cooldown = None
+        self.has_hit = None
 
         self.key_history = []
 
@@ -148,6 +149,7 @@ class GameView(arcade.View):
         self.score = 0
         self.hit_cooldown = 0
         self.hit_active = 0
+        self.has_hit = False
 
         self.pliers_dropped = False
 
@@ -337,8 +339,13 @@ class GameView(arcade.View):
         self.player_sprite.hit_active = self.hit_active
         if self.hit_active:
             self.hit_active -= 1
+            if self.hit_active == 0:
+                if not enemy_hit_list and not self.has_hit:
+                    arcade.play_sound(self.enemy_hit_miss_sound)
+                self.has_hit = False
             for enemy in enemy_hit_list:
                 self.on_enemy_hit(enemy)
+                self.has_hit = True
         else:
             for enemy in enemy_hit_list:
                 enemy.remove_from_sprite_lists()
@@ -422,6 +429,8 @@ class GameView(arcade.View):
         arcade.play_sound(self.enemy_hit_sound)
 
         enemy.remove_from_sprite_lists()
+
+        self.has_hit = True
         self.hit_cooldown = 0
 
     def on_score(self, score):
