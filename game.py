@@ -809,6 +809,14 @@ class HeartSprite(arcade.Sprite):
         self.scale = TILE_SCALING
         self.texture = arcade.load_texture(UI_HEART_IMAGE_SOURCE)
 
+class BoltSprite(arcade.Sprite):
+    def __init__(self):
+        # Set up parent class
+        super().__init__()
+
+        self.scale = TILE_SCALING
+        self.texture = arcade.load_texture(UI_BOLT_IMAGE_SOURCE)
+
 
 class DentistCharacter(arcade.Sprite):
     def __init__(self):
