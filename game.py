@@ -2,6 +2,7 @@
 Delirious Dentist
 """
 import datetime
+import math
 from operator import itemgetter
 import random
 import arcade
@@ -120,6 +121,7 @@ class GameView(arcade.View):
 
         # Create the Sprite lists
         self.player_list = arcade.SpriteList()
+        self.player_list.draw_hit_boxes()
         self.enemy_list = arcade.SpriteList()
         self.life_list = arcade.SpriteList()
         self.interior_list = arcade.SpriteList()
@@ -128,6 +130,7 @@ class GameView(arcade.View):
         # Walls use spatial hashing for faster collision detection
         self.wall_list = arcade.SpriteList(use_spatial_hash=True)
         self.decoration_list = arcade.SpriteList(use_spatial_hash=True)
+        self.decoration_list.draw_hit_boxes()
         self.power_up_list = arcade.SpriteList(use_spatial_hash=True)
 
         # Set up the player, specifically placing it at these coordinates.
@@ -227,12 +230,16 @@ class GameView(arcade.View):
 
         self.camera.use()
 
+
         self.interior_list.draw()
         self.player_list.draw()
         self.enemy_list.draw()
         self.wall_list.draw()
         self.decoration_list.draw()
         self.power_up_list.draw()
+        self.enemy_list.draw_hit_boxes((0, 0, 0, 255), 3)
+        self.player_list.draw_hit_boxes((0, 0, 0, 255), 3)
+        self.decoration_list.draw_hit_boxes((0, 0, 0, 255), 3)
 
         if self.init:
             self.init = False
@@ -469,11 +476,12 @@ class GameView(arcade.View):
                 enemy_sprite.change_y = -abs(enemy_sprite.change_y)
             elif enemy_sprite.bottom < ENEMY_BOTTOM_BORDER:
                 enemy_sprite.change_y = abs(enemy_sprite.change_y)
-            elif arcade.check_for_collision_with_list(
-                enemy_sprite, self.decoration_list
-            ):
-                # chose random new speed and direction when hitting deco elements
-                self.set_enemy_speed(enemy_sprite)
+            else:
+                collisions = arcade.check_for_collision_with_list(
+                    enemy_sprite, self.decoration_list, 3
+                )
+                if len(collisions) > 0:
+                    enemy_sprite.away_from(collisions[0])
 
     def remove_life(self):
         if len(self.life_list.sprite_list) > 0:
@@ -646,6 +654,23 @@ class EnemySprite(arcade.Sprite):
         image_source = random.choice(image_sources)
         self.scale = CHARACTER_SCALING
         self.texture = arcade.load_texture(image_source)
+
+    def away_from(self, sprite):
+        # Random 1 in 100 chance that we'll change from our old direction and
+        # then re-aim toward the player
+        start_x = self.center_x
+        start_y = self.center_y
+
+        dest_x = sprite.center_x
+        dest_y = sprite.center_y
+
+        x_diff = dest_x - start_x
+        y_diff = dest_y - start_y
+        angle = math.atan2(y_diff, x_diff)
+
+        self.change_x = -1 * math.cos(angle) * ENEMY_MAX_SPEED / 2
+        self.change_y = -1 * math.sin(angle) * ENEMY_MAX_SPEED / 2
+
 
 class PliersSprite(arcade.Sprite):
     def __init__(self, scale):
