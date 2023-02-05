@@ -1,5 +1,6 @@
 # Delirious Dentist
 
+![Start Screen Screenshot](https://github.com/ccntrq/delirious-dentist/blob/master/screenshots/delirious-dentist-start-screen.png)
 ![Ingame Screenshot](https://github.com/ccntrq/delirious-dentist/blob/master/screenshots/delirious-dentist-ingame-screenshot.png)
 
 ## Game Description
