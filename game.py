@@ -47,6 +47,8 @@ UI_SCOREBOARD_IMAGE_SOURCE = "resources/sprites/ui/scoreboard.png"
 # Sounds
 ENEMY_HIT_SOUND_RESOURCE = "resources/sounds/hit_nodrop.wav"
 ENEMY_HIT_MISS_SOUND_RESOURCE = "resources/sounds/hit_miss.wav"
+ENEMY_HIT_PUNCH_SOUND_RESOURCE = ":resources:sounds/hit3.wav"
+ENEMY_HIT_GOLD_PUNCH_SOUND_RESOURCE = ":resources:sounds/hit5.wav"
 ENEMY_COLLISION_SOUND_RESOURCE = "resources/sounds/enemy_collision.wav"
 GAME_OVER_SOUND_RESOURCE = "resources/sounds/gameover.wav"
 GAME_OPENING_SOUND_RESOURCE = "resources/sounds/openingscore.wav"
@@ -116,6 +118,8 @@ class GameView(arcade.View):
         # Load sounds
         self.enemy_hit_sound = arcade.load_sound(ENEMY_HIT_SOUND_RESOURCE)
         self.enemy_hit_miss_sound = arcade.load_sound(ENEMY_HIT_MISS_SOUND_RESOURCE)
+        self.enemy_hit_punch_sound = arcade.load_sound(ENEMY_HIT_PUNCH_SOUND_RESOURCE)
+        self.enemy_hit_gold_punch_sound = arcade.load_sound(ENEMY_HIT_GOLD_PUNCH_SOUND_RESOURCE)
         self.enemy_collision_sound = arcade.load_sound(ENEMY_COLLISION_SOUND_RESOURCE)
         self.game_over_sound = arcade.load_sound(GAME_OVER_SOUND_RESOURCE)
         self.game_opening_sound = arcade.load_sound(GAME_OPENING_SOUND_RESOURCE)
@@ -505,6 +509,8 @@ class GameView(arcade.View):
         ):
             tooth = GoldenToothSprite()
             self.camera.shake(pyglet.math.Vec2(5, 5))
+            arcade.play_sound(self.enemy_hit_gold_punch_sound)
+            arcade.play_sound(self.tooth_gold_drop_sound)
         else:
             tooth = ToothSprite()
 
