@@ -418,8 +418,9 @@ class GameView(arcade.View):
             25 if self.player_sprite.pliers_equipped else 0
         ):
             self.drop_tooth(enemy)
-        else:
-            arcade.play_sound(self.enemy_hit_sound)
+
+        arcade.play_sound(self.enemy_hit_sound)
+
         enemy.remove_from_sprite_lists()
         self.hit_cooldown = 0
 
