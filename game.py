@@ -448,6 +448,7 @@ class GameView(arcade.View):
             10 if self.player_sprite.pliers_equipped else 0
         ):
             tooth = GoldenToothSprite()
+            self.camera.shake(pyglet.math.Vec2(5, 5))
         else:
             tooth = ToothSprite()
 
@@ -461,7 +462,6 @@ class GameView(arcade.View):
         tooth.center_y = min(
             [max([enemy.center_y + random.randint(-64, 64), 128]), ENEMY_TOP_BORDER]
         )
-        self.camera.shake(pyglet.math.Vec2(5, 5))
 
     def add_pliers(self):
         if (
