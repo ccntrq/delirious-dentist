@@ -149,7 +149,6 @@ class GameView(arcade.View):
 
         # Create the Sprite lists
         self.player_list = arcade.SpriteList()
-        self.player_list.draw_hit_boxes()
         self.enemy_list = arcade.SpriteList()
         self.life_list = arcade.SpriteList()
         self.interior_list = arcade.SpriteList()
@@ -158,7 +157,6 @@ class GameView(arcade.View):
         # Walls use spatial hashing for faster collision detection
         self.wall_list = arcade.SpriteList(use_spatial_hash=True)
         self.decoration_list = arcade.SpriteList(use_spatial_hash=True)
-        self.decoration_list.draw_hit_boxes()
         self.power_up_list = arcade.SpriteList(use_spatial_hash=True)
 
         # Set up the player, specifically placing it at these coordinates.
@@ -263,9 +261,6 @@ class GameView(arcade.View):
         self.wall_list.draw()
         self.decoration_list.draw()
         self.power_up_list.draw()
-        self.enemy_list.draw_hit_boxes((0, 0, 0, 255), 3)
-        self.player_list.draw_hit_boxes((0, 0, 0, 255), 3)
-        self.decoration_list.draw_hit_boxes((0, 0, 0, 255), 3)
 
         self.ui_camera.use()
 
