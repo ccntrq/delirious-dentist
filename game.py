@@ -153,7 +153,8 @@ class GameView(arcade.View):
         self.has_hit = False
 
         self.pliers_dropped = False
-        self.bolt_active = False
+        self.bolt_active = 0
+        self.flask_active = 0
 
         # Marker if gameover
         self.gameover_state = False
@@ -328,6 +329,9 @@ class GameView(arcade.View):
                 self.player_sprite.pliers_equipped = True
                 arcade.play_sound(self.item_collect_pliers_sound)
             elif isinstance(power_up, FlaskSprite):
+                self.add_flask_to_ui()
+                self.flask_active += 500
+                self.player_sprite.flask_active = True
                 arcade.play_sound(self.item_collect_generic_sound)
             elif isinstance(power_up, BoltSprite):
                 self.add_bolt_to_ui()
@@ -344,13 +348,19 @@ class GameView(arcade.View):
                 self.player_sprite.movement_speed = CHARACTER_MOVEMENT_SPEED
                 self.remove_bolt_from_ui()
 
+        if self.flask_active > 0:
+            self.flask_active -= 1
+            if self.flask_active == 0:
+                self.player_sprite.flask_active = False
+                self.remove_flask_from_ui()
+
         # Check for collisions with or hits of enemies
         enemy_hit_list = arcade.check_for_collision_with_list(
             self.player_sprite, self.enemy_list
         )
 
         self.player_sprite.hit_active = self.hit_active
-        if self.hit_active:
+        if self.player_sprite.is_hitting():
             self.hit_active -= 1
             if self.hit_active == 0:
                 if not enemy_hit_list and not self.has_hit:
@@ -462,7 +472,7 @@ class GameView(arcade.View):
 
     def add_bolt_to_ui(self):
         bolt = BoltSprite(0.4)
-        bolt.center_x = 850
+        bolt.center_x = 870
         bolt.center_y = UI_HEIGHT - 40
         self.static_ui_elements_list.append(bolt)
 
@@ -471,6 +481,19 @@ class GameView(arcade.View):
         self.static_ui_elements_list.clear()
         for item in items:
             if not isinstance(item, BoltSprite):
+                self.static_ui_elements_list.append(item)
+
+    def add_flask_to_ui(self):
+        flask = FlaskSprite(0.4)
+        flask.center_x = 840
+        flask.center_y = UI_HEIGHT - 40
+        self.static_ui_elements_list.append(flask)
+
+    def remove_flask_from_ui(self):
+        items = self.static_ui_elements_list.sprite_list
+        self.static_ui_elements_list.clear()
+        for item in items:
+            if not isinstance(item, FlaskSprite):
                 self.static_ui_elements_list.append(item)
 
     def drop_tooth(self, enemy):
@@ -865,12 +888,13 @@ class BoltSprite(arcade.Sprite):
         self.scale = scale
         self.texture = arcade.load_texture(UI_BOLT_IMAGE_SOURCE)
 
+
 class FlaskSprite(arcade.Sprite):
-    def __init__(self):
+    def __init__(self, scale=TILE_SCALING):
         # Set up parent class
         super().__init__()
 
-        self.scale = TILE_SCALING
+        self.scale = scale
         self.texture = arcade.load_texture(UI_FLASK_IMAGE_SOURCE)
 
 
@@ -902,9 +926,10 @@ class DentistCharacter(arcade.Sprite):
         # self.hit_hit_box = list(map(
         #    lambda x: [x[0] * 1.5, x[1] * 1.5], list(self.main_hit_box)))
         self.hit_active = 0
+        self.flask_active = False
 
     def update_animation(self, delta_time: float = 1 / 60):
-        if self.hit_active:
+        if self.is_hitting():
             self.texture = (
                 self.pliers_hit_texture if self.pliers_equipped else self.hit_texture
             )
@@ -913,6 +938,9 @@ class DentistCharacter(arcade.Sprite):
 
         self.texture = self.main_texture
         self.hit_box = self.main_hit_box
+
+    def is_hitting(self):
+        return self.hit_active > 0 or self.flask_active
 
 
 class ScoreBoard:
