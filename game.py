@@ -249,8 +249,6 @@ class GameView(arcade.View):
             self.player_sprite, self.wall_list
         )
 
-        arcade.play_sound(self.game_opening_sound)
-
     def on_draw(self):
         """Render the screen."""
         self.clear()
@@ -663,11 +661,14 @@ class InstructionView(arcade.View):
         # Reset the viewport, necessary if we have a scrolling game and we need
         # to reset the viewport back to the start so we can see what we draw.
         arcade.set_viewport(0, SCREEN_WIDTH - 1, 0, SCREEN_HEIGHT - 1)
+        self.game_opening_sound = arcade.load_sound(GAME_OPENING_SOUND_RESOURCE)
+        arcade.play_sound(self.game_opening_sound)
 
     def on_draw(self):
         """Draw this view"""
         # Don't clear hear. We want to draw over the game view!
         # self.clear()
+
         font = "Kenney Blocks"
         text_color = arcade.color.WHITE
         text_start = SCREEN_HEIGHT * 0.75
