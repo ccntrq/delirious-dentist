@@ -60,6 +60,7 @@ TOOTH_GOLD_DROP_SOUND_RESOURCE = "resources/sounds/golden_toothdrop.wav"
 ITEM_COLLECT_PLIERS_SOUND_RESOURCE = "resources/sounds/pliers.wav"
 ITEM_COLLECT_BOLT_SOUND_RESOURCE = "resources/sounds/bolt.wav"
 ITEM_COLLECT_GENERIC_SOUND_RESOURCE = "resources/sounds/item_catch.wav"
+#MUSIC_SOUND_SOURCE = "resources/sounds/music.wav"
 
 
 # movement speed of the dentist character
@@ -140,6 +141,7 @@ class GameView(arcade.View):
         self.item_collect_generic_sound = arcade.load_sound(
             ITEM_COLLECT_GENERIC_SOUND_RESOURCE
         )
+        #self.music_sound = arcade.load_sound(MUSIC_SOUND_SOURCE)
 
         # Our physics engine
         self.physics_engine = None
@@ -152,6 +154,7 @@ class GameView(arcade.View):
 
     def setup(self):
         """Set up the game here. Call this function to restart the game."""
+        #arcade.play_sound(self.music_sound, 0.1, 0.0, True, 1.0)
         self.score = 0
         self.hit_cooldown = 0
         self.hit_active = 0
