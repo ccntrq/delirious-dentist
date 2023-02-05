@@ -315,17 +315,19 @@ class GameView(arcade.View):
         for power_up in power_up_hit_list:
             if isinstance(power_up, HeartSprite):
                 self.add_life()
+                arcade.play_sound(self.item_collect_generic_sound)
             elif isinstance(power_up, ToothSprite):
                 self.on_score(power_up.points)
                 arcade.play_sound(self.tooth_collect_sound)
             elif isinstance(power_up, GoldenToothSprite):
                 self.on_score(power_up.points)
-                arcade.play_sound(self.tooth_collect_sound)  # XXX GOLDEN TOOTH SOUND
+                arcade.play_sound(self.tooth_gold_collect_sound)
                 self.camera.shake(pyglet.math.Vec2(5, 5))
             elif isinstance(power_up, PliersSprite):
                 # XXX pliers pickup sound
                 self.add_pliers_to_ui()
                 self.player_sprite.pliers_equipped = True
+                arcade.play_sound(self.item_collect_pliers_sound)
             else:
                 raise Exception("Unknown power up type.")
             power_up.remove_from_sprite_lists()
@@ -434,7 +436,6 @@ class GameView(arcade.View):
         pliers.center_x = 700
         pliers.center_y = UI_HEIGHT - 40
         self.static_ui_elements_list.append(pliers)
-        arcade.play_sound(self.item_collect_pliers_sound)
 
     def drop_tooth(self, enemy):
         # Drop golden tooth
