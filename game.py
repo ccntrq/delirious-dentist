@@ -359,6 +359,7 @@ class GameView(arcade.View):
 
         self.add_enemies()
         self.add_hearts()
+        self.add_bolts()
 
     def update_player_speed(self):
         # Calculate speed based on the keys pressed
@@ -485,6 +486,15 @@ class GameView(arcade.View):
         heart = HeartSprite()
         self.set_random_sprite_position_no_collisions(heart)
         self.power_up_list.append(heart)
+
+    def add_bolts(self):
+        if random.randint(1, 2000) == 1:
+            self.add_bolt()
+
+    def add_bolt(self):
+        bolt = BoltSprite()
+        self.set_random_sprite_position_no_collisions(bolt)
+        self.power_up_list.append(bolt)
 
     def add_life(self):
         lifes = len(self.life_list.sprite_list)
