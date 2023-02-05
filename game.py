@@ -43,6 +43,7 @@ UI_PLIER_IMAGE_SOURCE = "resources/sprites/ui/plier.png"
 UI_BOLT_IMAGE_SOURCE = "resources/sprites/ui/bolt.png"
 UI_FLASK_IMAGE_SOURCE = "resources/sprites/ui/flask.png"
 UI_SCOREBOARD_IMAGE_SOURCE = "resources/sprites/ui/scoreboard.png"
+SCREEN_MAIN_TITLE_IMAGE_SOURCE = "resources/coverart/main_title.png"
 
 # Sounds
 ENEMY_HIT_SOUND_RESOURCE = "resources/sounds/hit_nodrop.wav"
@@ -785,15 +786,30 @@ class InstructionView(arcade.View):
         self.game_opening_sound = arcade.load_sound(GAME_OPENING_SOUND_RESOURCE)
         arcade.play_sound(self.game_opening_sound)
 
+        self.cover_art_list = None
+
+        self.setup()
+
+    def setup(self):
+
+        self.cover_art_list = arcade.SpriteList()
+
+        # Create main title
+        main_title = arcade.Sprite(SCREEN_MAIN_TITLE_IMAGE_SOURCE, 1)
+        main_title.center_x = SCREEN_WIDTH / 2
+        main_title.center_y = SCREEN_HEIGHT - 120
+        self.cover_art_list.append(main_title)
+
+
     def on_draw(self):
         """Draw this view"""
         # Don't clear hear. We want to draw over the game view!
         # self.clear()
-
+        self.cover_art_list.draw()
         font = "Kenney Blocks"
         text_color = arcade.color.WHITE
         text_start = SCREEN_HEIGHT * 0.75
-        arcade.draw_text(
+        '''arcade.draw_text(
             "DELIRIOUS DENTIST",
             0,
             text_start,
@@ -802,7 +818,7 @@ class InstructionView(arcade.View):
             width=SCREEN_WIDTH,
             align="center",
             font_name=font,
-        )
+        )'''
         arcade.draw_text(
             "Press space to perform a root treatment. Collect tooth for your precious roots collection and avoid beeing hit by angry patients",
             0,
