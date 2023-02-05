@@ -67,7 +67,7 @@ CHARACTER_HIT_TIMEOUT = 20
 CHARACTER_HIT_COOLDOWN = 10
 CHARACTER_LIFES = 5
 # chance for a tooth drop in percent
-TOOTH_DROP_CHANCE = 40
+TOOTH_DROP_CHANCE = 50
 TOOTH_GOLDEN_DROP_CHANCE = 10
 ENEMY_MAX_SPEED = 5
 TOOTH_POINTS = 1
@@ -253,19 +253,6 @@ class GameView(arcade.View):
         self.clear()
         # Code to draw the screen goes here
 
-        self.ui_camera.use()
-
-        self.life_list.draw()
-        self.static_ui_elements_list.draw()
-        arcade.draw_text(
-            str(self.score),
-            950,
-            12,
-            arcade.color.BLACK,
-            24,
-            width=SCREEN_WIDTH,
-            align="left",
-        )
 
         self.camera.use()
 
@@ -279,6 +266,20 @@ class GameView(arcade.View):
         self.enemy_list.draw_hit_boxes((0, 0, 0, 255), 3)
         self.player_list.draw_hit_boxes((0, 0, 0, 255), 3)
         self.decoration_list.draw_hit_boxes((0, 0, 0, 255), 3)
+
+        self.ui_camera.use()
+
+        self.life_list.draw()
+        self.static_ui_elements_list.draw()
+        arcade.draw_text(
+            str(self.score),
+            950,
+            12,
+            arcade.color.BLACK,
+            24,
+            width=SCREEN_WIDTH,
+            align="left",
+        )
 
         if self.init:
             self.init = False
@@ -303,6 +304,7 @@ class GameView(arcade.View):
         # Move the player with the physics engine
         self.physics_engine.update()
         self.player_list.update_animation()
+        self.static_ui_elements_list.update_animation()
 
         # Check for tooth collections
         power_up_hit_list = arcade.check_for_collision_with_list(
@@ -319,7 +321,11 @@ class GameView(arcade.View):
             elif isinstance(power_up, GoldenToothSprite):
                 self.on_score(power_up.points)
                 arcade.play_sound(self.tooth_gold_collect_sound)
-                self.camera.shake(pyglet.math.Vec2(5, 5))
+                animation_sprite = ToothAnimation()
+                animation_sprite.center_x = power_up.center_x
+                animation_sprite.center_y = power_up.center_y
+                self.static_ui_elements_list.append(animation_sprite)
+
             elif isinstance(power_up, PliersSprite):
                 # XXX pliers pickup sound
                 self.add_pliers_to_ui()
@@ -455,6 +461,7 @@ class GameView(arcade.View):
         tooth.center_y = min(
             [max([enemy.center_y + random.randint(-64, 64), 128]), ENEMY_TOP_BORDER]
         )
+        self.camera.shake(pyglet.math.Vec2(5, 5))
 
     def add_pliers(self):
         if (
@@ -842,6 +849,19 @@ class ScoreBoard:
                 )
             )
             return lines[0:limit]
+
+class ToothAnimation(GoldenToothSprite):
+    def __init__(self):
+
+        # Set up parent class
+        super().__init__()
+        self.scale = 1
+
+    def update_animation(self, delta_time: float = 1 / 60):
+        self.scale *= 1.2
+        maximum_scale = 6
+        if self.scale >= maximum_scale:
+            self.remove_from_sprite_lists()
 
 
 def main():
