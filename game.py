@@ -41,7 +41,7 @@ UI_TOOTH_IMAGE_SOURCE = "resources/sprites/ui/tooth.png"
 UI_GOLDEN_TOOTH_IMAGE_SOURCE = "resources/sprites/ui/golden_tooth.png"
 UI_PLIER_IMAGE_SOURCE = "resources/sprites/ui/plier.png"
 UI_BOLT_IMAGE_SOURCE = "resources/sprites/ui/bolt.png"
-UI_JUGGER_IMAGE_SOURCE = "resources/sprites/ui/jugger.png"
+UI_FLASK_IMAGE_SOURCE = "resources/sprites/ui/flask.png"
 UI_SCOREBOARD_IMAGE_SOURCE = "resources/sprites/ui/scoreboard.png"
 
 # Sounds
@@ -327,6 +327,8 @@ class GameView(arcade.View):
                 self.add_pliers_to_ui()
                 self.player_sprite.pliers_equipped = True
                 arcade.play_sound(self.item_collect_pliers_sound)
+            elif isinstance(power_up, FlaskSprite):
+                arcade.play_sound(self.item_collect_generic_sound)
             else:
                 raise Exception("Unknown power up type.")
             power_up.remove_from_sprite_lists()
@@ -360,6 +362,7 @@ class GameView(arcade.View):
         self.add_enemies()
         self.add_hearts()
         self.add_bolts()
+        self.add_flasks()
 
     def update_player_speed(self):
         # Calculate speed based on the keys pressed
@@ -495,6 +498,15 @@ class GameView(arcade.View):
         bolt = BoltSprite()
         self.set_random_sprite_position_no_collisions(bolt)
         self.power_up_list.append(bolt)
+
+    def add_flasks(self):
+        if random.randint(1, 3000) == 1:
+            self.add_flask()
+
+    def add_flask(self):
+        flask = FlaskSprite()
+        self.set_random_sprite_position_no_collisions(flask)
+        self.power_up_list.append(flask)
 
     def add_life(self):
         lifes = len(self.life_list.sprite_list)
@@ -826,6 +838,14 @@ class BoltSprite(arcade.Sprite):
 
         self.scale = TILE_SCALING
         self.texture = arcade.load_texture(UI_BOLT_IMAGE_SOURCE)
+
+class FlaskSprite(arcade.Sprite):
+    def __init__(self):
+        # Set up parent class
+        super().__init__()
+
+        self.scale = TILE_SCALING
+        self.texture = arcade.load_texture(UI_FLASK_IMAGE_SOURCE)
 
 
 class DentistCharacter(arcade.Sprite):
