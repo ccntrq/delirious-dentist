@@ -401,6 +401,7 @@ class GameView(arcade.View):
             if self.hit_cooldown > 0:
                 arcade.play_sound(self.space_spam_sound)
             else:
+                arcade.play_sound(self.enemy_hit_miss_sound)
                 self.hit_active = CHARACTER_HIT_TIMEOUT + (
                     15 if self.player_sprite.pliers_equipped else 0
                 )
