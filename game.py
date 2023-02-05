@@ -168,13 +168,6 @@ class GameView(arcade.View):
         self.decoration_list = arcade.SpriteList(use_spatial_hash=True)
         self.power_up_list = arcade.SpriteList(use_spatial_hash=True)
 
-        # Set up the player, specifically placing it at these coordinates.
-        image_source = CHARACTER_DENTIST_IMAGE_SOURCE
-        self.player_sprite = DentistCharacter()
-        self.player_sprite.center_x = 64
-        self.player_sprite.center_y = 2 * UI_HEIGHT
-        self.player_list.append(self.player_sprite)
-
         for _ in range(CHARACTER_LIFES):
             self.add_life()
 
@@ -240,6 +233,12 @@ class GameView(arcade.View):
         room_water_dispenser = arcade.Sprite(ROOM_WATER_DISPENSER_IMAGE_SOURCE, 0.4)
         self.set_random_sprite_position_no_collisions(room_water_dispenser)
         self.decoration_list.append(room_water_dispenser)
+
+        # Set up the player, specifically placing it at these coordinates.
+        image_source = CHARACTER_DENTIST_IMAGE_SOURCE
+        self.player_sprite = DentistCharacter()
+        self.set_random_sprite_position_no_collisions(self.player_sprite)
+        self.player_list.append(self.player_sprite)
 
         for deco in self.decoration_list:
             self.wall_list.append(deco)
