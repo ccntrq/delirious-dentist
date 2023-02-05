@@ -435,13 +435,7 @@ class GameView(arcade.View):
             self.add_random_enemy()
 
     def add_random_enemy(self):
-        image_sources = [
-            ENEMY_1_IMAGE_SOURCE,
-            ENEMY_2_IMAGE_SOURCE,
-            ENEMY_3_IMAGE_SOURCE,
-        ]
-        image_source = random.choice(image_sources)
-        enemy_sprite = arcade.Sprite(image_source, CHARACTER_SCALING)
+        enemy_sprite = EnemySprite()
         self.set_enemy_speed(enemy_sprite)
 
         for _ in range(0, 9):
@@ -638,6 +632,20 @@ class InstructionView(arcade.View):
             game_view.setup()
             self.window.show_view(game_view)
 
+
+class EnemySprite(arcade.Sprite):
+    def __init__(self):
+        # Set up parent class
+        super().__init__()
+
+        image_sources = [
+            ENEMY_1_IMAGE_SOURCE,
+            ENEMY_2_IMAGE_SOURCE,
+            ENEMY_3_IMAGE_SOURCE,
+        ]
+        image_source = random.choice(image_sources)
+        self.scale = CHARACTER_SCALING
+        self.texture = arcade.load_texture(image_source)
 
 class PliersSprite(arcade.Sprite):
     def __init__(self, scale):
