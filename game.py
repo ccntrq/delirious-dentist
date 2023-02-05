@@ -553,7 +553,7 @@ class GameOverView(arcade.View):
         # self.clear()
 
         text_color = arcade.color.BLACK
-        text_color_current = arcade.color.BARN_RED
+        text_color_current = arcade.color.BANANA_YELLOW
         begin_x = SCREEN_HEIGHT * 0.75
         font = "Kenney Blocks"
         arcade.draw_text(
@@ -635,7 +635,7 @@ class InstructionView(arcade.View):
         # Don't clear hear. We want to draw over the game view!
         # self.clear()
         font = "Kenney Blocks"
-        text_color = arcade.color.BLACK
+        text_color = arcade.color.WHITE
         text_start = SCREEN_HEIGHT * 0.75
         arcade.draw_text(
             "DELIRIOUS DENTIST",
