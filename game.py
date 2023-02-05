@@ -112,6 +112,7 @@ class GameView(arcade.View):
         self.hit_active = None
         self.hit_cooldown = None
         self.has_hit = None
+        self.enemy_auto_spawn = None
 
         self.key_history = []
 
@@ -159,6 +160,7 @@ class GameView(arcade.View):
         self.pliers_dropped = False
         self.bolt_active = 0
         self.flask_active = 0
+        self.enemy_auto_spawn = 0
 
         # Marker if gameover
         self.gameover_state = False
@@ -578,6 +580,12 @@ class GameView(arcade.View):
 
         for _ in range(add_enemies):
             self.add_random_enemy()
+
+        if self.enemy_auto_spawn > random.randint(0, 250000):
+            self.add_random_enemy()
+            self.enemy_auto_spawn = 0
+        else:
+            self.enemy_auto_spawn +=1
 
     def add_random_enemy(self):
         enemy_sprite = EnemySprite()
