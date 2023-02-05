@@ -8,7 +8,7 @@ import random
 import arcade
 import pyglet
 
-VERSION = "0.1"
+VERSION = "1.0"
 
 # Constants
 SCREEN_WIDTH = 1024
