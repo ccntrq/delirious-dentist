@@ -153,8 +153,8 @@ class GameView(arcade.View):
             self.add_life()
 
         ui_tooth = arcade.Sprite(UI_TOOTH_IMAGE_SOURCE, 0.25)
-        ui_tooth.center_x = 730
-        ui_tooth.center_y = UI_HEIGHT - 32
+        ui_tooth.center_x = 930
+        ui_tooth.center_y = UI_HEIGHT - 38
         self.static_ui_elements_list.append(ui_tooth)
 
 
@@ -230,8 +230,8 @@ class GameView(arcade.View):
         self.static_ui_elements_list.draw()
         arcade.draw_text(
             str(self.score),
-            750,
-            18,
+            950,
+            12,
             arcade.color.BLACK,
             24,
             width=SCREEN_WIDTH,
@@ -451,7 +451,7 @@ class GameView(arcade.View):
         lifes = len(self.life_list.sprite_list)
         life = HeartSprite()
         life.center_x = lifes * 40 + 32
-        life.center_y = UI_HEIGHT - 32
+        life.center_y = UI_HEIGHT - 40
 
         self.life_list.append(life)
 
