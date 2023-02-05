@@ -105,6 +105,7 @@ class GameView(arcade.View):
         self.power_up_list = None
         self.static_ui_elements_list = None
         self.pliers_dropped = None
+        self.bolt_active = None
 
         self.hit_active = None
         self.hit_cooldown = None
@@ -152,6 +153,7 @@ class GameView(arcade.View):
         self.has_hit = False
 
         self.pliers_dropped = False
+        self.bolt_active = False
 
         # Marker if gameover
         self.gameover_state = False
@@ -322,15 +324,25 @@ class GameView(arcade.View):
                 self.static_ui_elements_list.append(animation_sprite)
 
             elif isinstance(power_up, PliersSprite):
-                # XXX pliers pickup sound
                 self.add_pliers_to_ui()
                 self.player_sprite.pliers_equipped = True
                 arcade.play_sound(self.item_collect_pliers_sound)
             elif isinstance(power_up, FlaskSprite):
                 arcade.play_sound(self.item_collect_generic_sound)
+            elif isinstance(power_up, BoltSprite):
+                self.add_bolt_to_ui()
+                self.bolt_active += 500
+                self.player_sprite.movement_speed = CHARACTER_MOVEMENT_SPEED * 1.5
+                arcade.play_sound(self.item_collect_bolt_sound)
             else:
                 raise Exception("Unknown power up type.")
             power_up.remove_from_sprite_lists()
+
+        if self.bolt_active > 0:
+            self.bolt_active -= 1
+            if self.bolt_active == 0:
+                self.player_sprite.movement_speed = CHARACTER_MOVEMENT_SPEED
+                self.remove_bolt_from_ui()
 
         # Check for collisions with or hits of enemies
         enemy_hit_list = arcade.check_for_collision_with_list(
@@ -377,14 +389,14 @@ class GameView(arcade.View):
         vert = next((x for x in actions if x == "up" or x == "down"), None)
 
         if vert == "up":
-            self.player_sprite.change_y = CHARACTER_MOVEMENT_SPEED
+            self.player_sprite.change_y = self.player_sprite.movement_speed
         elif vert == "down":
-            self.player_sprite.change_y = -CHARACTER_MOVEMENT_SPEED
+            self.player_sprite.change_y = -self.player_sprite.movement_speed
 
         if horz == "left":
-            self.player_sprite.change_x = -CHARACTER_MOVEMENT_SPEED
+            self.player_sprite.change_x = -self.player_sprite.movement_speed
         elif horz == "right":
-            self.player_sprite.change_x = CHARACTER_MOVEMENT_SPEED
+            self.player_sprite.change_x = self.player_sprite.movement_speed
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed."""
@@ -444,9 +456,22 @@ class GameView(arcade.View):
 
     def add_pliers_to_ui(self):
         pliers = PliersSprite(0.2)
-        pliers.center_x = 700
+        pliers.center_x = 900
         pliers.center_y = UI_HEIGHT - 40
         self.static_ui_elements_list.append(pliers)
+
+    def add_bolt_to_ui(self):
+        bolt = BoltSprite(0.4)
+        bolt.center_x = 850
+        bolt.center_y = UI_HEIGHT - 40
+        self.static_ui_elements_list.append(bolt)
+
+    def remove_bolt_from_ui(self):
+        items = self.static_ui_elements_list.sprite_list
+        self.static_ui_elements_list.clear()
+        for item in items:
+            if not isinstance(item, BoltSprite):
+                self.static_ui_elements_list.append(item)
 
     def drop_tooth(self, enemy):
         # Drop golden tooth
@@ -831,12 +856,13 @@ class HeartSprite(arcade.Sprite):
         self.scale = TILE_SCALING
         self.texture = arcade.load_texture(UI_HEART_IMAGE_SOURCE)
 
+
 class BoltSprite(arcade.Sprite):
-    def __init__(self):
+    def __init__(self, scale=TILE_SCALING):
         # Set up parent class
         super().__init__()
 
-        self.scale = TILE_SCALING
+        self.scale = scale
         self.texture = arcade.load_texture(UI_BOLT_IMAGE_SOURCE)
 
 class FlaskSprite(arcade.Sprite):
@@ -855,6 +881,8 @@ class DentistCharacter(arcade.Sprite):
 
         self.scale = CHARACTER_SCALING
         self.pliers_equipped = False
+
+        self.movement_speed = CHARACTER_MOVEMENT_SPEED
 
         # XXX auto set hitbox or adjust coordinates to our sprite
         # self.points = [[-22, -64], [22, -64], [22, 28], [-22, 28]]
