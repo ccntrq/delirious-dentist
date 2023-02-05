@@ -46,11 +46,20 @@ UI_JUGGER_IMAGE_SOURCE = "resources/sprites/ui/jugger.png"
 UI_SCOREBOARD_IMAGE_SOURCE = "resources/sprites/ui/scoreboard.png"
 
 # Sounds
-ENEMY_HIT_SOUND_RESOURCE = ":resources:sounds/hit2.wav"
-ENEMY_COLLISION_SOUND_RESOURCE = ":resources:sounds/hurt1.wav"
-GAME_OVER_SOUND_RESOURCE = ":resources:sounds/gameover1.wav"
-TOOTH_COLLECT_SOUND_RESOURCE = ":resources:sounds/coin1.wav"
-TOOTH_DROP_SOUND_RESOURCE = ":resources:sounds/laser1.wav"
+ENEMY_HIT_SOUND_RESOURCE = "resources/sounds/hit_nodrop.wav"
+ENEMY_HIT_MISS_SOUND_RESOURCE = "resources/sounds/hit_miss.wav"
+ENEMY_COLLISION_SOUND_RESOURCE = "resources/sounds/enemy_collision.wav"
+GAME_OVER_SOUND_RESOURCE = "resources/sounds/gameover.wav"
+GAME_OPENING_SOUND_RESOURCE = "resources/sounds/openingscore.wav"
+SPACE_SPAM_SOUND_RESOURCE = "resources/sounds/space_spam.wav"
+TOOTH_COLLECT_SOUND_RESOURCE = "resources/sounds/tooth_collect.wav"
+TOOTH_GOLD_COLLECT_SOUND_RESOURCE = "resources/sounds/golden_tooth.wav"
+TOOTH_DROP_SOUND_RESOURCE = "resources/sounds/tooth_drop.wav"
+TOOTH_GOLD_DROP_SOUND_RESOURCE = "resources/sounds/golden_toothdrop.wav"
+ITEM_COLLECT_PLIERS_SOUND_RESOURCE = "resources/sounds/pliers.wav"
+ITEM_COLLECT_BOLT_SOUND_RESOURCE = "resources/sounds/bolt.wav"
+ITEM_COLLECT_GENERIC_SOUND_RESOURCE = "resources/sounds/item_catch.wav"
+
 
 # movement speed of the dentist character
 CHARACTER_MOVEMENT_SPEED = 5
@@ -105,10 +114,18 @@ class GameView(arcade.View):
 
         # Load sounds
         self.enemy_hit_sound = arcade.load_sound(ENEMY_HIT_SOUND_RESOURCE)
+        self.enemy_hit_miss_sound = arcade.load_sound(ENEMY_HIT_MISS_SOUND_RESOURCE)
         self.enemy_collision_sound = arcade.load_sound(ENEMY_COLLISION_SOUND_RESOURCE)
         self.game_over_sound = arcade.load_sound(GAME_OVER_SOUND_RESOURCE)
+        self.game_opening_sound = arcade.load_sound(GAME_OPENING_SOUND_RESOURCE)
+        self.space_spam_sound = arcade.load_sound(SPACE_SPAM_SOUND_RESOURCE)
         self.tooth_collect_sound = arcade.load_sound(TOOTH_COLLECT_SOUND_RESOURCE)
+        self.tooth_gold_collect_sound = arcade.load_sound(TOOTH_GOLD_COLLECT_SOUND_RESOURCE)
         self.tooth_drop_sound = arcade.load_sound(TOOTH_DROP_SOUND_RESOURCE)
+        self.tooth_gold_drop_sound = arcade.load_sound(TOOTH_GOLD_DROP_SOUND_RESOURCE)
+        self.item_collect_pliers_sound = arcade.load_sound(ITEM_COLLECT_PLIERS_SOUND_RESOURCE)
+        self.item_collect_bolt_sound = arcade.load_sound(ITEM_COLLECT_BOLT_SOUND_RESOURCE)
+        self.item_collect_generic_sound = arcade.load_sound(ITEM_COLLECT_GENERIC_SOUND_RESOURCE)
 
         # Our physics engine
         self.physics_engine = None
@@ -231,6 +248,8 @@ class GameView(arcade.View):
         self.physics_engine = arcade.PhysicsEngineSimple(
             self.player_sprite, self.wall_list
         )
+
+        arcade.play_sound(self.game_opening_sound)
 
     def on_draw(self):
         """Render the screen."""
@@ -371,7 +390,7 @@ class GameView(arcade.View):
             self.key_history.append("right")
         elif key == arcade.key.SPACE:
             if self.hit_cooldown > 0:
-                arcade.play_sound(self.game_over_sound)
+                arcade.play_sound(self.space_spam_sound)
             else:
                 self.hit_active = CHARACTER_HIT_TIMEOUT + (
                     15 if self.player_sprite.pliers_equipped else 0
