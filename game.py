@@ -35,10 +35,14 @@ ROOM_WINDOW_RIGHT_IMAGE_SOURCE = "resources/sprites/room/window_right.png"
 ROOM_CHAIR_IMAGE_SOURCE = "resources/sprites/room/chair.png"
 ROOM_PLANT_IMAGE_SOURCE = "resources/sprites/room/plant.png"
 ROOM_XRAY_IMAGE_SOURCE = "resources/sprites/room/xray.png"
+ROOM_VENDING_MACHINE_IMAGE_SOURCE = "resources/sprites/room/vending_machine.png"
+ROOM_WATER_DISPENSER_IMAGE_SOURCE = "resources/sprites/room/water_dispenser.png"
 UI_HEART_IMAGE_SOURCE = "resources/sprites/ui/heart.png"
 UI_TOOTH_IMAGE_SOURCE = "resources/sprites/ui/tooth.png"
 UI_GOLDEN_TOOTH_IMAGE_SOURCE = "resources/sprites/ui/golden_tooth.png"
 UI_PLIER_IMAGE_SOURCE = "resources/sprites/ui/plier.png"
+UI_BOLT_IMAGE_SOURCE = "resources/sprites/ui/bolt.png"
+UI_JUGGER_IMAGE_SOURCE = "resources/sprites/ui/jugger.png"
 UI_SCOREBOARD_IMAGE_SOURCE = "resources/sprites/ui/scoreboard.png"
 
 # Sounds
@@ -121,7 +125,6 @@ class GameView(arcade.View):
         self.score = 0
         self.hit_cooldown = 0
         self.hit_active = 0
-
 
         self.pliers_dropped = False
 
@@ -210,6 +213,16 @@ class GameView(arcade.View):
         room_xray.center_x = self.random_x()
         room_xray.center_y = self.random_y()
         self.decoration_list.append(room_xray)
+
+        room_vending_machine = arcade.Sprite(ROOM_VENDING_MACHINE_IMAGE_SOURCE, 0.4)
+        room_vending_machine.center_x = self.random_x()
+        room_vending_machine.center_y = self.random_y()
+        self.decoration_list.append(room_vending_machine)
+
+        room_water_dispenser = arcade.Sprite(ROOM_WATER_DISPENSER_IMAGE_SOURCE, 0.4)
+        room_water_dispenser.center_x = self.random_x()
+        room_water_dispenser.center_y = self.random_y()
+        self.decoration_list.append(room_water_dispenser)
 
         for deco in self.decoration_list:
             self.wall_list.append(deco)
