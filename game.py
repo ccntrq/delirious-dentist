@@ -513,6 +513,8 @@ class GameView(arcade.View):
             arcade.play_sound(self.tooth_gold_drop_sound)
         else:
             tooth = ToothSprite()
+            arcade.play_sound(self.enemy_hit_punch_sound)
+            arcade.play_sound(self.tooth_drop_sound)
 
         self.power_up_list.append(tooth)
         self.position_after_hit(self.player_sprite, enemy, tooth)
