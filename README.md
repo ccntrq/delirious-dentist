@@ -11,9 +11,9 @@ The more teeth he collects the more people come to stop him.
 
 ## How to play
 
-Navigate the dentist using w, a, s, d or arrow keys
+Navigate the dentist using `W`, `A`, `S`, `D` or using the Arrow keys.
 
-Attack with space
+Attack with `Space`
 
 ## Game Mechanics
 
@@ -23,6 +23,17 @@ Collect teeth for score points.
 The more score points you collect the more patients will come.
 
 ## Install Instructions
+
+This game was developed with [Python 3](https://www.python.org/) and [Python Arcade](https://api.arcade.academy/en/latest/index.html).
+
+Follow the instructions to install [Python (here)](https://wiki.python.org/moin/BeginnersGuide/Download) and [Python Arcade (here)](https://api.arcade.academy/en/latest/install/index.html).
+
+Afterwards the game can be started with
+
+```
+python3 game.py
+```
+
 
 ## Development Summary
 
