@@ -68,7 +68,7 @@ CHARACTER_HIT_TIMEOUT = 20
 CHARACTER_HIT_COOLDOWN = 10
 CHARACTER_LIFES = 5
 # chance for a tooth drop in percent
-TOOTH_DROP_CHANCE = 50
+TOOTH_DROP_CHANCE = 40
 TOOTH_GOLDEN_DROP_CHANCE = 10
 ENEMY_MAX_SPEED = 5
 TOOTH_POINTS = 1
@@ -434,6 +434,7 @@ class GameView(arcade.View):
         pliers.center_x = 700
         pliers.center_y = UI_HEIGHT - 40
         self.static_ui_elements_list.append(pliers)
+        arcade.play_sound(self.item_collect_pliers_sound)
 
     def drop_tooth(self, enemy):
         # Drop golden tooth
