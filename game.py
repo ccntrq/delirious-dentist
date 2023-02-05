@@ -39,6 +39,7 @@ UI_HEART_IMAGE_SOURCE = "resources/sprites/ui/heart.png"
 UI_TOOTH_IMAGE_SOURCE = "resources/sprites/ui/tooth.png"
 UI_GOLDEN_TOOTH_IMAGE_SOURCE = "resources/sprites/ui/golden_tooth.png"
 UI_PLIER_IMAGE_SOURCE = "resources/sprites/ui/plier.png"
+UI_SCOREBOARD_IMAGE_SOURCE = "resources/sprites/ui/scoreboard.png"
 
 # Sounds
 ENEMY_HIT_SOUND_RESOURCE = ":resources:sounds/hit2.wav"
@@ -111,13 +112,21 @@ class GameView(arcade.View):
         self.camera = arcade.Camera(SCREEN_WIDTH, SCREEN_HEIGHT)
         self.ui_camera = arcade.Camera(SCREEN_WIDTH, SCREEN_HEIGHT)
 
+        # Marker if gameover
+        self.gameover_state = False
+
+
     def setup(self):
         """Set up the game here. Call this function to restart the game."""
         self.score = 0
         self.hit_cooldown = 0
         self.hit_active = 0
 
+
         self.pliers_dropped = False
+
+        # Marker if gameover
+        self.gameover_state = False
 
         # Create the Sprite lists
         self.player_list = arcade.SpriteList()
@@ -147,6 +156,7 @@ class GameView(arcade.View):
         ui_tooth.center_x = 730
         ui_tooth.center_y = UI_HEIGHT - 32
         self.static_ui_elements_list.append(ui_tooth)
+
 
         # Create walls
         # Create lower boundary
@@ -244,6 +254,17 @@ class GameView(arcade.View):
         if self.init:
             self.init = False
             self.window.show_view(InstructionView())
+
+        if self.gameover_state == True:
+            # Create Scoreboard Background here because of transparency; transparency issues when drawing in GameOverView
+            ui_scoreboard = arcade.Sprite(UI_SCOREBOARD_IMAGE_SOURCE, 1.25)
+            ui_scoreboard.center_x = SCREEN_WIDTH / 2
+            ui_scoreboard.center_y = SCREEN_HEIGHT / 2 - 48
+            ui_scoreboard.draw()
+
+            gameover_view = GameOverView(self.score)
+            gameover_view.setup()
+            self.window.show_view(gameover_view)
 
         self.check_game_over()
 
@@ -491,7 +512,10 @@ class GameView(arcade.View):
     def check_game_over(self):
         if not self.life_list.sprite_list:
             arcade.play_sound(self.game_over_sound)
-            self.window.show_view(GameOverView(self.score))
+
+            #needed to check if it's the last draw before GameOverView, to draw background board for the scoreboard
+            self.gameover_state = True
+
 
     def random_x(self):
         return random.randint(ENEMY_LEFT_BORDER + 64, ENEMY_RIGHT_BORDER - 64)
@@ -507,11 +531,21 @@ class GameOverView(arcade.View):
         """This is run once when we switch to this view"""
         super().__init__()
         self.score = score
-        ScoreBoard().store_score(score)
+        self.gameover_time = ScoreBoard().store_score(score)
+
+        self.scoreboard_ui_elements_list = None
 
         # Reset the viewport, necessary if we have a scrolling game and we need
         # to reset the viewport back to the start so we can see what we draw.
         arcade.set_viewport(0, SCREEN_WIDTH - 1, 0, SCREEN_HEIGHT - 1)
+
+    def setup(self):
+
+        self.scoreboard_ui_elements_list = arcade.SpriteList()
+        ui_scoreboard = arcade.Sprite(UI_SCOREBOARD_IMAGE_SOURCE, 1.25)
+        ui_scoreboard.center_x = SCREEN_WIDTH / 2
+        ui_scoreboard.center_y = SCREEN_HEIGHT / 2 - 48
+        self.scoreboard_ui_elements_list.append(ui_scoreboard)
 
     def on_draw(self):
         """Draw this view"""
@@ -519,6 +553,7 @@ class GameOverView(arcade.View):
         # self.clear()
 
         text_color = arcade.color.BLACK
+        text_color_current = arcade.color.BARN_RED
         begin_x = SCREEN_HEIGHT * 0.75
         font = "Kenney Blocks"
         arcade.draw_text(
@@ -535,7 +570,7 @@ class GameOverView(arcade.View):
             f"SCORE: {self.score}",
             0,
             begin_x - 48,
-            text_color,
+            text_color_current,
             32,
             width=SCREEN_WIDTH,
             align="center",
@@ -565,10 +600,10 @@ class GameOverView(arcade.View):
         i = 0
         for high_score in ScoreBoard().get_high_scores():
             arcade.draw_text(
-                f"{high_score[0]}  -  {high_score[1]}",
+                f'{high_score[0]:03}  -  {high_score[1]}',
                 0,
                 begin_x - 170 - i * 30,
-                text_color,
+                text_color_current if self.gameover_time == high_score[1] else text_color,
                 24,
                 width=SCREEN_WIDTH,
                 align="center",
@@ -754,6 +789,7 @@ class ScoreBoard:
         timestamp = datetime.datetime.now().strftime("%b %d %Y %H:%M:%S")
         with open(HIGH_SCORE_FILE, "a+") as high_score_file:
             high_score_file.write(f"{score},{timestamp}\n")
+        return timestamp
 
     def get_high_scores(self, limit=10):
         with open(HIGH_SCORE_FILE, "r+") as high_score_file:
