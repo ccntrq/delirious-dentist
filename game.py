@@ -90,6 +90,7 @@ class GameView(arcade.View):
         self.enemy_list = None
         self.power_up_list = None
         self.static_ui_elements_list = None
+        self.pliers_dropped = None
 
         self.hit_active = None
         self.hit_cooldown = None
@@ -114,6 +115,8 @@ class GameView(arcade.View):
         self.score = 0
         self.hit_cooldown = 0
         self.hit_active = 0
+
+        self.pliers_dropped = False
 
         # Create the Sprite lists
         self.player_list = arcade.SpriteList()
@@ -252,13 +255,17 @@ class GameView(arcade.View):
         for power_up in power_up_hit_list:
             if isinstance(power_up, HeartSprite):
                 self.add_life()
-            elif isinstance(power_up, ToothSprite) :
+            elif isinstance(power_up, ToothSprite):
                 self.on_score(power_up.points)
                 arcade.play_sound(self.tooth_collect_sound)
-            elif isinstance( power_up, GoldenToothSprite):
+            elif isinstance(power_up, GoldenToothSprite):
                 self.on_score(power_up.points)
-                arcade.play_sound(self.tooth_collect_sound) # XXX GOLDEN TOOTH SOUND
-                self.camera.shake(pyglet.math.Vec2(5,5))
+                arcade.play_sound(self.tooth_collect_sound)  # XXX GOLDEN TOOTH SOUND
+                self.camera.shake(pyglet.math.Vec2(5, 5))
+            elif isinstance(power_up, PliersSprite):
+                # XXX pliers pickup sound
+                self.add_pliers_to_ui()
+                self.player_sprite.pliers_equipped = True
             else:
                 raise Exception("Unknown power up type.")
             power_up.remove_from_sprite_lists()
@@ -359,12 +366,11 @@ class GameView(arcade.View):
 
     def on_score(self, score):
         self.score += score
-        if self.score >= 10 and not self.player_sprite.pliers_equipped:
-            self.player_sprite.pliers_equipped = True
-            self.add_pliers_to_ui()
+
+        self.add_pliers()
 
     def add_pliers_to_ui(self):
-        pliers = arcade.Sprite(UI_PLIER_IMAGE_SOURCE, 0.2)
+        pliers = PliersSprite(0.2)
         pliers.center_x = 700
         pliers.center_y = UI_HEIGHT - 40
         self.static_ui_elements_list.append(pliers)
@@ -390,6 +396,18 @@ class GameView(arcade.View):
         tooth.center_y = min(
             [max([enemy.center_y + random.randint(-64, 64), 128]), ENEMY_TOP_BORDER]
         )
+
+    def add_pliers(self):
+        if (
+            not self.pliers_dropped
+            and not self.player_sprite.pliers_equipped
+            and random.randint(10, 20) <= self.score
+        ):
+            self.pliers_dropped = True
+            pliers = PliersSprite(0.5)
+            pliers.center_x = self.random_x()
+            pliers.center_y = self.random_y()
+            self.power_up_list.append(pliers)
 
     def add_hearts(self):
         if random.randint(1, 1000) == 1:
@@ -619,6 +637,15 @@ class InstructionView(arcade.View):
             game_view = GameView()
             game_view.setup()
             self.window.show_view(game_view)
+
+
+class PliersSprite(arcade.Sprite):
+    def __init__(self, scale):
+        # Set up parent class
+        super().__init__()
+
+        self.scale = scale
+        self.texture = arcade.load_texture(UI_PLIER_IMAGE_SOURCE)
 
 
 class ToothSprite(arcade.Sprite):
