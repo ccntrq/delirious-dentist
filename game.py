@@ -214,28 +214,23 @@ class GameView(arcade.View):
 
         # Create interior
         room_chair = arcade.Sprite(ROOM_CHAIR_IMAGE_SOURCE, 0.5)
-        room_chair.center_x = self.random_x()
-        room_chair.center_y = self.random_y()
+        self.set_random_sprite_position_no_collisions(room_chair)
         self.decoration_list.append(room_chair)
 
         room_plant = arcade.Sprite(ROOM_PLANT_IMAGE_SOURCE, 0.4)
-        room_plant.center_x = self.random_x()
-        room_plant.center_y = self.random_y()
+        self.set_random_sprite_position_no_collisions(room_plant)
         self.decoration_list.append(room_plant)
 
         room_xray = arcade.Sprite(ROOM_XRAY_IMAGE_SOURCE, 0.4)
-        room_xray.center_x = self.random_x()
-        room_xray.center_y = self.random_y()
+        self.set_random_sprite_position_no_collisions(room_xray)
         self.decoration_list.append(room_xray)
 
         room_vending_machine = arcade.Sprite(ROOM_VENDING_MACHINE_IMAGE_SOURCE, 0.4)
-        room_vending_machine.center_x = self.random_x()
-        room_vending_machine.center_y = self.random_y()
+        self.set_random_sprite_position_no_collisions(room_vending_machine)
         self.decoration_list.append(room_vending_machine)
 
         room_water_dispenser = arcade.Sprite(ROOM_WATER_DISPENSER_IMAGE_SOURCE, 0.4)
-        room_water_dispenser.center_x = self.random_x()
-        room_water_dispenser.center_y = self.random_y()
+        self.set_random_sprite_position_no_collisions(room_water_dispenser)
         self.decoration_list.append(room_water_dispenser)
 
         for deco in self.decoration_list:
@@ -466,8 +461,7 @@ class GameView(arcade.View):
         ):
             self.pliers_dropped = True
             pliers = PliersSprite(0.5)
-            pliers.center_x = self.random_x()
-            pliers.center_y = self.random_y()
+            self.set_random_sprite_position_no_collisions(pliers)
             self.power_up_list.append(pliers)
 
     def add_hearts(self):
@@ -476,8 +470,7 @@ class GameView(arcade.View):
 
     def add_heart(self):
         heart = HeartSprite()
-        heart.center_x = self.random_x()
-        heart.center_y = self.random_y()
+        self.set_random_sprite_position_no_collisions(heart)
         self.power_up_list.append(heart)
 
     def add_life(self):
@@ -546,9 +539,19 @@ class GameView(arcade.View):
         if not self.life_list.sprite_list:
             arcade.play_sound(self.game_over_sound)
 
-            #needed to check if it's the last draw before GameOverView, to draw background board for the scoreboard
+            # needed to check if it's the last draw before GameOverView, to draw background board for the scoreboard
             self.gameover_state = True
 
+    def set_random_sprite_position_no_collisions(self, sprite):
+        for _ in range(0, 99):
+            x = self.random_x()
+            y = self.random_y()
+
+            sprite.center_x = x
+            sprite.center_y = y
+
+            if not arcade.check_for_collision_with_list(sprite, self.decoration_list):
+                return
 
     def random_x(self):
         return random.randint(ENEMY_LEFT_BORDER + 64, ENEMY_RIGHT_BORDER - 64)
