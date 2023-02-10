@@ -27,11 +27,11 @@ jobs:
       - name: Build Executable (Windows)
         if: runner.os == 'Windows'
         shell: powershell
-        run: pyinstaller --add-data "resources;resources" --collect-data arcade --onefile game.py
+        run: pyinstaller -p src --add-data "resources;resources" --collect-data arcade --onefile game.py
 
       - name: Build Executable (Linux/Mac)
         if: runner.os == 'Linux' || runner.os == 'macOs'
-        run: pyinstaller --add-data "resources:resources" --collect-data arcade --onefile game.py
+        run: pyinstaller -p src --add-data "resources:resources" --collect-data arcade --onefile game.py
 
       # Uploads artifact
       - name: Upload Artifact
