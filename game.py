@@ -44,6 +44,7 @@ UI_BOLT_IMAGE_SOURCE = "resources/sprites/ui/bolt.png"
 UI_FLASK_IMAGE_SOURCE = "resources/sprites/ui/flask.png"
 UI_SCOREBOARD_IMAGE_SOURCE = "resources/sprites/ui/scoreboard.png"
 SCREEN_MAIN_TITLE_IMAGE_SOURCE = "resources/coverart/main_title.png"
+FX_BLOOD_IMAGE_SOURCE = "resources/sprites/fx/reds.png"
 
 # Sounds
 ENEMY_HIT_SOUND_RESOURCE = "resources/sounds/hit_nodrop.wav"
@@ -466,6 +467,7 @@ class GameView(arcade.View):
 
         enemy.remove_from_sprite_lists()
 
+        self.add_blood(enemy)
         self.has_hit = True
         self.hit_cooldown = 0
 
@@ -531,6 +533,29 @@ class GameView(arcade.View):
             ]
         )
         tooth.center_y = min([max([tooth.center_y, 128]), ENEMY_TOP_BORDER])
+
+    def add_blood(self, enemy):
+        # Drop golden tooth
+        '''
+        drop_golden_tooth = random.uniform(0, 100)
+        tooth = None
+        if drop_golden_tooth <= TOOTH_GOLDEN_DROP_CHANCE + (
+            10 if self.player_sprite.pliers_equipped else 0
+        ):
+            tooth = GoldenToothSprite()
+            self.camera.shake(pyglet.math.Vec2(5, 5))
+            arcade.play_sound(self.enemy_hit_gold_punch_sound)
+            arcade.play_sound(self.tooth_gold_drop_sound)
+        else:
+            tooth = ToothSprite()
+            arcade.play_sound(self.enemy_hit_punch_sound)
+            arcade.play_sound(self.tooth_drop_sound)
+        '''
+        blood = BloodSprite()
+        self.interior_list.append(blood)
+        self.position_after_hit(self.player_sprite, enemy, blood)
+        blood.center_x = min([max([blood.center_x, 16]), ENEMY_RIGHT_BORDER - 16,])
+        blood.center_y = min([max([blood.center_y, 16]), ENEMY_TOP_BORDER])
 
     def add_pliers(self):
         if (
@@ -894,6 +919,13 @@ class ToothSprite(arcade.Sprite):
         self.scale = 0.5
         self.points = TOOTH_POINTS
         self.texture = arcade.load_texture(UI_TOOTH_IMAGE_SOURCE)
+
+class BloodSprite(arcade.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.scale = 0.5
+        self.texture = arcade.load_texture(FX_BLOOD_IMAGE_SOURCE)
+
 
 
 class GoldenToothSprite(arcade.Sprite):
