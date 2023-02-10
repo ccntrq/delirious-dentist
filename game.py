@@ -15,6 +15,7 @@ mymodule_dir = os.path.join(script_dir, "src")
 sys.path.append(mymodule_dir)
 
 import config
+from animation.grow import GrowAnimation
 from sprite.dentist import DentistSprite
 from sprite.enemy import EnemySprite
 from sprite.bolt import BoltSprite
@@ -260,7 +261,9 @@ class GameView(arcade.View):
             elif isinstance(power_up, GoldenToothSprite):
                 self.on_score(power_up.points)
                 arcade.play_sound(self.tooth_gold_collect_sound)
-                animation_sprite = ToothAnimation()
+                animation_sprite = GoldenToothSprite()
+                animation_sprite.scale = 1
+                GrowAnimation.animate(animation_sprite)
                 animation_sprite.center_x = power_up.center_x
                 animation_sprite.center_y = power_up.center_y
                 self.static_ui_elements_list.append(animation_sprite)
@@ -819,20 +822,6 @@ class ScoreBoard:
                 )
             )
             return lines[0:limit]
-
-
-class ToothAnimation(GoldenToothSprite):
-    def __init__(self):
-        # Set up parent class
-        super().__init__()
-        self.scale = 1
-
-    def update_animation(self, delta_time: float = 1 / 60):
-        self.scale *= 1.2
-        maximum_scale = 6
-        if self.scale >= maximum_scale:
-            self.remove_from_sprite_lists()
-
 
 def main():
     """Main function"""
