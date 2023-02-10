@@ -16,7 +16,13 @@ sys.path.append(mymodule_dir)
 
 import config
 from sprite.dentist import DentistSprite
-from sprite.enemy   import EnemySprite
+from sprite.enemy import EnemySprite
+from sprite.bolt import BoltSprite
+from sprite.flask import FlaskSprite
+from sprite.golden_tooth import GoldenToothSprite
+from sprite.heart import HeartSprite
+from sprite.pliers import PliersSprite
+from sprite.tooth import ToothSprite
 
 
 class GameView(arcade.View):
@@ -787,62 +793,6 @@ class InstructionView(arcade.View):
         """If the user releases the space key, start the game."""
         if key == arcade.key.SPACE:
             self.window.show_view(self.game_view)
-
-
-class PliersSprite(arcade.Sprite):
-    def __init__(self, scale):
-        # Set up parent class
-        super().__init__()
-
-        self.scale = scale
-        self.texture = arcade.load_texture(config.UI_PLIER_IMAGE_SOURCE)
-
-
-class ToothSprite(arcade.Sprite):
-    def __init__(self):
-        # Set up parent class
-        super().__init__()
-
-        self.scale = 0.5
-        self.points = config.TOOTH_POINTS
-        self.texture = arcade.load_texture(config.UI_TOOTH_IMAGE_SOURCE)
-
-
-class GoldenToothSprite(arcade.Sprite):
-    def __init__(self):
-        # Set up parent class
-        super().__init__()
-
-        self.scale = 0.75
-        self.points = config.GOLDEN_TOOTH_POINTS
-        self.texture = arcade.load_texture(config.UI_GOLDEN_TOOTH_IMAGE_SOURCE)
-
-
-class HeartSprite(arcade.Sprite):
-    def __init__(self):
-        # Set up parent class
-        super().__init__()
-
-        self.scale = config.TILE_SCALING
-        self.texture = arcade.load_texture(config.UI_HEART_IMAGE_SOURCE)
-
-
-class BoltSprite(arcade.Sprite):
-    def __init__(self, scale=config.TILE_SCALING):
-        # Set up parent class
-        super().__init__()
-
-        self.scale = scale
-        self.texture = arcade.load_texture(config.UI_BOLT_IMAGE_SOURCE)
-
-
-class FlaskSprite(arcade.Sprite):
-    def __init__(self, scale=config.TILE_SCALING):
-        # Set up parent class
-        super().__init__()
-
-        self.scale = scale
-        self.texture = arcade.load_texture(config.UI_FLASK_IMAGE_SOURCE)
 
 
 class ScoreBoard:
