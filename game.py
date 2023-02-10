@@ -101,13 +101,12 @@ class GameView(arcade.View):
     Main application class.
     """
 
-    def __init__(self, init=False):
+    def __init__(self):
         # Call the parent class and set up the window
         super().__init__()
 
         arcade.set_background_color(arcade.csscolor.WHITE_SMOKE)
 
-        self.init = init
         self.score = None
         self.player_list = None
         self.wall_list = None
@@ -157,9 +156,6 @@ class GameView(arcade.View):
         self.camera = arcade.Camera(SCREEN_WIDTH, SCREEN_HEIGHT)
         self.ui_camera = arcade.Camera(SCREEN_WIDTH, SCREEN_HEIGHT)
 
-        # Marker if gameover
-        self.gameover_state = False
-
     def setup(self):
         """Set up the game here. Call this function to restart the game."""
         #arcade.play_sound(self.music_sound, 0.1, 0.0, True, 1.0)
@@ -167,6 +163,7 @@ class GameView(arcade.View):
         self.hit_cooldown = 0
         self.hit_active = 0
         self.has_hit = False
+        self.key_history = []
 
         self.pliers_dropped = False
         self.bolt_active = 0
@@ -296,22 +293,6 @@ class GameView(arcade.View):
             align="left",
         )
 
-        if self.init:
-            self.init = False
-            self.window.show_view(InstructionView())
-
-        if self.gameover_state == True:
-            # Create Scoreboard Background here because of transparency; transparency issues when drawing in GameOverView
-            ui_scoreboard = arcade.Sprite(UI_SCOREBOARD_IMAGE_SOURCE, 1.25)
-            ui_scoreboard.center_x = SCREEN_WIDTH / 2
-            ui_scoreboard.center_y = SCREEN_HEIGHT / 2 - 48
-            ui_scoreboard.draw()
-
-            gameover_view = GameOverView(self.score)
-            gameover_view.setup()
-            self.window.show_view(gameover_view)
-
-        self.check_game_over()
 
     def on_update(self, delta_time):
         """Movement and game logic"""
@@ -401,6 +382,7 @@ class GameView(arcade.View):
         self.add_hearts()
         self.add_bolts()
         self.add_flasks()
+        self.check_game_over()
 
     def update_player_speed(self):
         # Calculate speed based on the keys pressed
@@ -648,9 +630,9 @@ class GameView(arcade.View):
     def check_game_over(self):
         if not self.life_list.sprite_list:
             arcade.play_sound(self.game_over_sound)
-
-            # needed to check if it's the last draw before GameOverView, to draw background board for the scoreboard
-            self.gameover_state = True
+            gameover_view = GameOverView(self)
+            gameover_view.setup()
+            self.window.show_view(gameover_view)
 
     def set_random_sprite_position_no_collisions(self, sprite):
         for _ in range(0, 99):
@@ -687,11 +669,12 @@ class GameView(arcade.View):
 class GameOverView(arcade.View):
     """View to show when game is over"""
 
-    def __init__(self, score):
+    def __init__(self, game_view):
         """This is run once when we switch to this view"""
         super().__init__()
-        self.score = score
-        self.gameover_time = ScoreBoard().store_score(score)
+        self.game_view = game_view
+        self.score = game_view.score
+        self.gameover_time = ScoreBoard().store_score(self.score)
 
         self.scoreboard_ui_elements_list = None
 
@@ -708,8 +691,15 @@ class GameOverView(arcade.View):
 
     def on_draw(self):
         """Draw this view"""
-        # DON'T clear here! We want to draw over the endgame screen.
-        # self.clear()
+
+        self.clear()
+
+        self.game_view.on_draw()
+
+        ui_scoreboard = arcade.Sprite(UI_SCOREBOARD_IMAGE_SOURCE, 1.25)
+        ui_scoreboard.center_x = SCREEN_WIDTH / 2
+        ui_scoreboard.center_y = SCREEN_HEIGHT / 2 - 48
+        ui_scoreboard.draw()
 
         text_color = arcade.color.BLACK
         text_color_current = arcade.color.BANANA_YELLOW
@@ -775,17 +765,18 @@ class GameOverView(arcade.View):
     def on_key_release(self, key, _modifiers):
         """If the user releases the ENTER key, re-start the game."""
         if key == arcade.key.ENTER:
-            game_view = GameView()
-            game_view.setup()
-            self.window.show_view(game_view)
+            self.game_view.setup()
+            self.window.show_view(self.game_view)
 
 
 class InstructionView(arcade.View):
     """View to show instructions before the game"""
 
-    def __init__(self):
+    def __init__(self, game_view):
         """This is run once when we switch to this view"""
         super().__init__()
+
+        self.game_view = game_view
 
         # Reset the viewport, necessary if we have a scrolling game and we need
         # to reset the viewport back to the start so we can see what we draw.
@@ -810,8 +801,10 @@ class InstructionView(arcade.View):
 
     def on_draw(self):
         """Draw this view"""
-        # Don't clear hear. We want to draw over the game view!
-        # self.clear()
+        self.clear()
+
+        self.game_view.on_draw()
+
         self.cover_art_list.draw()
         font = "Kenney Blocks"
         text_color = arcade.color.WHITE
@@ -850,9 +843,7 @@ class InstructionView(arcade.View):
     def on_key_release(self, key, _modifiers):
         """If the user releases the space key, start the game."""
         if key == arcade.key.SPACE:
-            game_view = GameView()
-            game_view.setup()
-            self.window.show_view(game_view)
+            self.window.show_view(self.game_view)
 
 
 class EnemySprite(arcade.Sprite):
@@ -1027,7 +1018,10 @@ class ToothAnimation(GoldenToothSprite):
 def main():
     """Main function"""
     window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
-    start_view = GameView(True)
+
+    game_view = GameView()
+    game_view.setup()
+    start_view = InstructionView(game_view)
     start_view.setup()
     window.show_view(start_view)
     arcade.run()
