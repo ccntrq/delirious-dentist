@@ -4,6 +4,7 @@ Delirious Dentist
 import datetime
 import math
 from operator import itemgetter
+import os
 import random
 import arcade
 import pyglet
@@ -16,52 +17,58 @@ SCREEN_HEIGHT = 640
 SCREEN_TITLE = f"Delirious Dentist (v{VERSION})"
 UI_HEIGHT = 64
 
+
+def resource(*paths):
+    return os.path.join(os.path.dirname(__file__), "resources", *paths)
+
+
 # Sprite locations
-CHARACTER_DENTIST_IMAGE_SOURCE = "resources/sprites/characters/dentist.png"
-CHARACTER_DENTIST_ATTACK_IMAGE_SOURCE = (
-    "resources/sprites/characters/dentist_attack.png"
+CHARACTER_DENTIST_IMAGE_SOURCE = resource("sprites", "characters", "dentist.png")
+CHARACTER_DENTIST_ATTACK_IMAGE_SOURCE = resource(
+    "sprites", "characters", "dentist_attack.png"
 )
-CHARACTER_DENTIST_ATTACK_PLIER_IMAGE_SOURCE = (
-    "resources/sprites/characters/dentist_attack_plier.png"
+CHARACTER_DENTIST_ATTACK_PLIER_IMAGE_SOURCE = resource(
+    "sprites", "characters", "dentist_attack_plier.png"
 )
-ENEMY_1_IMAGE_SOURCE = "resources/sprites/characters/enemy_1.png"
-ENEMY_2_IMAGE_SOURCE = "resources/sprites/characters/enemy_2.png"
-ENEMY_3_IMAGE_SOURCE = "resources/sprites/characters/enemy_3.png"
-ROOM_TILE_FLOOR_IMAGE_SOURCE = "resources/sprites/room/tile_floor.png"
-ROOM_WINDOW_IMAGE_SOURCE = "resources/sprites/room/window.png"
-ROOM_WINDOW_LEFT_IMAGE_SOURCE = "resources/sprites/room/window_left.png"
-ROOM_WINDOW_RIGHT_IMAGE_SOURCE = "resources/sprites/room/window_right.png"
-ROOM_CHAIR_IMAGE_SOURCE = "resources/sprites/room/chair.png"
-ROOM_PLANT_IMAGE_SOURCE = "resources/sprites/room/plant.png"
-ROOM_XRAY_IMAGE_SOURCE = "resources/sprites/room/xray.png"
-ROOM_VENDING_MACHINE_IMAGE_SOURCE = "resources/sprites/room/vending_machine.png"
-ROOM_WATER_DISPENSER_IMAGE_SOURCE = "resources/sprites/room/water_dispenser.png"
-UI_HEART_IMAGE_SOURCE = "resources/sprites/ui/heart.png"
-UI_TOOTH_IMAGE_SOURCE = "resources/sprites/ui/tooth.png"
-UI_GOLDEN_TOOTH_IMAGE_SOURCE = "resources/sprites/ui/golden_tooth.png"
-UI_PLIER_IMAGE_SOURCE = "resources/sprites/ui/plier.png"
-UI_BOLT_IMAGE_SOURCE = "resources/sprites/ui/bolt.png"
-UI_FLASK_IMAGE_SOURCE = "resources/sprites/ui/flask.png"
-UI_SCOREBOARD_IMAGE_SOURCE = "resources/sprites/ui/scoreboard.png"
-SCREEN_MAIN_TITLE_IMAGE_SOURCE = "resources/coverart/main_title.png"
+ENEMY_1_IMAGE_SOURCE = resource("sprites", "characters", "enemy_1.png")
+ENEMY_2_IMAGE_SOURCE = resource("sprites", "characters", "enemy_2.png")
+ENEMY_3_IMAGE_SOURCE = resource("sprites", "characters", "enemy_3.png")
+ROOM_TILE_FLOOR_IMAGE_SOURCE = resource("sprites", "room", "tile_floor.png")
+ROOM_WINDOW_IMAGE_SOURCE = resource("sprites", "room", "window.png")
+ROOM_WINDOW_LEFT_IMAGE_SOURCE = resource("sprites", "room", "window_left.png")
+ROOM_WINDOW_RIGHT_IMAGE_SOURCE = resource("sprites", "room", "window_right.png")
+ROOM_CHAIR_IMAGE_SOURCE = resource("sprites", "room", "chair.png")
+ROOM_PLANT_IMAGE_SOURCE = resource("sprites", "room", "plant.png")
+ROOM_XRAY_IMAGE_SOURCE = resource("sprites", "room", "xray.png")
+ROOM_VENDING_MACHINE_IMAGE_SOURCE = resource("sprites", "room", "vending_machine.png")
+ROOM_WATER_DISPENSER_IMAGE_SOURCE = resource("sprites", "room", "water_dispenser.png")
+UI_HEART_IMAGE_SOURCE = resource("sprites", "ui", "heart.png")
+UI_TOOTH_IMAGE_SOURCE = resource("sprites", "ui", "tooth.png")
+UI_GOLDEN_TOOTH_IMAGE_SOURCE = resource("sprites", "ui", "golden_tooth.png")
+UI_PLIER_IMAGE_SOURCE = resource("sprites", "ui", "plier.png")
+UI_BOLT_IMAGE_SOURCE = resource("sprites", "ui", "bolt.png")
+UI_FLASK_IMAGE_SOURCE = resource("sprites", "ui", "flask.png")
+UI_SCOREBOARD_IMAGE_SOURCE = resource("sprites", "ui", "scoreboard.png")
+
+SCREEN_MAIN_TITLE_IMAGE_SOURCE = resource("coverart", "main_title.png")
 
 # Sounds
-ENEMY_HIT_SOUND_RESOURCE = "resources/sounds/hit_nodrop.wav"
-ENEMY_HIT_MISS_SOUND_RESOURCE = "resources/sounds/hit_miss.wav"
+ENEMY_HIT_SOUND_RESOURCE = resource("sounds", "hit_nodrop.wav")
+ENEMY_HIT_MISS_SOUND_RESOURCE = resource("sounds", "hit_miss.wav")
 ENEMY_HIT_PUNCH_SOUND_RESOURCE = ":resources:sounds/hit3.wav"
 ENEMY_HIT_GOLD_PUNCH_SOUND_RESOURCE = ":resources:sounds/hit5.wav"
-ENEMY_COLLISION_SOUND_RESOURCE = "resources/sounds/enemy_collision.wav"
-GAME_OVER_SOUND_RESOURCE = "resources/sounds/gameover.wav"
-GAME_OPENING_SOUND_RESOURCE = "resources/sounds/openingscore.wav"
-SPACE_SPAM_SOUND_RESOURCE = "resources/sounds/space_spam.wav"
-TOOTH_COLLECT_SOUND_RESOURCE = "resources/sounds/tooth_collect.wav"
-TOOTH_GOLD_COLLECT_SOUND_RESOURCE = "resources/sounds/golden_tooth.wav"
-TOOTH_DROP_SOUND_RESOURCE = "resources/sounds/tooth_drop.wav"
-TOOTH_GOLD_DROP_SOUND_RESOURCE = "resources/sounds/golden_toothdrop.wav"
-ITEM_COLLECT_PLIERS_SOUND_RESOURCE = "resources/sounds/pliers.wav"
-ITEM_COLLECT_BOLT_SOUND_RESOURCE = "resources/sounds/bolt.wav"
-ITEM_COLLECT_GENERIC_SOUND_RESOURCE = "resources/sounds/item_catch.wav"
-#MUSIC_SOUND_SOURCE = "resources/sounds/music.wav"
+ENEMY_COLLISION_SOUND_RESOURCE = resource("sounds", "enemy_collision.wav")
+GAME_OVER_SOUND_RESOURCE = resource("sounds", "gameover.wav")
+GAME_OPENING_SOUND_RESOURCE = resource("sounds", "openingscore.wav")
+SPACE_SPAM_SOUND_RESOURCE = resource("sounds", "space_spam.wav")
+TOOTH_COLLECT_SOUND_RESOURCE = resource("sounds", "tooth_collect.wav")
+TOOTH_GOLD_COLLECT_SOUND_RESOURCE = resource("sounds", "golden_tooth.wav")
+TOOTH_DROP_SOUND_RESOURCE = resource("sounds", "tooth_drop.wav")
+TOOTH_GOLD_DROP_SOUND_RESOURCE = resource("sounds", "golden_toothdrop.wav")
+ITEM_COLLECT_PLIERS_SOUND_RESOURCE = resource("sounds", "pliers.wav")
+ITEM_COLLECT_BOLT_SOUND_RESOURCE = resource("sounds", "bolt.wav")
+ITEM_COLLECT_GENERIC_SOUND_RESOURCE = resource("sounds", "item_catch.wav")
+# MUSIC_SOUND_SOURCE = "resources/sounds/music.wav"
 
 
 # movement speed of the dentist character

@@ -1,0 +1,37 @@
+
+on:
+  - push
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      # Check-out repository
+      - uses: actions/checkout@v3
+
+      # Setup Python
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10' # Version range or exact version of a Python version to use, using SemVer's version range syntax
+          architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
+
+      - name: Install Dependencies (Windows)
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          pip install pyinstaller==5.7.0 -r requirements.txt
+
+      - name: Build Executable (Windows)
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: pyinstaller --add-data "resources;resources" --collect-data arcade --onefile game.py
+
+      # Uploads artifact
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: exe
+          path: dist/game.exe
+
+
