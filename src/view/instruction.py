@@ -40,16 +40,6 @@ class InstructionView(arcade.View):
         font = "Kenney Blocks"
         text_color = arcade.color.WHITE
         text_start = config.SCREEN_HEIGHT * 0.75
-        """arcade.draw_text(
-            "DELIRIOUS DENTIST",
-            0,
-            text_start,
-            text_color,
-            48,
-            width=SCREEN_WIDTH,
-            align="center",
-            font_name=font,
-        )"""
         arcade.draw_text(
             "Press space to perform a root treatment. Collect tooth for your precious roots collection and avoid beeing hit by angry patients",
             0,
