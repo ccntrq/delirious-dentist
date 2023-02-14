@@ -44,7 +44,7 @@ UI_BOLT_IMAGE_SOURCE = "resources/sprites/ui/bolt.png"
 UI_FLASK_IMAGE_SOURCE = "resources/sprites/ui/flask.png"
 UI_SCOREBOARD_IMAGE_SOURCE = "resources/sprites/ui/scoreboard.png"
 SCREEN_MAIN_TITLE_IMAGE_SOURCE = "resources/coverart/main_title.png"
-FX_BLOOD_IMAGE_SOURCE = "resources/sprites/fx/reds.png"
+FX_BLOOD_IMAGE_SOURCE = "resources/sprites/fx/blood.png"
 
 # Sounds
 ENEMY_HIT_SOUND_RESOURCE = "resources/sounds/hit_nodrop.wav"
@@ -535,27 +535,15 @@ class GameView(arcade.View):
         tooth.center_y = min([max([tooth.center_y, 128]), ENEMY_TOP_BORDER])
 
     def add_blood(self, enemy):
-        # Drop golden tooth
-        '''
-        drop_golden_tooth = random.uniform(0, 100)
-        tooth = None
-        if drop_golden_tooth <= TOOTH_GOLDEN_DROP_CHANCE + (
-            10 if self.player_sprite.pliers_equipped else 0
-        ):
-            tooth = GoldenToothSprite()
-            self.camera.shake(pyglet.math.Vec2(5, 5))
-            arcade.play_sound(self.enemy_hit_gold_punch_sound)
-            arcade.play_sound(self.tooth_gold_drop_sound)
-        else:
-            tooth = ToothSprite()
-            arcade.play_sound(self.enemy_hit_punch_sound)
-            arcade.play_sound(self.tooth_drop_sound)
-        '''
-        blood = BloodSprite()
-        self.interior_list.append(blood)
-        self.position_after_hit(self.player_sprite, enemy, blood)
-        blood.center_x = min([max([blood.center_x, 16]), ENEMY_RIGHT_BORDER - 16,])
-        blood.center_y = min([max([blood.center_y, 16]), ENEMY_TOP_BORDER])
+        # Drop blood
+
+        splatter_amount = random.randint(1, 10)
+        for _ in range(0,splatter_amount):
+            blood = BloodSprite()
+            self.blood_position_after_hit(self.player_sprite, enemy, blood, splatter_amount)
+            blood.center_x = min([max([blood.center_x, 16]), ENEMY_RIGHT_BORDER - 16, ])
+            blood.center_y = min([max([blood.center_y, 16]), ENEMY_TOP_BORDER])
+            self.interior_list.append(blood)
 
     def add_pliers(self):
         if (
@@ -700,6 +688,22 @@ class GameView(arcade.View):
 
         sprite.center_x = enemy.center_x + math.cos(angle) * 128
         sprite.center_y = enemy.center_y + math.sin(angle) * 128
+
+    def blood_position_after_hit(self, player, enemy, sprite, splatter_amount):
+        start_x = player.center_x
+        start_y = player.center_y
+
+        dest_x = enemy.center_x
+        dest_y = enemy.center_y
+
+        x_diff = dest_x - start_x
+        y_diff = dest_y - start_y
+        angle = math.atan2(y_diff, x_diff)
+
+        for _ in range(0, splatter_amount):
+            blood_distance = random.randint(-10, 34)
+            sprite.center_x = enemy.center_x + math.cos(angle) * blood_distance
+            sprite.center_y = enemy.center_y + math.sin(angle) * blood_distance
 
 
 class GameOverView(arcade.View):
@@ -923,7 +927,7 @@ class ToothSprite(arcade.Sprite):
 class BloodSprite(arcade.Sprite):
     def __init__(self):
         super().__init__()
-        self.scale = 0.5
+        self.scale = 1
         self.texture = arcade.load_texture(FX_BLOOD_IMAGE_SOURCE)
 
 
