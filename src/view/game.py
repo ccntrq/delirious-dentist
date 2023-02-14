@@ -103,9 +103,6 @@ class GameView(arcade.View):
         self.flask_active = 0
         self.enemy_auto_spawn = 0
 
-        # Marker if gameover
-        self.gameover_state = False
-
         # Create the Sprite lists
         self.player_list = arcade.SpriteList()
         self.enemy_list = arcade.SpriteList()
