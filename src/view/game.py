@@ -6,6 +6,7 @@ import pyglet
 import config
 
 from animation.grow import GrowAnimation
+from room import Room
 from sprite.dentist import DentistSprite
 from sprite.enemy import EnemySprite
 from sprite.bolt import BoltSprite
@@ -15,6 +16,7 @@ from sprite.heart import HeartSprite
 from sprite.pliers import PliersSprite
 from sprite.tooth import ToothSprite
 from util.direction import DirectionUtil
+from util.position import PositionUtil
 from view.game_over import GameOverView
 
 
@@ -29,10 +31,9 @@ class GameView(arcade.View):
 
         arcade.set_background_color(arcade.csscolor.WHITE_SMOKE)
 
+        self.room = Room()
         self.score = None
         self.player_list = None
-        self.wall_list = None
-        self.decoration_list = None
         self.enemy_list = None
         self.power_up_list = None
         self.static_ui_elements_list = None
@@ -93,6 +94,7 @@ class GameView(arcade.View):
     def setup(self):
         """Set up the game here. Call this function to restart the game."""
         # arcade.play_sound(self.music_sound, 0.1, 0.0, True, 1.0)
+        self.room.setup()
         self.score = 0
         self.hit_cooldown = 0
         self.hit_active = 0
@@ -108,12 +110,9 @@ class GameView(arcade.View):
         self.player_list = arcade.SpriteList()
         self.enemy_list = arcade.SpriteList()
         self.life_list = arcade.SpriteList()
-        self.interior_list = arcade.SpriteList()
         self.static_ui_elements_list = arcade.SpriteList()
 
         # Walls use spatial hashing for faster collision detection
-        self.wall_list = arcade.SpriteList(use_spatial_hash=True)
-        self.decoration_list = arcade.SpriteList(use_spatial_hash=True)
         self.power_up_list = arcade.SpriteList(use_spatial_hash=True)
 
         for _ in range(config.CHARACTER_LIFES):
@@ -124,79 +123,16 @@ class GameView(arcade.View):
         ui_tooth.center_y = config.UI_HEIGHT - 38
         self.static_ui_elements_list.append(ui_tooth)
 
-        # Create walls
-        # Create lower boundary
-        for x in range(0, config.SCREEN_WIDTH, 256):
-            wall = arcade.Sprite(config.ROOM_WINDOW_IMAGE_SOURCE, 0.5)
-            wall.center_x = x + 128
-            wall.center_y = config.UI_HEIGHT + 16
-            self.wall_list.append(wall)
-
-        # Create upper boundary
-        for x in range(0, config.SCREEN_WIDTH, 256):
-            wall = arcade.Sprite(config.ROOM_WINDOW_IMAGE_SOURCE, 0.5)
-            wall.center_x = x + 128
-            wall.center_y = config.SCREEN_HEIGHT - 32
-            self.wall_list.append(wall)
-
-        # Create left boundary
-        for y in range(config.UI_HEIGHT + 80, config.SCREEN_HEIGHT, 56):
-            wall = arcade.Sprite(config.ROOM_WINDOW_LEFT_IMAGE_SOURCE, 0.5)
-            wall.center_x = 12
-            wall.center_y = y
-            self.wall_list.append(wall)
-
-        # Create right boundary
-        for y in range(config.UI_HEIGHT + 80, config.SCREEN_HEIGHT, 56):
-            wall = arcade.Sprite(config.ROOM_WINDOW_RIGHT_IMAGE_SOURCE, 0.5)
-            wall.center_x = config.SCREEN_WIDTH - 12
-            wall.center_y = y
-            self.wall_list.append(wall)
-
-        # Create the floor
-        for x in range(0, config.SCREEN_WIDTH, 32):
-            for y in range(config.UI_HEIGHT, config.SCREEN_HEIGHT, 32):
-                floor = arcade.Sprite(config.ROOM_TILE_FLOOR_IMAGE_SOURCE, 0.25)
-                floor.center_x = x + 16
-                floor.center_y = y
-                self.interior_list.append(floor)
-
-        # Create interior
-        room_chair = arcade.Sprite(config.ROOM_CHAIR_IMAGE_SOURCE, 0.5)
-        self.set_random_sprite_position_no_collisions(room_chair)
-        self.decoration_list.append(room_chair)
-
-        room_plant = arcade.Sprite(config.ROOM_PLANT_IMAGE_SOURCE, 0.4)
-        self.set_random_sprite_position_no_collisions(room_plant)
-        self.decoration_list.append(room_plant)
-
-        room_xray = arcade.Sprite(config.ROOM_XRAY_IMAGE_SOURCE, 0.4)
-        self.set_random_sprite_position_no_collisions(room_xray)
-        self.decoration_list.append(room_xray)
-
-        room_vending_machine = arcade.Sprite(
-            config.ROOM_VENDING_MACHINE_IMAGE_SOURCE, 0.4
-        )
-        self.set_random_sprite_position_no_collisions(room_vending_machine)
-        self.decoration_list.append(room_vending_machine)
-
-        room_water_dispenser = arcade.Sprite(
-            config.ROOM_WATER_DISPENSER_IMAGE_SOURCE, 0.4
-        )
-        self.set_random_sprite_position_no_collisions(room_water_dispenser)
-        self.decoration_list.append(room_water_dispenser)
-
         # Set up the player, specifically placing it at these coordinates.
         self.player_sprite = DentistSprite()
-        self.set_random_sprite_position_no_collisions(self.player_sprite)
+        self.room.set_random_sprite_location_without_decoration_collision(
+            self.player_sprite
+        )
         self.player_list.append(self.player_sprite)
-
-        for deco in self.decoration_list:
-            self.wall_list.append(deco)
 
         # Create the 'physics engine'
         self.physics_engine = arcade.PhysicsEngineSimple(
-            self.player_sprite, self.wall_list
+            self.player_sprite, [self.room.wall_list, self.room.decoration_list]
         )
 
     def on_draw(self):
@@ -206,11 +142,9 @@ class GameView(arcade.View):
 
         self.camera.use()
 
-        self.interior_list.draw()
+        self.room.on_draw()
         self.player_list.draw()
         self.enemy_list.draw()
-        self.wall_list.draw()
-        self.decoration_list.draw()
         self.power_up_list.draw()
 
         self.ui_camera.use()
@@ -468,7 +402,7 @@ class GameView(arcade.View):
         ):
             self.pliers_dropped = True
             pliers = PliersSprite(0.5)
-            self.set_random_sprite_position_no_collisions(pliers)
+            self.room.set_random_sprite_location_without_decoration_collision(pliers)
             self.power_up_list.append(pliers)
 
     def add_hearts(self):
@@ -477,7 +411,7 @@ class GameView(arcade.View):
 
     def add_heart(self):
         heart = HeartSprite()
-        self.set_random_sprite_position_no_collisions(heart)
+        self.room.set_random_sprite_location_without_decoration_collision(heart)
         self.power_up_list.append(heart)
 
     def add_bolts(self):
@@ -486,7 +420,7 @@ class GameView(arcade.View):
 
     def add_bolt(self):
         bolt = BoltSprite()
-        self.set_random_sprite_position_no_collisions(bolt)
+        self.room.set_random_sprite_location_without_decoration_collision(bolt)
         self.power_up_list.append(bolt)
 
     def add_flasks(self):
@@ -495,7 +429,7 @@ class GameView(arcade.View):
 
     def add_flask(self):
         flask = FlaskSprite()
-        self.set_random_sprite_position_no_collisions(flask)
+        self.room.set_random_sprite_location_without_decoration_collision(flask)
         self.power_up_list.append(flask)
 
     def add_life(self):
@@ -523,18 +457,11 @@ class GameView(arcade.View):
         enemy_sprite = EnemySprite()
         self.set_enemy_speed(enemy_sprite)
 
-        for _ in range(0, 9):
-            enemy_sprite.center_x = self.random_x()
-            enemy_sprite.center_y = self.random_y()
+        PositionUtil.set_random_position_without_collision(
+            enemy_sprite, self.player_list, self.room.decoration_list
+        )
 
-            collides_with_other_object = arcade.check_for_collision(
-                self.player_sprite, enemy_sprite
-            )
-            # or arcade.check_for_collision_with_list(enemy_sprite, self.enemy_list)
-
-            if not collides_with_other_object:
-                self.enemy_list.append(enemy_sprite)
-                return
+        self.enemy_list.append(enemy_sprite)
 
     def set_enemy_speed(self, enemy):
         enemy.change_x = random.randint(0, config.ENEMY_MAX_SPEED)
@@ -556,7 +483,7 @@ class GameView(arcade.View):
                 enemy_sprite.change_y = abs(enemy_sprite.change_y)
             else:
                 collisions = arcade.check_for_collision_with_list(
-                    enemy_sprite, self.decoration_list, 3
+                    enemy_sprite, self.room.decoration_list, 3
                 )
                 if len(collisions) > 0:
                     enemy_sprite.away_from(collisions[0])
@@ -572,27 +499,6 @@ class GameView(arcade.View):
             gameover_view = GameOverView(self)
             gameover_view.setup()
             self.window.show_view(gameover_view)
-
-    def set_random_sprite_position_no_collisions(self, sprite):
-        for _ in range(0, 99):
-            x = self.random_x()
-            y = self.random_y()
-
-            sprite.center_x = x
-            sprite.center_y = y
-
-            if not arcade.check_for_collision_with_list(sprite, self.decoration_list):
-                return
-
-    def random_x(self):
-        return random.randint(
-            config.ENEMY_LEFT_BORDER + 64, config.ENEMY_RIGHT_BORDER - 64
-        )
-
-    def random_y(self):
-        return random.randint(
-            config.ENEMY_BOTTOM_BORDER + 64, config.ENEMY_TOP_BORDER - 64
-        )
 
     def position_after_hit(self, player, enemy, sprite):
         dest = DirectionUtil.towards(player, enemy)
