@@ -14,6 +14,7 @@ from sprite.golden_tooth import GoldenToothSprite
 from sprite.heart import HeartSprite
 from sprite.pliers import PliersSprite
 from sprite.tooth import ToothSprite
+from util.direction import DirectionUtil
 from view.game_over import GameOverView
 
 
@@ -594,15 +595,7 @@ class GameView(arcade.View):
         )
 
     def position_after_hit(self, player, enemy, sprite):
-        start_x = player.center_x
-        start_y = player.center_y
+        dest = DirectionUtil.towards(player, enemy)
 
-        dest_x = enemy.center_x
-        dest_y = enemy.center_y
-
-        x_diff = dest_x - start_x
-        y_diff = dest_y - start_y
-        angle = math.atan2(y_diff, x_diff)
-
-        sprite.center_x = enemy.center_x + math.cos(angle) * 128
-        sprite.center_y = enemy.center_y + math.sin(angle) * 128
+        sprite.center_x = enemy.center_x + dest[0] * 128
+        sprite.center_y = enemy.center_y + dest[0] * 128
