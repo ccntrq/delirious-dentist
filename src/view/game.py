@@ -116,6 +116,7 @@ class GameView(arcade.View):
         self.physics_engine.update()
         self.player_list.update_animation()
         self.animation_list.update_animation()
+        self.enemy_list.on_update()
 
         # Check for tooth collections
         power_up_hit_list = arcade.check_for_collision_with_list(
@@ -194,8 +195,6 @@ class GameView(arcade.View):
 
         if self.hit_cooldown > 0:
             self.hit_cooldown -= 1
-
-        self.enemy_move()
 
         self.add_enemies()
         self.add_hearts()
@@ -362,40 +361,13 @@ class GameView(arcade.View):
             self.enemy_auto_spawn += 1
 
     def add_random_enemy(self):
-        enemy_sprite = EnemySprite()
-        self.set_enemy_speed(enemy_sprite)
+        enemy_sprite = EnemySprite(self.room.decoration_list)
 
         PositionUtil.set_random_position_without_collision(
             enemy_sprite, self.player_list, self.room.decoration_list
         )
 
         self.enemy_list.append(enemy_sprite)
-
-    def set_enemy_speed(self, enemy):
-        enemy.change_x = random.randint(0, config.ENEMY_MAX_SPEED)
-        enemy.change_y = random.randint(0, config.ENEMY_MAX_SPEED - enemy.change_x)
-
-    def enemy_move(self):
-        for enemy_sprite in self.enemy_list.sprite_list:
-            enemy_sprite.center_y += enemy_sprite.change_y
-            enemy_sprite.center_x += enemy_sprite.change_x
-
-        for enemy_sprite in self.enemy_list.sprite_list:
-            if enemy_sprite.right > config.ENEMY_RIGHT_BORDER:
-                enemy_sprite.change_x = -abs(enemy_sprite.change_x)
-            elif enemy_sprite.left < config.ENEMY_LEFT_BORDER:
-                enemy_sprite.change_x = abs(enemy_sprite.change_x)
-            if enemy_sprite.top > config.ENEMY_TOP_BORDER:
-                enemy_sprite.change_y = -abs(enemy_sprite.change_y)
-            elif enemy_sprite.bottom < config.ENEMY_BOTTOM_BORDER:
-                enemy_sprite.change_y = abs(enemy_sprite.change_y)
-            else:
-                collisions = arcade.check_for_collision_with_list(
-                    enemy_sprite, self.room.decoration_list, 3
-                )
-                if len(collisions) > 0:
-                    enemy_sprite.away_from(collisions[0])
-
 
     def check_game_over(self):
         if not self.ui.life_list.sprite_list:
