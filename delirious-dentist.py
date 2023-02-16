@@ -11,6 +11,7 @@ sys.path.append(mymodule_dir)
 
 import config
 
+from sound import Sound
 from view.game import GameView
 from view.instruction import InstructionView
 
@@ -21,9 +22,10 @@ def main():
         config.SCREEN_WIDTH, config.SCREEN_HEIGHT, config.SCREEN_TITLE
     )
 
-    game_view = GameView()
+    sound = Sound()
+    game_view = GameView(sound)
     game_view.setup()
-    start_view = InstructionView(game_view)
+    start_view = InstructionView(game_view, sound)
     start_view.setup()
     window.show_view(start_view)
     arcade.run()

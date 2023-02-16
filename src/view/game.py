@@ -7,6 +7,7 @@ import config
 
 from animation.grow import GrowAnimation
 from room import Room
+from sound import Sound
 from sprite.dentist import DentistSprite
 from sprite.enemy import EnemySprite
 from sprite.bolt import BoltSprite
@@ -25,7 +26,7 @@ class GameView(arcade.View):
     Main application class.
     """
 
-    def __init__(self):
+    def __init__(self, sound):
         # Call the parent class and set up the window
         super().__init__()
 
@@ -47,43 +48,7 @@ class GameView(arcade.View):
 
         self.key_history = []
 
-        # Load sounds
-        self.enemy_hit_sound = arcade.load_sound(config.ENEMY_HIT_SOUND_RESOURCE)
-        self.enemy_hit_miss_sound = arcade.load_sound(
-            config.ENEMY_HIT_MISS_SOUND_RESOURCE
-        )
-        self.enemy_hit_punch_sound = arcade.load_sound(
-            config.ENEMY_HIT_PUNCH_SOUND_RESOURCE
-        )
-        self.enemy_hit_gold_punch_sound = arcade.load_sound(
-            config.ENEMY_HIT_GOLD_PUNCH_SOUND_RESOURCE
-        )
-        self.enemy_collision_sound = arcade.load_sound(
-            config.ENEMY_COLLISION_SOUND_RESOURCE
-        )
-        self.game_over_sound = arcade.load_sound(config.GAME_OVER_SOUND_RESOURCE)
-        self.game_opening_sound = arcade.load_sound(config.GAME_OPENING_SOUND_RESOURCE)
-        self.space_spam_sound = arcade.load_sound(config.SPACE_SPAM_SOUND_RESOURCE)
-        self.tooth_collect_sound = arcade.load_sound(
-            config.TOOTH_COLLECT_SOUND_RESOURCE
-        )
-        self.tooth_gold_collect_sound = arcade.load_sound(
-            config.TOOTH_GOLD_COLLECT_SOUND_RESOURCE
-        )
-        self.tooth_drop_sound = arcade.load_sound(config.TOOTH_DROP_SOUND_RESOURCE)
-        self.tooth_gold_drop_sound = arcade.load_sound(
-            config.TOOTH_GOLD_DROP_SOUND_RESOURCE
-        )
-        self.item_collect_pliers_sound = arcade.load_sound(
-            config.ITEM_COLLECT_PLIERS_SOUND_RESOURCE
-        )
-        self.item_collect_bolt_sound = arcade.load_sound(
-            config.ITEM_COLLECT_BOLT_SOUND_RESOURCE
-        )
-        self.item_collect_generic_sound = arcade.load_sound(
-            config.ITEM_COLLECT_GENERIC_SOUND_RESOURCE
-        )
-        # self.music_sound = arcade.load_sound(MUSIC_SOUND_SOURCE)
+        self.sound = sound
 
         # Our physics engine
         self.physics_engine = None
@@ -93,7 +58,6 @@ class GameView(arcade.View):
 
     def setup(self):
         """Set up the game here. Call this function to restart the game."""
-        # arcade.play_sound(self.music_sound, 0.1, 0.0, True, 1.0)
         self.room.setup()
         self.score = 0
         self.hit_cooldown = 0
@@ -177,13 +141,13 @@ class GameView(arcade.View):
         for power_up in power_up_hit_list:
             if isinstance(power_up, HeartSprite):
                 self.add_life()
-                arcade.play_sound(self.item_collect_generic_sound)
+                arcade.play_sound(self.sound.item_collect_generic_sound)
             elif isinstance(power_up, ToothSprite):
                 self.on_score(power_up.points)
-                arcade.play_sound(self.tooth_collect_sound)
+                arcade.play_sound(self.sound.tooth_collect_sound)
             elif isinstance(power_up, GoldenToothSprite):
                 self.on_score(power_up.points)
-                arcade.play_sound(self.tooth_gold_collect_sound)
+                arcade.play_sound(self.sound.tooth_gold_collect_sound)
                 animation_sprite = GoldenToothSprite()
                 animation_sprite.scale = 1
                 GrowAnimation.animate(animation_sprite)
@@ -194,19 +158,19 @@ class GameView(arcade.View):
             elif isinstance(power_up, PliersSprite):
                 self.add_pliers_to_ui()
                 self.player_sprite.pliers_equipped = True
-                arcade.play_sound(self.item_collect_pliers_sound)
+                arcade.play_sound(self.sound.item_collect_pliers_sound)
             elif isinstance(power_up, FlaskSprite):
                 self.add_flask_to_ui()
                 self.flask_active += 500
                 self.player_sprite.flask_active = True
-                arcade.play_sound(self.item_collect_generic_sound)
+                arcade.play_sound(self.sound.item_collect_generic_sound)
             elif isinstance(power_up, BoltSprite):
                 self.add_bolt_to_ui()
                 self.bolt_active += 500
                 self.player_sprite.movement_speed = (
                     config.CHARACTER_MOVEMENT_SPEED * 1.5
                 )
-                arcade.play_sound(self.item_collect_bolt_sound)
+                arcade.play_sound(self.sound.item_collect_bolt_sound)
             else:
                 raise Exception("Unknown power up type.")
             power_up.remove_from_sprite_lists()
@@ -233,7 +197,7 @@ class GameView(arcade.View):
             self.hit_active -= 1
             if self.hit_active == 0:
                 if not enemy_hit_list and not self.has_hit:
-                    arcade.play_sound(self.enemy_hit_miss_sound)
+                    arcade.play_sound(self.sound.enemy_hit_miss_sound)
                 self.has_hit = False
             for enemy in enemy_hit_list:
                 self.on_enemy_hit(enemy)
@@ -241,7 +205,7 @@ class GameView(arcade.View):
         else:
             for enemy in enemy_hit_list:
                 enemy.remove_from_sprite_lists()
-                arcade.play_sound(self.enemy_collision_sound)
+                arcade.play_sound(self.sound.enemy_collision_sound)
                 self.remove_life()
 
         if self.hit_cooldown > 0:
@@ -291,9 +255,9 @@ class GameView(arcade.View):
             self.key_history.append("right")
         elif key == arcade.key.SPACE:
             if self.hit_cooldown > 0:
-                arcade.play_sound(self.space_spam_sound)
+                arcade.play_sound(self.sound.space_spam_sound)
             else:
-                arcade.play_sound(self.enemy_hit_miss_sound)
+                arcade.play_sound(self.sound.enemy_hit_miss_sound)
                 self.hit_active = config.CHARACTER_HIT_TIMEOUT + (
                     15 if self.player_sprite.pliers_equipped else 0
                 )
@@ -324,7 +288,7 @@ class GameView(arcade.View):
         ):
             self.drop_tooth(enemy)
 
-        arcade.play_sound(self.enemy_hit_sound)
+        arcade.play_sound(self.sound.enemy_hit_sound)
 
         enemy.remove_from_sprite_lists()
 
@@ -377,12 +341,12 @@ class GameView(arcade.View):
         ):
             tooth = GoldenToothSprite()
             self.camera.shake(pyglet.math.Vec2(5, 5))
-            arcade.play_sound(self.enemy_hit_gold_punch_sound)
-            arcade.play_sound(self.tooth_gold_drop_sound)
+            arcade.play_sound(self.sound.enemy_hit_gold_punch_sound)
+            arcade.play_sound(self.sound.tooth_gold_drop_sound)
         else:
             tooth = ToothSprite()
-            arcade.play_sound(self.enemy_hit_punch_sound)
-            arcade.play_sound(self.tooth_drop_sound)
+            arcade.play_sound(self.sound.enemy_hit_punch_sound)
+            arcade.play_sound(self.sound.tooth_drop_sound)
 
         self.power_up_list.append(tooth)
         self.position_after_hit(self.player_sprite, enemy, tooth)
@@ -495,7 +459,7 @@ class GameView(arcade.View):
 
     def check_game_over(self):
         if not self.life_list.sprite_list:
-            arcade.play_sound(self.game_over_sound)
+            arcade.play_sound(self.sound.game_over_sound)
             gameover_view = GameOverView(self)
             gameover_view.setup()
             self.window.show_view(gameover_view)
