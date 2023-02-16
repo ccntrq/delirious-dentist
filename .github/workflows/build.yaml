@@ -33,12 +33,25 @@ jobs:
         if: runner.os == 'Linux' || runner.os == 'macOs'
         run: pyinstaller -p src --add-data "resources:resources" --collect-data arcade --onefile --windowed delirious-dentist.py
 
+      - name: Tar files to preseve permissions (Linux/Mac)
+        if: runner.os == 'Linux' || runner.os == 'macOs'
+        run: cd dist && tar -cvf delirious-dentist.tar delirious-dentist*
+
       # Uploads artifact
       - name: Upload Artifact
+        if: runner.os == 'Windows'
         uses: actions/upload-artifact@v3
         with:
           name: ${{ runner.os }}-exe
           path: |
             dist/delirious-dentist*
+
+      - name: Upload Artifact
+        if: runner.os == 'Linux' || runner.os == 'macOs'
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ runner.os }}-exe
+          path: |
+            dist/delirious-dentist.tar
 
 
