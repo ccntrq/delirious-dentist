@@ -7,10 +7,6 @@ from util.position import PositionUtil
 
 class Room:
     def __init__(self):
-        # Call the parent class and set up the window
-        super().__init__()
-
-        arcade.set_background_color(arcade.csscolor.WHITE_SMOKE)
 
         self.wall_list = None
         self.decoration_list = None

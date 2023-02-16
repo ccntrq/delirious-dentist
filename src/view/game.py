@@ -16,6 +16,7 @@ from sprite.golden_tooth import GoldenToothSprite
 from sprite.heart import HeartSprite
 from sprite.pliers import PliersSprite
 from sprite.tooth import ToothSprite
+from ui import UI
 from util.direction import DirectionUtil
 from util.position import PositionUtil
 from view.game_over import GameOverView
@@ -33,13 +34,14 @@ class GameView(arcade.View):
         arcade.set_background_color(arcade.csscolor.WHITE_SMOKE)
 
         self.room = Room()
+        self.ui = UI(self)
         self.score = None
         self.player_list = None
         self.enemy_list = None
         self.power_up_list = None
-        self.static_ui_elements_list = None
         self.pliers_dropped = None
         self.bolt_active = None
+        self.animation_list = None
 
         self.hit_active = None
         self.hit_cooldown = None
@@ -59,6 +61,7 @@ class GameView(arcade.View):
     def setup(self):
         """Set up the game here. Call this function to restart the game."""
         self.room.setup()
+        self.ui.setup()
         self.score = 0
         self.hit_cooldown = 0
         self.hit_active = 0
@@ -73,19 +76,10 @@ class GameView(arcade.View):
         # Create the Sprite lists
         self.player_list = arcade.SpriteList()
         self.enemy_list = arcade.SpriteList()
-        self.life_list = arcade.SpriteList()
-        self.static_ui_elements_list = arcade.SpriteList()
+        self.animation_list = arcade.SpriteList()
 
         # Walls use spatial hashing for faster collision detection
         self.power_up_list = arcade.SpriteList(use_spatial_hash=True)
-
-        for _ in range(config.CHARACTER_LIFES):
-            self.add_life()
-
-        ui_tooth = arcade.Sprite(config.UI_TOOTH_IMAGE_SOURCE, 0.25)
-        ui_tooth.center_x = 930
-        ui_tooth.center_y = config.UI_HEIGHT - 38
-        self.static_ui_elements_list.append(ui_tooth)
 
         # Set up the player, specifically placing it at these coordinates.
         self.player_sprite = DentistSprite()
@@ -110,20 +104,10 @@ class GameView(arcade.View):
         self.player_list.draw()
         self.enemy_list.draw()
         self.power_up_list.draw()
+        self.animation_list.draw()
 
         self.ui_camera.use()
-
-        self.life_list.draw()
-        self.static_ui_elements_list.draw()
-        arcade.draw_text(
-            str(self.score),
-            950,
-            12,
-            arcade.color.BLACK,
-            24,
-            width=config.SCREEN_WIDTH,
-            align="left",
-        )
+        self.ui.on_draw()
 
     def on_update(self, delta_time):
         """Movement and game logic"""
@@ -131,7 +115,7 @@ class GameView(arcade.View):
         # Move the player with the physics engine
         self.physics_engine.update()
         self.player_list.update_animation()
-        self.static_ui_elements_list.update_animation()
+        self.animation_list.update_animation()
 
         # Check for tooth collections
         power_up_hit_list = arcade.check_for_collision_with_list(
@@ -140,7 +124,7 @@ class GameView(arcade.View):
 
         for power_up in power_up_hit_list:
             if isinstance(power_up, HeartSprite):
-                self.add_life()
+                self.ui.add_life()
                 arcade.play_sound(self.sound.item_collect_generic_sound)
             elif isinstance(power_up, ToothSprite):
                 self.on_score(power_up.points)
@@ -153,19 +137,19 @@ class GameView(arcade.View):
                 GrowAnimation.animate(animation_sprite)
                 animation_sprite.center_x = power_up.center_x
                 animation_sprite.center_y = power_up.center_y
-                self.static_ui_elements_list.append(animation_sprite)
+                self.animation_list.append(animation_sprite)
 
             elif isinstance(power_up, PliersSprite):
-                self.add_pliers_to_ui()
+                self.ui.add_pliers()
                 self.player_sprite.pliers_equipped = True
                 arcade.play_sound(self.sound.item_collect_pliers_sound)
             elif isinstance(power_up, FlaskSprite):
-                self.add_flask_to_ui()
+                self.ui.add_flask()
                 self.flask_active += 500
                 self.player_sprite.flask_active = True
                 arcade.play_sound(self.sound.item_collect_generic_sound)
             elif isinstance(power_up, BoltSprite):
-                self.add_bolt_to_ui()
+                self.ui.add_bolt()
                 self.bolt_active += 500
                 self.player_sprite.movement_speed = (
                     config.CHARACTER_MOVEMENT_SPEED * 1.5
@@ -179,13 +163,13 @@ class GameView(arcade.View):
             self.bolt_active -= 1
             if self.bolt_active == 0:
                 self.player_sprite.movement_speed = config.CHARACTER_MOVEMENT_SPEED
-                self.remove_bolt_from_ui()
+                self.ui.remove_bolt()
 
         if self.flask_active > 0:
             self.flask_active -= 1
             if self.flask_active == 0:
                 self.player_sprite.flask_active = False
-                self.remove_flask_from_ui()
+                self.ui.remove_flask()
 
         # Check for collisions with or hits of enemies
         enemy_hit_list = arcade.check_for_collision_with_list(
@@ -206,7 +190,7 @@ class GameView(arcade.View):
             for enemy in enemy_hit_list:
                 enemy.remove_from_sprite_lists()
                 arcade.play_sound(self.sound.enemy_collision_sound)
-                self.remove_life()
+                self.ui.remove_life()
 
         if self.hit_cooldown > 0:
             self.hit_cooldown -= 1
@@ -300,38 +284,6 @@ class GameView(arcade.View):
 
         self.add_pliers()
 
-    def add_pliers_to_ui(self):
-        pliers = PliersSprite(0.2)
-        pliers.center_x = 900
-        pliers.center_y = config.UI_HEIGHT - 40
-        self.static_ui_elements_list.append(pliers)
-
-    def add_bolt_to_ui(self):
-        bolt = BoltSprite(0.4)
-        bolt.center_x = 870
-        bolt.center_y = config.UI_HEIGHT - 40
-        self.static_ui_elements_list.append(bolt)
-
-    def remove_bolt_from_ui(self):
-        items = self.static_ui_elements_list.sprite_list
-        self.static_ui_elements_list.clear()
-        for item in items:
-            if not isinstance(item, BoltSprite):
-                self.static_ui_elements_list.append(item)
-
-    def add_flask_to_ui(self):
-        flask = FlaskSprite(0.4)
-        flask.center_x = 840
-        flask.center_y = config.UI_HEIGHT - 40
-        self.static_ui_elements_list.append(flask)
-
-    def remove_flask_from_ui(self):
-        items = self.static_ui_elements_list.sprite_list
-        self.static_ui_elements_list.clear()
-        for item in items:
-            if not isinstance(item, FlaskSprite):
-                self.static_ui_elements_list.append(item)
-
     def drop_tooth(self, enemy):
         # Drop golden tooth
         drop_golden_tooth = random.uniform(0, 100)
@@ -396,14 +348,6 @@ class GameView(arcade.View):
         self.room.set_random_sprite_location_without_decoration_collision(flask)
         self.power_up_list.append(flask)
 
-    def add_life(self):
-        lifes = len(self.life_list.sprite_list)
-        life = HeartSprite()
-        life.center_x = lifes * 40 + 32
-        life.center_y = config.UI_HEIGHT - 40
-
-        self.life_list.append(life)
-
     def add_enemies(self):
         enemy_count = int(self.score / 5) + 1
         add_enemies = enemy_count - len(self.enemy_list.sprite_list)
@@ -452,13 +396,9 @@ class GameView(arcade.View):
                 if len(collisions) > 0:
                     enemy_sprite.away_from(collisions[0])
 
-    def remove_life(self):
-        if len(self.life_list.sprite_list) > 0:
-            life = self.life_list.sprite_list[-1]
-            life.remove_from_sprite_lists()
 
     def check_game_over(self):
-        if not self.life_list.sprite_list:
+        if not self.ui.life_list.sprite_list:
             arcade.play_sound(self.sound.game_over_sound)
             gameover_view = GameOverView(self)
             gameover_view.setup()
