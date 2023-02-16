@@ -27,11 +27,11 @@ jobs:
       - name: Build Executable (Windows)
         if: runner.os == 'Windows'
         shell: powershell
-        run: pyinstaller -p src --add-data "resources;resources" --collect-data arcade --onefile --windowed game.py
+        run: pyinstaller -p src --add-data "resources;resources" --collect-data arcade --onefile --windowed delirious-dentist.py
 
       - name: Build Executable (Linux/Mac)
         if: runner.os == 'Linux' || runner.os == 'macOs'
-        run: pyinstaller -p src --add-data "resources:resources" --collect-data arcade --onefile --windowed game.py
+        run: pyinstaller -p src --add-data "resources:resources" --collect-data arcade --onefile --windowed delirious-dentist.py
 
       # Uploads artifact
       - name: Upload Artifact
@@ -39,6 +39,6 @@ jobs:
         with:
           name: ${{ runner.os }}-exe
           path: |
-            dist/game*
+            dist/delirious-dentist*
 
 

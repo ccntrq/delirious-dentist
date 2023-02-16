@@ -1,20 +1,20 @@
-"""
-Delirious Dentist
-"""
-import datetime
 import math
-from operator import itemgetter
-import os
 import random
-import sys
 import arcade
 import pyglet
 
-script_dir = os.path.dirname(__file__)
-mymodule_dir = os.path.join(script_dir, "src")
-sys.path.append(mymodule_dir)
-
 import config
+
+from animation.grow import GrowAnimation
+from sprite.dentist import DentistSprite
+from sprite.enemy import EnemySprite
+from sprite.bolt import BoltSprite
+from sprite.flask import FlaskSprite
+from sprite.golden_tooth import GoldenToothSprite
+from sprite.heart import HeartSprite
+from sprite.pliers import PliersSprite
+from sprite.tooth import ToothSprite
+from view.game_over import GameOverView
 
 
 class GameView(arcade.View):
@@ -189,8 +189,7 @@ class GameView(arcade.View):
         self.decoration_list.append(room_water_dispenser)
 
         # Set up the player, specifically placing it at these coordinates.
-        image_source = config.CHARACTER_DENTIST_IMAGE_SOURCE
-        self.player_sprite = DentistCharacter()
+        self.player_sprite = DentistSprite()
         self.set_random_sprite_position_no_collisions(self.player_sprite)
         self.player_list.append(self.player_sprite)
 
@@ -253,7 +252,9 @@ class GameView(arcade.View):
             elif isinstance(power_up, GoldenToothSprite):
                 self.on_score(power_up.points)
                 arcade.play_sound(self.tooth_gold_collect_sound)
-                animation_sprite = ToothAnimation()
+                animation_sprite = GoldenToothSprite()
+                animation_sprite.scale = 1
+                GrowAnimation.animate(animation_sprite)
                 animation_sprite.center_x = power_up.center_x
                 animation_sprite.center_y = power_up.center_y
                 self.static_ui_elements_list.append(animation_sprite)
@@ -608,368 +609,3 @@ class GameView(arcade.View):
 
         sprite.center_x = enemy.center_x + math.cos(angle) * 128
         sprite.center_y = enemy.center_y + math.sin(angle) * 128
-
-
-class GameOverView(arcade.View):
-    """View to show when game is over"""
-
-    def __init__(self, game_view):
-        """This is run once when we switch to this view"""
-        super().__init__()
-        self.game_view = game_view
-        self.score = game_view.score
-        self.gameover_time = ScoreBoard().store_score(self.score)
-
-        self.scoreboard_ui_elements_list = None
-
-        # Reset the viewport, necessary if we have a scrolling game and we need
-        # to reset the viewport back to the start so we can see what we draw.
-        arcade.set_viewport(0, config.SCREEN_WIDTH - 1, 0, config.SCREEN_HEIGHT - 1)
-
-    def setup(self):
-        self.scoreboard_ui_elements_list = arcade.SpriteList()
-        ui_scoreboard = arcade.Sprite(config.UI_SCOREBOARD_IMAGE_SOURCE, 1.25)
-        ui_scoreboard.center_x = config.SCREEN_WIDTH / 2
-        ui_scoreboard.center_y = config.SCREEN_HEIGHT / 2 - 48
-        self.scoreboard_ui_elements_list.append(ui_scoreboard)
-
-    def on_draw(self):
-        """Draw this view"""
-
-        self.clear()
-
-        self.game_view.on_draw()
-
-        ui_scoreboard = arcade.Sprite(config.UI_SCOREBOARD_IMAGE_SOURCE, 1.25)
-        ui_scoreboard.center_x = config.SCREEN_WIDTH / 2
-        ui_scoreboard.center_y = config.SCREEN_HEIGHT / 2 - 48
-        ui_scoreboard.draw()
-
-        text_color = arcade.color.BLACK
-        text_color_current = arcade.color.BANANA_YELLOW
-        begin_x = config.SCREEN_HEIGHT * 0.75
-        font = "Kenney Blocks"
-        arcade.draw_text(
-            "GAME OVER",
-            0,
-            begin_x,
-            text_color,
-            48,
-            width=config.SCREEN_WIDTH,
-            align="center",
-            font_name=font,
-        )
-        arcade.draw_text(
-            f"SCORE: {self.score}",
-            0,
-            begin_x - 48,
-            text_color_current,
-            32,
-            width=config.SCREEN_WIDTH,
-            align="center",
-            font_name=font,
-        )
-        arcade.draw_text(
-            "PRESS ENTER TO RESTART",
-            0,
-            begin_x - 90,
-            text_color,
-            24,
-            width=config.SCREEN_WIDTH,
-            align="center",
-            font_name=font,
-        )
-
-        arcade.draw_text(
-            "HIGH SCORES:",
-            0,
-            begin_x - 140,
-            text_color,
-            24,
-            width=config.SCREEN_WIDTH,
-            align="center",
-            font_name=font,
-        )
-        i = 0
-        for high_score in ScoreBoard().get_high_scores():
-            arcade.draw_text(
-                f"{high_score[0]:03}  -  {high_score[1]}",
-                0,
-                begin_x - 170 - i * 30,
-                text_color_current
-                if self.gameover_time == high_score[1]
-                else text_color,
-                24,
-                width=config.SCREEN_WIDTH,
-                align="center",
-                font_name=font,
-            )
-            i += 1
-
-    def on_key_release(self, key, _modifiers):
-        """If the user releases the ENTER key, re-start the game."""
-        if key == arcade.key.ENTER:
-            self.game_view.setup()
-            self.window.show_view(self.game_view)
-
-
-class InstructionView(arcade.View):
-    """View to show instructions before the game"""
-
-    def __init__(self, game_view):
-        """This is run once when we switch to this view"""
-        super().__init__()
-
-        self.game_view = game_view
-
-        # Reset the viewport, necessary if we have a scrolling game and we need
-        # to reset the viewport back to the start so we can see what we draw.
-        arcade.set_viewport(0, config.SCREEN_WIDTH - 1, 0, config.SCREEN_HEIGHT - 1)
-        self.game_opening_sound = arcade.load_sound(config.GAME_OPENING_SOUND_RESOURCE)
-        arcade.play_sound(self.game_opening_sound)
-
-        self.cover_art_list = None
-
-        self.setup()
-
-    def setup(self):
-        self.cover_art_list = arcade.SpriteList()
-
-        # Create main title
-        main_title = arcade.Sprite(config.SCREEN_MAIN_TITLE_IMAGE_SOURCE, 1)
-        main_title.center_x = config.SCREEN_WIDTH / 2
-        main_title.center_y = config.SCREEN_HEIGHT - 120
-        self.cover_art_list.append(main_title)
-
-    def on_draw(self):
-        """Draw this view"""
-        self.clear()
-
-        self.game_view.on_draw()
-
-        self.cover_art_list.draw()
-        font = "Kenney Blocks"
-        text_color = arcade.color.WHITE
-        text_start = config.SCREEN_HEIGHT * 0.75
-        """arcade.draw_text(
-            "DELIRIOUS DENTIST",
-            0,
-            text_start,
-            text_color,
-            48,
-            width=SCREEN_WIDTH,
-            align="center",
-            font_name=font,
-        )"""
-        arcade.draw_text(
-            "Press space to perform a root treatment. Collect tooth for your precious roots collection and avoid beeing hit by angry patients",
-            0,
-            text_start - 90,
-            text_color,
-            32,
-            width=config.SCREEN_WIDTH,
-            align="center",
-            font_name=font,
-        )
-        arcade.draw_text(
-            "PRESS SPACE TO START THE GAME",
-            0,
-            text_start - 350,
-            text_color,
-            24,
-            width=config.SCREEN_WIDTH,
-            align="center",
-            font_name=font,
-        )
-
-    def on_key_release(self, key, _modifiers):
-        """If the user releases the space key, start the game."""
-        if key == arcade.key.SPACE:
-            self.window.show_view(self.game_view)
-
-
-class EnemySprite(arcade.Sprite):
-    def __init__(self):
-        # Set up parent class
-        super().__init__()
-
-        image_sources = [
-            config.ENEMY_1_IMAGE_SOURCE,
-            config.ENEMY_2_IMAGE_SOURCE,
-            config.ENEMY_3_IMAGE_SOURCE,
-        ]
-        image_source = random.choice(image_sources)
-        self.scale = config.CHARACTER_SCALING
-        self.texture = arcade.load_texture(image_source)
-
-    def away_from(self, sprite):
-        start_x = self.center_x
-        start_y = self.center_y
-
-        dest_x = sprite.center_x
-        dest_y = sprite.center_y
-
-        x_diff = dest_x - start_x
-        y_diff = dest_y - start_y
-        angle = math.atan2(y_diff, x_diff)
-
-        self.change_x = -1 * math.cos(angle) * config.ENEMY_MAX_SPEED / 2
-        self.change_y = -1 * math.sin(angle) * config.ENEMY_MAX_SPEED / 2
-
-
-class PliersSprite(arcade.Sprite):
-    def __init__(self, scale):
-        # Set up parent class
-        super().__init__()
-
-        self.scale = scale
-        self.texture = arcade.load_texture(config.UI_PLIER_IMAGE_SOURCE)
-
-
-class ToothSprite(arcade.Sprite):
-    def __init__(self):
-        # Set up parent class
-        super().__init__()
-
-        self.scale = 0.5
-        self.points = config.TOOTH_POINTS
-        self.texture = arcade.load_texture(config.UI_TOOTH_IMAGE_SOURCE)
-
-
-class GoldenToothSprite(arcade.Sprite):
-    def __init__(self):
-        # Set up parent class
-        super().__init__()
-
-        self.scale = 0.75
-        self.points = config.GOLDEN_TOOTH_POINTS
-        self.texture = arcade.load_texture(config.UI_GOLDEN_TOOTH_IMAGE_SOURCE)
-
-
-class HeartSprite(arcade.Sprite):
-    def __init__(self):
-        # Set up parent class
-        super().__init__()
-
-        self.scale = config.TILE_SCALING
-        self.texture = arcade.load_texture(config.UI_HEART_IMAGE_SOURCE)
-
-
-class BoltSprite(arcade.Sprite):
-    def __init__(self, scale=config.TILE_SCALING):
-        # Set up parent class
-        super().__init__()
-
-        self.scale = scale
-        self.texture = arcade.load_texture(config.UI_BOLT_IMAGE_SOURCE)
-
-
-class FlaskSprite(arcade.Sprite):
-    def __init__(self, scale=config.TILE_SCALING):
-        # Set up parent class
-        super().__init__()
-
-        self.scale = scale
-        self.texture = arcade.load_texture(config.UI_FLASK_IMAGE_SOURCE)
-
-
-class DentistCharacter(arcade.Sprite):
-    def __init__(self):
-        # Set up parent class
-        super().__init__()
-
-        self.scale = config.CHARACTER_SCALING
-        self.pliers_equipped = False
-
-        self.movement_speed = config.CHARACTER_MOVEMENT_SPEED
-
-        # XXX auto set hitbox or adjust coordinates to our sprite
-        # self.points = [[-22, -64], [22, -64], [22, 28], [-22, 28]]
-
-        # Set up the player, specifically placing it at these coordinates.
-        main_image_source = config.CHARACTER_DENTIST_IMAGE_SOURCE
-        hit_image_source = config.CHARACTER_DENTIST_ATTACK_IMAGE_SOURCE
-        pliers_hit_image_source = config.CHARACTER_DENTIST_ATTACK_PLIER_IMAGE_SOURCE
-        self.main_texture = arcade.load_texture(main_image_source)
-        self.hit_texture = arcade.load_texture(hit_image_source)
-        self.pliers_hit_texture = arcade.load_texture(pliers_hit_image_source)
-        self.texture = self.main_texture
-        self.main_hit_box = self.get_hit_box()
-        self.hit_hit_box = self.main_hit_box
-        # XXX Unused. Changing to a larger hit box pushes us away from borders
-        # XXX when hitting close while close to one
-        # self.hit_hit_box = list(map(
-        #    lambda x: [x[0] * 1.5, x[1] * 1.5], list(self.main_hit_box)))
-        self.hit_active = 0
-        self.flask_active = False
-
-    def update_animation(self, delta_time: float = 1 / 60):
-        if self.is_hitting():
-            self.texture = (
-                self.pliers_hit_texture if self.pliers_equipped else self.hit_texture
-            )
-            self.hit_box = self.hit_hit_box
-            return
-
-        self.texture = self.main_texture
-        self.hit_box = self.main_hit_box
-
-    def is_hitting(self):
-        return self.hit_active > 0 or self.flask_active
-
-
-class ScoreBoard:
-    def store_score(self, score):
-        timestamp = datetime.datetime.now().strftime("%b %d %Y %H:%M:%S")
-        with open(config.HIGH_SCORE_FILE, "a+") as high_score_file:
-            high_score_file.write(f"{score},{timestamp}\n")
-        return timestamp
-
-    def get_high_scores(self, limit=10):
-        with open(config.HIGH_SCORE_FILE, "r+") as high_score_file:
-            lines = list(
-                reversed(
-                    sorted(
-                        map(
-                            lambda x: [int(x[0]), x[1]],
-                            map(
-                                lambda x: x.rstrip().split(","),
-                                high_score_file.readlines(),
-                            ),
-                        ),
-                        key=itemgetter(0),
-                    )
-                )
-            )
-            return lines[0:limit]
-
-
-class ToothAnimation(GoldenToothSprite):
-    def __init__(self):
-        # Set up parent class
-        super().__init__()
-        self.scale = 1
-
-    def update_animation(self, delta_time: float = 1 / 60):
-        self.scale *= 1.2
-        maximum_scale = 6
-        if self.scale >= maximum_scale:
-            self.remove_from_sprite_lists()
-
-
-def main():
-    """Main function"""
-    window = arcade.Window(
-        config.SCREEN_WIDTH, config.SCREEN_HEIGHT, config.SCREEN_TITLE
-    )
-
-    game_view = GameView()
-    game_view.setup()
-    start_view = InstructionView(game_view)
-    start_view.setup()
-    window.show_view(start_view)
-    arcade.run()
-
-
-if __name__ == "__main__":
-    main()
