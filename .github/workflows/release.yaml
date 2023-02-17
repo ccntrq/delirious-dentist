@@ -1,0 +1,60 @@
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: write
+
+    steps:
+      # Check-out repository
+      - uses: actions/checkout@v3
+
+      # Setup Python
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10' # Version range or exact version of a Python version to use, using SemVer's version range syntax
+          architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
+
+      - name: Install Dependencies
+        run: |
+          pip install pyinstaller==5.7.0 -r requirements.txt
+
+      - name: Build Executable (Windows)
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: pyinstaller -p src --add-data "resources;resources" --collect-data arcade --onefile --windowed delirious-dentist.py
+
+      - name: Build Executable (Linux/Mac)
+        if: runner.os == 'Linux' || runner.os == 'macOs'
+        run: pyinstaller -p src --add-data "resources:resources" --collect-data arcade --onefile --windowed delirious-dentist.py
+
+      - name: Bundle files (Linux)
+        if: runner.os == 'Linux'
+        run: cd dist && tar -cvf delirious-dentist-Linux.tar.gz delirious-dentist
+
+      - name: Bundle files (macOs)
+        if: runner.os == 'macOs'
+        run: cd dist && tar -cvf delirious-dentist-macOs.tar.gz delirious-dentist.app
+
+      - name: Bundle files (Windows)
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: Compress-Archive -Path "dist\delirious-dentist.exe" -DestinationPath "dist\delirious-dentist-Win.zip"
+
+      - name: Release
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          artifacts: "dist/delirious-dentist*.tar.gz,dist/delirious-dentist*.zip"
+          bodyFile: CHANGELOG.md
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
