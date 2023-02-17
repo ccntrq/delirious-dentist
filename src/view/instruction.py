@@ -1,11 +1,13 @@
 import arcade
 
 import config
+from sound import Sound
+
 
 class InstructionView(arcade.View):
     """View to show instructions before the game"""
 
-    def __init__(self, game_view):
+    def __init__(self, game_view, sound):
         """This is run once when we switch to this view"""
         super().__init__()
 
@@ -14,14 +16,15 @@ class InstructionView(arcade.View):
         # Reset the viewport, necessary if we have a scrolling game and we need
         # to reset the viewport back to the start so we can see what we draw.
         arcade.set_viewport(0, config.SCREEN_WIDTH - 1, 0, config.SCREEN_HEIGHT - 1)
-        self.game_opening_sound = arcade.load_sound(config.GAME_OPENING_SOUND_RESOURCE)
-        arcade.play_sound(self.game_opening_sound)
 
         self.cover_art_list = None
+        self.sound = sound
 
         self.setup()
 
     def setup(self):
+        arcade.play_sound(self.sound.game_opening_sound)
+
         self.cover_art_list = arcade.SpriteList()
 
         # Create main title

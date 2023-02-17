@@ -3,10 +3,11 @@ import math
 import random
 
 import config
+from util.direction import DirectionUtil
 
 
 class EnemySprite(arcade.Sprite):
-    def __init__(self):
+    def __init__(self, decoration_list):
         # Set up parent class
         super().__init__()
 
@@ -18,17 +19,36 @@ class EnemySprite(arcade.Sprite):
         image_source = random.choice(image_sources)
         self.scale = config.CHARACTER_SCALING
         self.texture = arcade.load_texture(image_source)
+        self.decoration_list = decoration_list
+        self.set_random_speed_and_direction()
+
+    def on_update(self, delta_time: float = 1 / 60):
+        self.move()
+
+    def move(self):
+        super().update()
+
+        if self.right > config.ENEMY_RIGHT_BORDER:
+            self.change_x = -abs(self.change_x)
+        elif self.left < config.ENEMY_LEFT_BORDER:
+            self.change_x = abs(self.change_x)
+        if self.top > config.ENEMY_TOP_BORDER:
+            self.change_y = -abs(self.change_y)
+        elif self.bottom < config.ENEMY_BOTTOM_BORDER:
+            self.change_y = abs(self.change_y)
+        else:
+            collisions = arcade.check_for_collision_with_list(
+                self, self.decoration_list
+            )
+            if len(collisions) > 0:
+                self.away_from(collisions[0])
+
+    def set_random_speed_and_direction(self):
+        self.change_x = random.randint(0, config.ENEMY_MAX_SPEED)
+        self.change_y = random.randint(0, config.ENEMY_MAX_SPEED - self.change_x)
 
     def away_from(self, sprite):
-        start_x = self.center_x
-        start_y = self.center_y
+        dir = DirectionUtil.away_from(self, sprite)
 
-        dest_x = sprite.center_x
-        dest_y = sprite.center_y
-
-        x_diff = dest_x - start_x
-        y_diff = dest_y - start_y
-        angle = math.atan2(y_diff, x_diff)
-
-        self.change_x = -1 * math.cos(angle) * config.ENEMY_MAX_SPEED / 2
-        self.change_y = -1 * math.sin(angle) * config.ENEMY_MAX_SPEED / 2
+        self.change_x = dir[0] * config.ENEMY_MAX_SPEED / 2
+        self.change_y = dir[1] * config.ENEMY_MAX_SPEED / 2
