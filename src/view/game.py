@@ -141,16 +141,13 @@ class GameView(arcade.View):
                 self.animation_list.append(animation_sprite)
 
             elif isinstance(power_up, PliersSprite):
-                self.ui.add_pliers()
                 self.player_sprite.pliers_equipped = True
                 arcade.play_sound(self.sound.item_collect_pliers_sound)
             elif isinstance(power_up, FlaskSprite):
-                self.ui.add_flask()
                 self.flask_active += 500
                 self.player_sprite.flask_active = True
                 arcade.play_sound(self.sound.item_collect_generic_sound)
             elif isinstance(power_up, BoltSprite):
-                self.ui.add_bolt()
                 self.bolt_active += 500
                 self.player_sprite.movement_speed = (
                     config.CHARACTER_MOVEMENT_SPEED * 1.5
@@ -164,13 +161,11 @@ class GameView(arcade.View):
             self.bolt_active -= 1
             if self.bolt_active == 0:
                 self.player_sprite.movement_speed = config.CHARACTER_MOVEMENT_SPEED
-                self.ui.remove_bolt()
 
         if self.flask_active > 0:
             self.flask_active -= 1
             if self.flask_active == 0:
                 self.player_sprite.flask_active = False
-                self.ui.remove_flask()
 
         # Check for collisions with or hits of enemies
         enemy_hit_list = arcade.check_for_collision_with_list(
@@ -195,6 +190,8 @@ class GameView(arcade.View):
 
         if self.hit_cooldown > 0:
             self.hit_cooldown -= 1
+
+        self.ui.on_update(delta_time)
 
         self.add_enemies()
         self.add_hearts()
