@@ -9,6 +9,8 @@ _RESOURCE_PATH = os.path.join(
     os.path.dirname(__file__), "." if _IS_BUNDLED else "..", "resources"
 )
 
+DEBUG = not _IS_BUNDLED
+
 SCREEN_WIDTH = 1024
 SCREEN_HEIGHT = 640
 SCREEN_TITLE = f"Delirious Dentist (v{version.VERSION})"

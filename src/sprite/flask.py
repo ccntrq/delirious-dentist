@@ -1,9 +1,10 @@
 import arcade
 
 import config
+from animation.blink import BlinkAnimation
 
 
-class FlaskSprite(arcade.Sprite):
+class FlaskSprite(BlinkAnimation, arcade.Sprite):
     def __init__(self, scale=config.TILE_SCALING):
         # Set up parent class
         super().__init__()
