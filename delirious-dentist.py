@@ -18,6 +18,9 @@ from view.instruction import InstructionView
 
 def main():
     """Main function"""
+    if config.DEBUG:
+        arcade.enable_timings()
+
     window = arcade.Window(
         config.SCREEN_WIDTH, config.SCREEN_HEIGHT, config.SCREEN_TITLE
     )

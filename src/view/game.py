@@ -6,6 +6,7 @@ import pyglet
 import config
 
 from animation.grow import GrowAnimation
+from performance_stats import PerfomanceStats
 from room import Room
 from sound import Sound
 from sprite.dentist import DentistSprite
@@ -35,6 +36,7 @@ class GameView(arcade.View):
 
         self.room = Room()
         self.ui = UI(self)
+        self.performance_stats = PerfomanceStats()
         self.score = None
         self.player_list = None
         self.enemy_list = None
@@ -62,6 +64,9 @@ class GameView(arcade.View):
         """Set up the game here. Call this function to restart the game."""
         self.room.setup()
         self.ui.setup()
+
+        if config.DEBUG:
+            self.performance_stats.setup()
         self.score = 0
         self.hit_cooldown = 0
         self.hit_active = 0
@@ -109,8 +114,13 @@ class GameView(arcade.View):
         self.ui_camera.use()
         self.ui.on_draw()
 
+        if config.DEBUG:
+            self.performance_stats.on_draw()
+
     def on_update(self, delta_time):
         """Movement and game logic"""
+        if config.DEBUG:
+            self.performance_stats.update(delta_time)
 
         # Move the player with the physics engine
         self.physics_engine.update()
