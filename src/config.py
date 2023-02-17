@@ -92,4 +92,4 @@ ENEMY_LEFT_BORDER = 0
 CHARACTER_SCALING = 1
 TILE_SCALING = 1
 
-HIGH_SCORE_FILE = "delirious-dentist.scores"
+HIGH_SCORE_FILE_NAME = "delirious-dentist.scores"
