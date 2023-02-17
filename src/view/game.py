@@ -8,6 +8,7 @@ import config
 from animation.grow import GrowAnimation
 from performance_stats import PerfomanceStats
 from room import Room
+from scene import Scene
 from sound import Sound
 from sprite.dentist import DentistSprite
 from sprite.enemy import EnemySprite
@@ -33,7 +34,7 @@ class GameView(arcade.View):
         super().__init__()
 
         arcade.set_background_color(arcade.csscolor.WHITE_SMOKE)
-
+        self.scene = None
         self.room = Room()
         self.ui = UI(self)
         self.performance_stats = PerfomanceStats()
@@ -62,7 +63,9 @@ class GameView(arcade.View):
 
     def setup(self):
         """Set up the game here. Call this function to restart the game."""
-        self.room.setup()
+        self.scene = Scene()
+
+        self.room.setup(self.scene)
         self.ui.setup()
 
         if config.DEBUG:
@@ -78,13 +81,17 @@ class GameView(arcade.View):
         self.flask_active = 0
         self.enemy_auto_spawn = 0
 
+
         # Create the Sprite lists
         self.player_list = arcade.SpriteList()
         self.enemy_list = arcade.SpriteList()
         self.animation_list = arcade.SpriteList()
-
-        # Walls use spatial hashing for faster collision detection
         self.power_up_list = arcade.SpriteList(use_spatial_hash=True)
+
+        self.scene.add_sprite_list("Player", sprite_list=self.player_list)
+        self.scene.add_sprite_list("Enemy", sprite_list=self.enemy_list)
+        self.scene.add_sprite_list("Animation", sprite_list=self.animation_list)
+        self.scene.add_sprite_list("PowerUp", sprite_list=self.power_up_list)
 
         # Set up the player, specifically placing it at these coordinates.
         self.player_sprite = DentistSprite()
@@ -92,7 +99,7 @@ class GameView(arcade.View):
             self.player_sprite
         )
         self.player_list.append(self.player_sprite)
-
+        
         # Create the 'physics engine'
         self.physics_engine = arcade.PhysicsEngineSimple(
             self.player_sprite, [self.room.wall_list, self.room.decoration_list]
@@ -105,11 +112,7 @@ class GameView(arcade.View):
 
         self.camera.use()
 
-        self.room.on_draw()
-        self.player_list.draw()
-        self.enemy_list.draw()
-        self.power_up_list.draw()
-        self.animation_list.draw()
+        self.scene.draw()
 
         self.ui_camera.use()
         self.ui.on_draw()

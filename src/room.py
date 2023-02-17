@@ -12,13 +12,15 @@ class Room:
         self.decoration_list = None
         self.floor_list = None
 
-        self.setup()
-
-    def setup(self):
+    def setup(self, scene):
         # Walls use spatial hashing for faster collision detection
         self.wall_list = arcade.SpriteList(use_spatial_hash=True)
         self.decoration_list = arcade.SpriteList(use_spatial_hash=True)
         self.floor_list = arcade.SpriteList(use_spatial_hash=True)
+
+        scene.add_sprite_list("Floor", sprite_list=self.floor_list)
+        scene.add_sprite_list("Decoration", sprite_list=self.decoration_list)
+        scene.add_sprite_list("Wall", sprite_list=self.wall_list)
 
         # Create walls
         # Create lower boundary
@@ -85,12 +87,6 @@ class Room:
             room_water_dispenser
         )
         self.decoration_list.append(room_water_dispenser)
-
-    def on_draw(self):
-        "Draw room elements"
-        self.floor_list.draw()
-        self.wall_list.draw()
-        self.decoration_list.draw()
 
     def set_random_sprite_location_without_decoration_collision(self, sprite):
         PositionUtil.set_random_position_without_collision(sprite, self.decoration_list)
