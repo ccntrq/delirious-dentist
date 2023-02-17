@@ -321,13 +321,11 @@ class GameView(arcade.View):
     def add_blood(self, enemy):
         # Drop blood
 
-        splatter_amount = random.randint(1, 10)
+        splatter_amount = random.randint(15, 35)
         for _ in range(0,splatter_amount):
             blood = BloodSprite()
             self.blood_position_after_hit(self.player_sprite, enemy, blood, splatter_amount)
-            blood.center_x = min([max([blood.center_x, 16]), config.ENEMY_RIGHT_BORDER - 16, ])
-            blood.center_y = min([max([blood.center_y, 16]), config.ENEMY_TOP_BORDER])
-            self.room.floor_list.append(blood)
+            self.room.blood_list.append(blood)
 
     def add_pliers(self):
         if (
@@ -400,20 +398,14 @@ class GameView(arcade.View):
         dest = DirectionUtil.towards(player, enemy)
 
         sprite.center_x = enemy.center_x + dest[0] * 128
-        sprite.center_y = enemy.center_y + dest[0] * 128
+        sprite.center_y = enemy.center_y + dest[1] * 128
 
     def blood_position_after_hit(self, player, enemy, sprite, splatter_amount):
-        start_x = player.center_x
-        start_y = player.center_y
-
-        dest_x = enemy.center_x
-        dest_y = enemy.center_y
-
-        x_diff = dest_x - start_x
-        y_diff = dest_y - start_y
-        angle = math.atan2(y_diff, x_diff)
+        x_diff = enemy.change_x + player.change_x
+        y_diff = enemy.change_y + player.change_y
 
         for _ in range(0, splatter_amount):
-            blood_distance = random.randint(-10, 34)
-            sprite.center_x = enemy.center_x + math.cos(angle) * blood_distance
-            sprite.center_y = enemy.center_y + math.sin(angle) * blood_distance
+            sprite.alpha = random.randint(100, 150)
+            blood_distance = random.randint(10, 20)
+            sprite.center_x = enemy.center_x + x_diff * blood_distance + blood_distance * random.randint(1, 3)
+            sprite.center_y = enemy.center_y + y_diff * blood_distance + blood_distance * random.randint(1, 3)

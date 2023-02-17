@@ -11,6 +11,7 @@ class Room:
         self.wall_list = None
         self.decoration_list = None
         self.floor_list = None
+        self.blood_list = None
 
         self.setup()
 
@@ -19,6 +20,7 @@ class Room:
         self.wall_list = arcade.SpriteList(use_spatial_hash=True)
         self.decoration_list = arcade.SpriteList(use_spatial_hash=True)
         self.floor_list = arcade.SpriteList(use_spatial_hash=True)
+        self.blood_list = arcade.SpriteList(use_spatial_hash=True)
 
         # Create walls
         # Create lower boundary
@@ -89,6 +91,7 @@ class Room:
     def on_draw(self):
         "Draw room elements"
         self.floor_list.draw()
+        self.blood_list.draw()
         self.wall_list.draw()
         self.decoration_list.draw()
 
