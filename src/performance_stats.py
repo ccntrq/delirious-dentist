@@ -1,5 +1,7 @@
 import arcade
 
+import config
+
 
 class PerfomanceStats:
     def __init__(self):
@@ -14,7 +16,7 @@ class PerfomanceStats:
     def on_draw(self):
         # Get FPS for the last 60 frames
         text = f"FPS: {arcade.get_fps(60):5.1f}"
-        arcade.draw_text(text, 10, 10, arcade.color.BLACK, 22)
+        arcade.draw_text(text, 32, config.SCREEN_HEIGHT - 52, arcade.color.BLACK, 22)
 
     def update(self, delta_time):
         """Update method"""
