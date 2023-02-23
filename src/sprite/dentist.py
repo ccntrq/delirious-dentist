@@ -2,6 +2,10 @@ import arcade
 
 import config
 
+MAIN_TEXTURE = 0
+HIT_TEXTURE = 1
+PLIERS_HIT_TEXTURE = 2
+
 
 class DentistSprite(arcade.Sprite):
     def __init__(self):
@@ -13,25 +17,36 @@ class DentistSprite(arcade.Sprite):
 
         self.movement_speed = config.CHARACTER_MOVEMENT_SPEED
 
+        texture_resources = [
+            config.CHARACTER_DENTIST_IMAGE_SOURCE,
+            config.CHARACTER_DENTIST_ATTACK_IMAGE_SOURCE,
+            config.CHARACTER_DENTIST_ATTACK_PLIER_IMAGE_SOURCE,
+        ]
+
+        self.hit_boxes = list(
+            map(
+                lambda r: arcade.Sprite(r, self.scale).get_hit_box(),
+                texture_resources,
+            )
+        )
+
         # Set up the player, specifically placing it at these coordinates.
-        main_image_source = config.CHARACTER_DENTIST_IMAGE_SOURCE
-        hit_image_source = config.CHARACTER_DENTIST_ATTACK_IMAGE_SOURCE
-        pliers_hit_image_source = config.CHARACTER_DENTIST_ATTACK_PLIER_IMAGE_SOURCE
-        self.main_texture = arcade.load_texture(main_image_source)
-        self.hit_texture = arcade.load_texture(hit_image_source)
-        self.pliers_hit_texture = arcade.load_texture(pliers_hit_image_source)
-        self.texture = self.main_texture
+        self.textures = list(map(arcade.load_texture, texture_resources))
+        self.texture = self.textures[MAIN_TEXTURE]
         self.hit_active = 0
         self.flask_active = False
 
     def update_animation(self, delta_time: float = 1 / 60):
-        if self.is_hitting():
-            self.texture = (
-                self.pliers_hit_texture if self.pliers_equipped else self.hit_texture
-            )
-            return
+        texture_index = (
+            PLIERS_HIT_TEXTURE
+            if self.hit_active and self.pliers_equipped
+            else HIT_TEXTURE
+            if self.hit_active
+            else MAIN_TEXTURE
+        )
 
-        self.texture = self.main_texture
+        self.texture = self.textures[texture_index]
+        self.hit_box = self.hit_boxes[texture_index]
 
     def is_hitting(self):
         return self.hit_active > 0 or self.flask_active
