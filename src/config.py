@@ -22,7 +22,7 @@ def resource(*paths):
 
 
 # Sprite locations
-CHARACTER_DENTIST_IMAGE_SOURCE = resource("sprites", "characters", "dentist.png")
+CHARACTER_DENTIST_IMAGE_SOURCE = resource("sprites", "characters", "dentist_front.png")
 CHARACTER_DENTIST_ATTACK_IMAGE_SOURCE = resource(
     "sprites", "characters", "dentist_attack.png"
 )
