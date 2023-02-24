@@ -56,7 +56,7 @@ CHARACTER_DENTIST_ATTACK_PLIER_RIGHT_IMAGE_SOURCE = resource(
 CHARACTER_DENTIST_ATTACK_PLIER_UP_IMAGE_SOURCE = resource(
     "sprites", "characters", "dentist_punch_pliers_right.png"
 )
-ENEMY_1_IMAGE_SOURCE = resource("sprites", "characters", "enemy_1.png")
+ENEMY_1_IMAGE_SOURCE = resource("sprites", "characters", "enemy_1_front.png")
 ENEMY_2_IMAGE_SOURCE = resource("sprites", "characters", "enemy_2.png")
 ENEMY_3_IMAGE_SOURCE = resource("sprites", "characters", "enemy_3.png")
 ROOM_TILE_FLOOR_IMAGE_SOURCE = resource("sprites", "room", "tile_floor.png")
@@ -68,7 +68,7 @@ ROOM_PLANT_IMAGE_SOURCE = resource("sprites", "room", "plant.png")
 ROOM_XRAY_IMAGE_SOURCE = resource("sprites", "room", "xray.png")
 ROOM_VENDING_MACHINE_IMAGE_SOURCE = resource("sprites", "room", "vending_machine.png")
 ROOM_WATER_DISPENSER_IMAGE_SOURCE = resource("sprites", "room", "water_dispenser.png")
-UI_HEART_IMAGE_SOURCE = resource("sprites", "ui", "heart.png")
+UI_HEART_IMAGE_SOURCE = resource("sprites", "ui", "heart_item.png")
 UI_TOOTH_IMAGE_SOURCE = resource("sprites", "ui", "tooth.png")
 UI_GOLDEN_TOOTH_IMAGE_SOURCE = resource("sprites", "ui", "golden_tooth.png")
 UI_PLIER_IMAGE_SOURCE = resource("sprites", "ui", "plier.png")
