@@ -23,11 +23,38 @@ def resource(*paths):
 
 # Sprite locations
 CHARACTER_DENTIST_IMAGE_SOURCE = resource("sprites", "characters", "dentist_front.png")
+CHARACTER_DENTIST_LEFT_IMAGE_SOURCE = resource(
+    "sprites", "characters", "dentist_left.png"
+)
+CHARACTER_DENTIST_RIGHT_IMAGE_SOURCE = resource(
+    "sprites", "characters", "dentist_right.png"
+)
+CHARACTER_DENTIST_UP_IMAGE_SOURCE = resource(
+    "sprites", "characters", "dentist_back.png"
+)
 CHARACTER_DENTIST_ATTACK_IMAGE_SOURCE = resource(
-    "sprites", "characters", "dentist_attack.png"
+    "sprites", "characters", "dentist_punch_right.png"
+)
+CHARACTER_DENTIST_ATTACK_LEFT_IMAGE_SOURCE = resource(
+    "sprites", "characters", "dentist_punch_left.png"
+)
+CHARACTER_DENTIST_ATTACK_RIGHT_IMAGE_SOURCE = resource(
+    "sprites", "characters", "dentist_punch_right.png"
+)
+CHARACTER_DENTIST_ATTACK_UP_IMAGE_SOURCE = resource(
+    "sprites", "characters", "dentist_punch_right.png"
 )
 CHARACTER_DENTIST_ATTACK_PLIER_IMAGE_SOURCE = resource(
-    "sprites", "characters", "dentist_attack_plier.png"
+    "sprites", "characters", "dentist_punch_pliers_right.png"
+)
+CHARACTER_DENTIST_ATTACK_PLIER_LEFT_IMAGE_SOURCE = resource(
+    "sprites", "characters", "dentist_punch_pliers_left.png"
+)
+CHARACTER_DENTIST_ATTACK_PLIER_RIGHT_IMAGE_SOURCE = resource(
+    "sprites", "characters", "dentist_punch_pliers_right.png"
+)
+CHARACTER_DENTIST_ATTACK_PLIER_UP_IMAGE_SOURCE = resource(
+    "sprites", "characters", "dentist_punch_pliers_right.png"
 )
 ENEMY_1_IMAGE_SOURCE = resource("sprites", "characters", "enemy_1.png")
 ENEMY_2_IMAGE_SOURCE = resource("sprites", "characters", "enemy_2.png")

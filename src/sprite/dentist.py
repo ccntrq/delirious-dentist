@@ -3,8 +3,8 @@ import arcade
 import config
 
 MAIN_TEXTURE = 0
-HIT_TEXTURE = 1
-PLIERS_HIT_TEXTURE = 2
+HIT_TEXTURE = 4
+PLIERS_HIT_TEXTURE = 8
 
 
 class DentistSprite(arcade.Sprite):
@@ -19,8 +19,17 @@ class DentistSprite(arcade.Sprite):
 
         texture_resources = [
             config.CHARACTER_DENTIST_IMAGE_SOURCE,
+            config.CHARACTER_DENTIST_LEFT_IMAGE_SOURCE,
+            config.CHARACTER_DENTIST_RIGHT_IMAGE_SOURCE,
+            config.CHARACTER_DENTIST_UP_IMAGE_SOURCE,
             config.CHARACTER_DENTIST_ATTACK_IMAGE_SOURCE,
+            config.CHARACTER_DENTIST_ATTACK_LEFT_IMAGE_SOURCE,
+            config.CHARACTER_DENTIST_ATTACK_RIGHT_IMAGE_SOURCE,
+            config.CHARACTER_DENTIST_ATTACK_UP_IMAGE_SOURCE,
             config.CHARACTER_DENTIST_ATTACK_PLIER_IMAGE_SOURCE,
+            config.CHARACTER_DENTIST_ATTACK_PLIER_LEFT_IMAGE_SOURCE,
+            config.CHARACTER_DENTIST_ATTACK_PLIER_RIGHT_IMAGE_SOURCE,
+            config.CHARACTER_DENTIST_ATTACK_PLIER_UP_IMAGE_SOURCE,
         ]
 
         self.hit_boxes = list(
@@ -43,6 +52,18 @@ class DentistSprite(arcade.Sprite):
             else HIT_TEXTURE
             if self.is_hitting()
             else MAIN_TEXTURE
+        )
+
+        texture_index += (
+            0
+            if self.change_y < 0
+            else 3
+            if self.change_y > 0
+            else 1
+            if self.change_x < 0
+            else 2
+            if self.change_x > 0
+            else 0
         )
 
         self.texture = self.textures[texture_index]
