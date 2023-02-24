@@ -268,6 +268,9 @@ class GameView(arcade.View):
             self.key_history = list(filter(lambda x: x != "left", self.key_history))
         elif key == arcade.key.RIGHT or key == arcade.key.D:
             self.key_history = list(filter(lambda x: x != "right", self.key_history))
+        elif key == arcade.key.ENTER:
+            # reload game
+            self.setup()
 
         self.update_player_speed()
 
