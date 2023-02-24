@@ -39,9 +39,9 @@ class DentistSprite(arcade.Sprite):
     def update_animation(self, delta_time: float = 1 / 60):
         texture_index = (
             PLIERS_HIT_TEXTURE
-            if self.hit_active and self.pliers_equipped
+            if self.is_hitting() and self.pliers_equipped
             else HIT_TEXTURE
-            if self.hit_active
+            if self.is_hitting()
             else MAIN_TEXTURE
         )
 
