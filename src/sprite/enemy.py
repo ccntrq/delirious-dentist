@@ -18,7 +18,7 @@ class EnemySprite(arcade.Sprite):
             #config.ENEMY_3_IMAGE_SOURCE,
         ]
         image_source = random.choice(image_sources)
-        self.scale = config.CHARACTER_SCALING * 2
+        self.scale = config.TILE_SCALING
         self.texture = arcade.load_texture(image_source)
         self.decoration_list = decoration_list
         self.set_random_speed_and_direction()

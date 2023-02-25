@@ -12,7 +12,7 @@ class DentistSprite(arcade.Sprite):
         # Set up parent class
         super().__init__()
 
-        self.scale = 2
+        self.scale = config.TILE_SCALING
         self.pliers_equipped = False
 
         self.movement_speed = config.CHARACTER_MOVEMENT_SPEED

@@ -7,7 +7,6 @@ from util.position import PositionUtil
 
 class Room:
     def __init__(self):
-
         self.wall_list = None
         self.decoration_list = None
         self.floor_list = None
@@ -50,28 +49,30 @@ class Room:
             self.wall_list.append(wall)
 
         # Create the floor
-        for x in range(0, config.SCREEN_WIDTH, 32):
-            for y in range(config.UI_HEIGHT, config.SCREEN_HEIGHT, 32):
-                floor = arcade.Sprite(config.ROOM_TILE_FLOOR_IMAGE_SOURCE, 0.25)
-                floor.center_x = x + 16
+        for x in range(0, config.SCREEN_WIDTH, 256):
+            for y in range(config.UI_HEIGHT, config.SCREEN_HEIGHT, 256):
+                floor = arcade.Sprite(
+                    config.ROOM_TILE_FLOOR_IMAGE_SOURCE, config.TILE_SCALING
+                )
+                floor.center_x = x + 128
                 floor.center_y = y
                 self.floor_list.append(floor)
 
         # Create interior
-        room_chair = arcade.Sprite(config.ROOM_CHAIR_IMAGE_SOURCE, 0.5)
+        room_chair = arcade.Sprite(config.ROOM_CHAIR_IMAGE_SOURCE, config.TILE_SCALING)
         self.set_random_sprite_location_without_decoration_collision(room_chair)
         self.decoration_list.append(room_chair)
 
-        room_plant = arcade.Sprite(config.ROOM_PLANT_IMAGE_SOURCE, 0.4)
+        room_plant = arcade.Sprite(config.ROOM_PLANT_IMAGE_SOURCE, config.TILE_SCALING)
         self.set_random_sprite_location_without_decoration_collision(room_plant)
         self.decoration_list.append(room_plant)
 
-        room_xray = arcade.Sprite(config.ROOM_XRAY_IMAGE_SOURCE, 0.4)
+        room_xray = arcade.Sprite(config.ROOM_XRAY_IMAGE_SOURCE, config.TILE_SCALING)
         self.set_random_sprite_location_without_decoration_collision(room_xray)
         self.decoration_list.append(room_xray)
 
         room_vending_machine = arcade.Sprite(
-            config.ROOM_VENDING_MACHINE_IMAGE_SOURCE, 0.4
+            config.ROOM_VENDING_MACHINE_IMAGE_SOURCE, config.TILE_SCALING
         )
         self.set_random_sprite_location_without_decoration_collision(
             room_vending_machine
@@ -79,7 +80,7 @@ class Room:
         self.decoration_list.append(room_vending_machine)
 
         room_water_dispenser = arcade.Sprite(
-            config.ROOM_WATER_DISPENSER_IMAGE_SOURCE, 0.4
+            config.ROOM_WATER_DISPENSER_IMAGE_SOURCE, config.TILE_SCALING
         )
         self.set_random_sprite_location_without_decoration_collision(
             room_water_dispenser
@@ -88,9 +89,9 @@ class Room:
 
     def on_draw(self):
         "Draw room elements"
-        self.floor_list.draw()
-        self.wall_list.draw()
-        self.decoration_list.draw()
+        self.floor_list.draw(pixelated=True)
+        self.wall_list.draw(pixelated=True)
+        self.decoration_list.draw(pixelated=True)
 
     def set_random_sprite_location_without_decoration_collision(self, sprite):
         PositionUtil.set_random_position_without_collision(sprite, self.decoration_list)
