@@ -106,8 +106,8 @@ class GameView(arcade.View):
         self.camera.use()
 
         self.room.on_draw()
-        self.player_list.draw()
-        self.enemy_list.draw()
+        self.player_list.draw(pixelated=True)
+        self.enemy_list.draw(pixelated=True)
         self.power_up_list.draw()
         self.animation_list.draw()
 
