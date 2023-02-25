@@ -22,15 +22,29 @@ def resource(*paths):
 
 
 # Sprite locations
-CHARACTER_DENTIST_IMAGE_SOURCE = resource("sprites", "characters", "dentist_front_walking_animation_1.png")
-CHARACTER_DENTIST_LEFT_IMAGE_SOURCE = resource(
+CHARACTER_DENTIST_IMAGE_SOURCE_1 = resource(
+    "sprites", "characters", "dentist_front_walking_animation_1.png"
+)
+CHARACTER_DENTIST_IMAGE_SOURCE_2 = resource(
+    "sprites", "characters", "dentist_front_walking_animation_2.png"
+)
+CHARACTER_DENTIST_LEFT_IMAGE_SOURCE_1 = resource(
     "sprites", "characters", "dentist_left_walking_animation_1.png"
 )
-CHARACTER_DENTIST_RIGHT_IMAGE_SOURCE = resource(
+CHARACTER_DENTIST_LEFT_IMAGE_SOURCE_2 = resource(
+    "sprites", "characters", "dentist_left_walking_animation_2.png"
+)
+CHARACTER_DENTIST_RIGHT_IMAGE_SOURCE_1 = resource(
     "sprites", "characters", "dentist_right_walking_animation_1.png"
 )
-CHARACTER_DENTIST_UP_IMAGE_SOURCE = resource(
+CHARACTER_DENTIST_RIGHT_IMAGE_SOURCE_2 = resource(
+    "sprites", "characters", "dentist_right_walking_animation_2.png"
+)
+CHARACTER_DENTIST_UP_IMAGE_SOURCE_1 = resource(
     "sprites", "characters", "dentist_back_walking_animation_1.png"
+)
+CHARACTER_DENTIST_UP_IMAGE_SOURCE_2 = resource(
+    "sprites", "characters", "dentist_back_walking_animation_2.png"
 )
 CHARACTER_DENTIST_ATTACK_IMAGE_SOURCE = resource(
     "sprites", "characters", "dentist_punch_right.png"
