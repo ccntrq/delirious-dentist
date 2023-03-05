@@ -52,7 +52,7 @@ class Room:
         for x in range(0, config.SCREEN_WIDTH, 256):
             for y in range(config.UI_HEIGHT, config.SCREEN_HEIGHT, 256):
                 floor = arcade.Sprite(
-                    config.ROOM_TILE_FLOOR_IMAGE_SOURCE, config.TILE_SCALING
+                    config.ROOM_TILE_FLOOR_IMAGE_SOURCE, 2
                 )
                 floor.center_x = x + 128
                 floor.center_y = y
