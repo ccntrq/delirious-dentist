@@ -106,9 +106,9 @@ class GameView(arcade.View):
         self.camera.use()
 
         self.room.on_draw()
-        self.player_list.draw()
-        self.enemy_list.draw()
-        self.power_up_list.draw()
+        self.player_list.draw(pixelated=True)
+        self.enemy_list.draw(pixelated=True)
+        self.power_up_list.draw(pixelated=True)
         self.animation_list.draw()
 
         self.ui_camera.use()
@@ -268,6 +268,9 @@ class GameView(arcade.View):
             self.key_history = list(filter(lambda x: x != "left", self.key_history))
         elif key == arcade.key.RIGHT or key == arcade.key.D:
             self.key_history = list(filter(lambda x: x != "right", self.key_history))
+        elif key == arcade.key.ENTER:
+            # reload game
+            self.setup()
 
         self.update_player_speed()
 

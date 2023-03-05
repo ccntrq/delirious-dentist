@@ -40,10 +40,8 @@ class UI:
     def on_draw(self):
         "Draw ui elements"
         self.static_ui_elements_list.draw()
-        self.life_list.draw()
+        self.life_list.draw(pixelated=True)
 
-        self.life_list.draw()
-        self.static_ui_elements_list.draw()
         arcade.draw_text(
             str(self.game.score),
             950,

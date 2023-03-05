@@ -13,11 +13,12 @@ class EnemySprite(arcade.Sprite):
 
         image_sources = [
             config.ENEMY_1_IMAGE_SOURCE,
-            config.ENEMY_2_IMAGE_SOURCE,
-            config.ENEMY_3_IMAGE_SOURCE,
+            # TODO: readd more sprites
+            #config.ENEMY_2_IMAGE_SOURCE,
+            #config.ENEMY_3_IMAGE_SOURCE,
         ]
         image_source = random.choice(image_sources)
-        self.scale = config.CHARACTER_SCALING
+        self.scale = config.TILE_SCALING
         self.texture = arcade.load_texture(image_source)
         self.decoration_list = decoration_list
         self.set_random_speed_and_direction()
