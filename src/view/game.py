@@ -128,6 +128,7 @@ class GameView(arcade.View):
         self.player_list.update_animation()
         self.animation_list.update_animation()
         self.enemy_list.on_update()
+        self.room.blood_list.on_update()
 
         # Check for tooth collections
         power_up_hit_list = arcade.check_for_collision_with_list(
@@ -324,7 +325,7 @@ class GameView(arcade.View):
         splatter_amount = random.randint(15, 35)
         for _ in range(0,splatter_amount):
             blood = BloodSprite()
-            self.blood_position_after_hit(self.player_sprite, enemy, blood, splatter_amount)
+            self.blood_position_after_hit(self.player_sprite, enemy, blood)
             self.room.blood_list.append(blood)
 
     def add_pliers(self):
@@ -400,12 +401,15 @@ class GameView(arcade.View):
         sprite.center_x = enemy.center_x + dest[0] * 128
         sprite.center_y = enemy.center_y + dest[1] * 128
 
-    def blood_position_after_hit(self, player, enemy, sprite, splatter_amount):
+    def blood_position_after_hit(self, player, enemy, blood):
+
         x_diff = enemy.change_x + player.change_x
         y_diff = enemy.change_y + player.change_y
 
-        for _ in range(0, splatter_amount):
-            sprite.alpha = random.randint(100, 150)
-            blood_distance = random.randint(10, 20)
-            sprite.center_x = enemy.center_x + x_diff * blood_distance + blood_distance * random.randint(1, 3)
-            sprite.center_y = enemy.center_y + y_diff * blood_distance + blood_distance * random.randint(1, 3)
+        blood.alpha = random.randint(100, 150)
+        blood_distance = random.randint(10, 20)
+        blood.center_x = enemy.center_x + x_diff * (blood_distance/2) + blood_distance * random.randint(1, 3)
+        blood.center_y = enemy.center_y + y_diff * (blood_distance/2) + blood_distance * random.randint(1, 3)
+
+        blood.change_x = x_diff
+        blood.change_y = y_diff
