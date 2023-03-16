@@ -49,7 +49,8 @@ UI_BOLT_IMAGE_SOURCE = resource("sprites", "ui", "bolt.png")
 UI_FLASK_IMAGE_SOURCE = resource("sprites", "ui", "flask.png")
 UI_SCOREBOARD_IMAGE_SOURCE = resource("sprites", "ui", "scoreboard.png")
 
-FX_BLOOD_IMAGE_SOURCE = resource("sprites", "fx", "blood.png")
+FX_BLOOD_IMAGE_SOURCE_1 = resource("sprites", "fx", "blood1.png")
+FX_BLOOD_IMAGE_SOURCE_2 = resource("sprites", "fx", "blood2.png")
 
 SCREEN_MAIN_TITLE_IMAGE_SOURCE = resource("coverart", "main_title.png")
 
