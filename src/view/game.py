@@ -406,7 +406,7 @@ class GameView(arcade.View):
         x_diff = enemy.change_x + player.change_x
         y_diff = enemy.change_y + player.change_y
 
-        blood.alpha = random.randint(200, 250)
+        blood.alpha = random.randint(100, 150)
         blood_distance = random.randint(10, 20)
         blood.center_x = enemy.center_x + x_diff * (blood_distance/2) + blood_distance * random.randint(1, 3)
         blood.center_y = enemy.center_y + y_diff * (blood_distance/2) + blood_distance * random.randint(1, 3)
